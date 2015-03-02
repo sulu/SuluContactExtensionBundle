@@ -1,0 +1,20 @@
+{
+    "name": "massive/contact-bundle",
+    "type": "sulu-bundle",
+    "description": "This bundle appends the crm approach to the standard contact bundle",
+    "license": "MIT",
+    "keywords": ["contact", "crm"],
+    "require": {
+        "php": ">=5.4",
+        "sulu/sulu": "dev-develop"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-0": {
+            "Massive\\Bundle\\Contact": ""
+        }
+    },
+    "target-dir": "Massive/Bundle/ContactBundle"
+}
+
