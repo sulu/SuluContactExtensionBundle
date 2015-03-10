@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Massive\\Bundle\\Contact": ""
+            "Massive\\Bundle\\ContactBundle": ""
         }
     },
     "target-dir": "Massive/Bundle/ContactBundle"
