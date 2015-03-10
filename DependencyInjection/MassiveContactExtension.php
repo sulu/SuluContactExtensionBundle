@@ -30,7 +30,22 @@ class MassiveContactExtension extends Extension implements PrependExtensionInter
             if ($name === 'sulu_admin') {
                 $container->prependExtensionConfig(
                     $name,
-                    array('widget_groups' => array('contact-detail' => array('mappings' => array('sulu-contact-main-account'))))
+                    array(
+                        'widget_groups' => array(
+                            'contact-info' => array(
+                                'mappings' => array('sulu-contact-contact-info')
+                            ),
+                            'account-info' => array(
+                                'mappings' => array('sulu-contact-account-info', 'sulu-contact-main-contact')
+                            ),
+                            'contact-detail' => array(
+                                'mappings' => array('sulu-contact-main-account')
+                            ),
+                            'account-detail' => array(
+                                'mappings' => array('sulu-contact-main-contact')
+                            )
+                        )
+                    )
                 );
             }
         }
