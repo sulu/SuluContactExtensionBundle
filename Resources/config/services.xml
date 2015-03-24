@@ -11,6 +11,10 @@
         <parameter key="massive_contact.contact.widgets.main_contact.class">Massive\Bundle\ContactBundle\Widgets\MainContact</parameter>
         <parameter key="massive_contact.contact.widgets.table.class">Massive\Bundle\ContactBundle\Widgets\Table</parameter>
         <parameter key="massive_contact.contact.widgets.toolbar.class">Massive\Bundle\ContactBundle\Widgets\Toolbar</parameter>
+
+        <!-- extend account -->
+        <parameter key="sulu_contact.account.entity">MassiveContactBundle:Account</parameter>
+        <parameter key="sulu_contact.account_factory.class">Massive\Bundle\ContactBundle\Contact\AccountFactory</parameter>
     </parameters>
 
     <services>
@@ -28,6 +32,7 @@
 
         <service id="massive_contact.contact.widgets.account_info" class="%massive_contact.contact.widgets.account_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="string">%sulu_contact.account.entity%</argument>
 
             <tag name="sulu.widget" alias="sulu-contact-account-info"/>
         </service>
@@ -40,6 +45,7 @@
 
         <service id="massive_contact.contact.widgets.main_contact" class="%massive_contact.contact.widgets.main_contact.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="string">%sulu_contact.account.entity%</argument>
 
             <tag name="sulu.widget" alias="sulu-contact-main-contact"/>
         </service>

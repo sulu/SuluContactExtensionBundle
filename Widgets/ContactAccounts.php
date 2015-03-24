@@ -15,8 +15,6 @@ use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
 use Doctrine\ORM\EntityManager;
-use Sulu\Bundle\ContactBundle\Entity\Account;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 
 /**
  * Widget for all accounts of a contact

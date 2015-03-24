@@ -12,7 +12,7 @@ namespace Massive\Bundle\ContactBundle\Widgets;
 
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Doctrine\ORM\EntityManager;
-use Sulu\Bundle\ContactBundle\Entity\Account;
+use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
@@ -26,11 +26,12 @@ class AccountInfo implements WidgetInterface
     protected $em;
 
     protected $widgetName = 'AccountInfo';
-    protected $accountEntityName = 'SuluContactBundle:Account';
+    protected $accountEntityName;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, $accountEntityName)
     {
         $this->em = $em;
+        $this->accountEntityName = $accountEntityName;
     }
 
     /**
@@ -90,10 +91,10 @@ class AccountInfo implements WidgetInterface
     /**
      * Returns the data neede for the account list-sidebar
      *
-     * @param Account $account
+     * @param AccountInterface $account
      * @return array
      */
-    protected function parseAccountForListSidebar(Account $account)
+    protected function parseAccountForListSidebar(AccountInterface $account)
     {
         $data = [];
 

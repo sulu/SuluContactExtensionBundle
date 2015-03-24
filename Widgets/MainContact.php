@@ -15,8 +15,7 @@ use Sulu\Bundle\AdminBundle\Widgets\WidgetException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
 use Doctrine\ORM\EntityManager;
-use Sulu\Bundle\ContactBundle\Entity\Account;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
+use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 
 /**
  * Widget to display main contact
@@ -26,11 +25,12 @@ class MainContact implements WidgetInterface
     protected $em;
 
     protected $widgetName = 'MainContact';
-    protected $accountEntityName = 'SuluContactBundle:Account';
+    protected $accountEntityName;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, $accountEntityName)
     {
         $this->em = $em;
+        $this->accountEntityName = $accountEntityName;
     }
 
     /**
@@ -92,10 +92,10 @@ class MainContact implements WidgetInterface
     /**
      * Returns the data needed for the account list-sidebar
      *
-     * @param Account $account
+     * @param AccountInterface $account
      * @return array
      */
-    protected function parseMainContact(Account $account)
+    protected function parseMainContact(AccountInterface $account)
     {
         $contact = $account->getMainContact();
 
