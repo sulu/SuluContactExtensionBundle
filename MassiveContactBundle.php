@@ -15,4 +15,9 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MassiveContactBundle extends Bundle
 {
+    public function getParent()
+    {
+        return 'SuluContactBundle';
+    }
+
 }
