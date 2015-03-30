@@ -124,5 +124,10 @@ define([
         dfd.resolve();
     };
 
+    Account.prototype.add = function(type) {
+        // TODO: show loading icon
+        this.sandbox.emit('sulu.router.navigate', 'contacts/accounts/add/type:' + type);
+    };
+
     return new Account();
 });
