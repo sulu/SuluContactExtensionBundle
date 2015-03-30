@@ -18,6 +18,8 @@ define(['config', 'widget-groups', 'sulucontact/components/accounts/components/f
         Form = function() {
         },
 
+        baseForm,
+
         initResponsibleContactSelect = function(formData) {
             var preselectedResponsibleContactId = !!formData.responsiblePerson ? formData.responsiblePerson.id : null;
             this.responsiblePersons = null;
@@ -44,8 +46,7 @@ define(['config', 'widget-groups', 'sulucontact/components/accounts/components/f
                 .fail(function(textStatus, error) {
                     this.sandbox.logger.error(textStatus, error);
                 }.bind(this));
-        },
-        baseForm;
+        };
 
     BaseForm.prototype = SuluBaseForm;
     BaseForm.prototype.constructor = BaseForm;
