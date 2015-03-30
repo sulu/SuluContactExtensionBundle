@@ -10,16 +10,15 @@
 
 namespace Massive\Bundle\ContactBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Sulu\Bundle\ContactBundle\Entity\AccountRepository as SuluAccountRepository;
 
 /**
  * Repository for the Codes, implementing some additional functions
  * for querying objects
  */
-class AccountRepository extends NestedTreeRepository
+class AccountRepository extends SuluAccountRepository
 {
     /**
      * Get account by id

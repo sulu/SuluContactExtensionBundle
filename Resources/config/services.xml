@@ -12,6 +12,9 @@
         <parameter key="massive_contact.contact.widgets.main_contact.class">Massive\Bundle\ContactBundle\Widgets\MainContact</parameter>
         <parameter key="massive_contact.contact.widgets.table.class">Massive\Bundle\ContactBundle\Widgets\Table</parameter>
         <parameter key="massive_contact.contact.widgets.toolbar.class">Massive\Bundle\ContactBundle\Widgets\Toolbar</parameter>
+        <parameter key="massive_contact.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
+        <parameter key="massive_contact.import.class">Massive\Bundle\ContactBundle\Import\Import</parameter>
+        <parameter key="massive_contact.data_completer.class">Massive\Bundle\ContactBundle\Import\DataCompleter</parameter>
 
         <!-- extend account -->
         <parameter key="sulu_contact.account.entity">MassiveContactBundle:Account</parameter>
@@ -66,6 +69,30 @@
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
+        </service>
+
+        <service id="massive_contact.import" class="%massive_contact.import.class%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu_contact.account_manager"/>
+            <argument type="service" id="sulu_contact.contact_manager"/>
+            <argument type="service" id="sulu_contact.account_factory"/>
+            <argument>%sulu_contact.defaults%</argument>
+            <argument>%massive_contact.account_types%</argument>
+            <argument>%sulu_contact.form_of_address%</argument>
+            <argument>%sulu_contact.account.entity%</argument>
+        </service>
+
+        <service id="massive_contact.js_config" class="%massive_contact.js_config.class%">
+            <tag name="sulu.js_config"/>
+            <argument>massive-contact</argument>
+            <argument type="collection">
+                <argument key="accountTypes">%massive_contact.account_types%</argument>
+            </argument>
+        </service>
+
+        <service id="massive_contact.data_completer" class="%massive_contact.data_completer.class%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu_contact.account_repository"/>
         </service>
     </services>
 
