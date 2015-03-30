@@ -17,6 +17,7 @@ use Sulu\Bundle\ContactBundle\Controller\AccountController as SuluAccountControl
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
+use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
 
@@ -28,6 +29,7 @@ class AccountController extends SuluAccountController
     protected function doPost(Request $request)
     {
         $account = parent::doPost($request);
+        $account->setType($request->get('type', 0));
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
 
         return $account;
@@ -63,6 +65,19 @@ class AccountController extends SuluAccountController
         }
     }
 
+    protected function generateFlatListBuilder(Request $request, $filter)
+    {
+        $listBuilder = parent::generateFlatListBuilder($request, $filter);
+
+        $type = $request->get('type');
+        if ($type) {
+            $listBuilder->where($this->fieldDescriptors['type'], $type);
+        }
+
+        return $listBuilder;
+    }
+
+
     /**
      * Converts an account to a different account type
      * @Post("/accounts/{id}")
@@ -73,7 +88,6 @@ class AccountController extends SuluAccountController
      */
     public function postTriggerAction($id, Request $request)
     {
-
         $action = $request->get('action');
         $em = $this->getDoctrine()->getManager();
         $view = null;
@@ -132,7 +146,7 @@ class AccountController extends SuluAccountController
      */
     protected function convertToType(AccountInterface $account, $type)
     {
-        $config = $this->container->getParameter('sulu_contact.account_types');
+        $config = $this->container->getParameter('massive_contact.account_types');
         $types = $this->getAccountTypes($config);
         $transitionsForType = $this->getAccountTypeTransitions(
             $config,
@@ -201,4 +215,23 @@ class AccountController extends SuluAccountController
 
         return $types;
     }
+
+    protected function initFieldDescriptors()
+    {
+        parent::initFieldDescriptors();
+
+        $this->fieldDescriptors['type'] = new DoctrineFieldDescriptor(
+            'type',
+            'type',
+            $this->getAccountEntityName(),
+            'contact.accounts.type',
+            array(),
+            true,
+            false,
+            '',
+            '150px'
+        );
+    }
+
+
 }

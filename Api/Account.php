@@ -25,6 +25,32 @@ use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
 class Account extends SuluAccount
 {
     /**
+     * Set type
+     *
+     * @param integer $type
+     * @return Account
+     */
+    public function setType($type)
+    {
+        $this->entity->setType($type);
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer
+     * @VirtualProperty
+     * @SerializedName("type")
+     * @Groups({"fullAccount", "partialAccount"})
+     */
+    public function getType()
+    {
+        return $this->entity->getType();
+    }
+
+    /**
      * Set responsiblePerson
      *
      * @param ContactEntity $responsiblePerson
