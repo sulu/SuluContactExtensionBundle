@@ -9,11 +9,15 @@
 
 define([
     'accountsutil/header',
+    'massivecontact/model/termsOfPayment',
+    'massivecontact/model/termsOfDelivery',
     'sulucontact/components/accounts/main'
-], function(AccountsUtilHeader, SuluBaseAccount) {
+], function(AccountsUtilHeader,
+            TermsOfPayment,
+            TermsOfDelivery,
+            SuluBaseAccount) {
 
     'use strict';
-
 
     var BaseAccount = function() {
         },
@@ -65,6 +69,95 @@ define([
                 callbackFunction.bind(this, false),
                 callbackFunction.bind(this, true)
             );
+        },
+
+        deleteTerms = function(termsKey, ids) {
+            var condition, clazz, instanceName;
+            if (!!ids && ids.length > 0) {
+
+                if (termsKey === 'delivery') {
+                    clazz = TermsOfDelivery;
+                    instanceName = 'terms-of-delivery';
+                } else if (termsKey === 'payment') {
+                    clazz = TermsOfPayment;
+                    instanceName = 'terms-of-payment';
+                }
+
+                this.sandbox.util.each(ids, function(index, id) {
+                    condition = clazz.findOrCreate({id: id});
+                    condition.destroy({
+                        error: function() {
+                            this.sandbox.emit(
+                                'husky.select.' + instanceName + '.revert'
+                            );
+                        }.bind(this)
+                    });
+                }.bind(this));
+            }
+        },
+
+        saveTerms = function(termsKey, data) {
+            var instanceName, urlSuffix;
+
+            if (!!data && data.length > 0) {
+                if (termsKey === 'delivery') {
+                    urlSuffix = 'termsofdeliveries';
+                    instanceName = 'terms-of-delivery';
+                } else if (termsKey === 'payment') {
+                    urlSuffix = 'termsofpayments';
+                    instanceName = 'terms-of-payment';
+                }
+
+                this.sandbox.util.save(
+                    '/admin/api/' + urlSuffix,
+                    'PATCH',
+                    data)
+                    .then(function(response) {
+                        this.sandbox.emit('husky.select.' + instanceName + '.update',
+                            response,
+                            null,
+                            true);
+                    }.bind(this)).fail(function(status, error) {
+                        this.sandbox.emit(
+                            'husky.select.' + instanceName + '.save.revert'
+                        );
+                        this.sandbox.logger.error(status, error);
+                    }.bind(this));
+            }
+        },
+
+        /**
+         * saves financial infos
+         */
+        saveFinancials = function(data) {
+            this.sandbox.emit('sulu.header.toolbar.item.loading', 'save-button');
+
+            this.account.set(data);
+
+            // set correct backbone models
+            if (!!data.termsOfPayment) {
+                this.account.set(
+                    'termsOfPayment',
+                    TermsOfPayment.findOrCreate({id: data.termsOfPayment})
+                );
+            }
+            if (!!data.termsOfDelivery) {
+                this.account.set(
+                    'termsOfDelivery',
+                    TermsOfDelivery.findOrCreate({id: data.termsOfDelivery})
+                );
+            }
+
+            this.account.save(null, {
+                patch: true,
+                success: function(response) {
+                    var model = response.toJSON();
+                    this.sandbox.emit('sulu.contacts.accounts.financials.saved', model);
+                }.bind(this),
+                error: function() {
+                    this.sandbox.logger.log("error while saving profile");
+                }.bind(this)
+            });
         };
 
     BaseAccount.prototype = SuluBaseAccount;
@@ -94,6 +187,15 @@ define([
         this.sandbox.on('sulu.contacts.account.convert', function(data) {
             convertAccount.call(this, data);
         }.bind(this));
+
+        // handling of terms of delivery/payment eventlistener
+        this.sandbox.on('husky.select.terms-of-delivery.delete', deleteTerms.bind(this, 'delivery'));
+        this.sandbox.on('husky.select.terms-of-payment.delete', deleteTerms.bind(this, 'payment'));
+        this.sandbox.on('husky.select.terms-of-delivery.save', saveTerms.bind(this, 'delivery'));
+        this.sandbox.on('husky.select.terms-of-payment.save', saveTerms.bind(this, 'payment'));
+
+        // saves financial infos
+        this.sandbox.on('sulu.contacts.accounts.financials.save', saveFinancials.bind(this));
     };
 
     Account.prototype.renderList = function() {
@@ -127,6 +229,20 @@ define([
     Account.prototype.add = function(type) {
         // TODO: show loading icon
         this.sandbox.emit('sulu.router.navigate', 'contacts/accounts/add/type:' + type);
+    };
+
+    Account.prototype.renderByDisplay = function() {
+        if (this.options.display === 'financials') {
+            this.renderComponent(
+                'accounts/components/',
+                this.options.display,
+                'accounts-form-container',
+                {},
+                'massivecontact'
+            ).then(this.setHeader.bind(this));
+        } else {
+            baseAccount.renderByDisplay.call(this);
+        }
     };
 
     return new Account();

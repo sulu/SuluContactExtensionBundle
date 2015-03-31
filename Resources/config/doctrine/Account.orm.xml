@@ -26,7 +26,6 @@
         <one-to-many field="children" target-entity="Sulu\Bundle\ContactBundle\Entity\AccountInterface" mapped-by="parent"
                      fetch="EXTRA_LAZY"/>
 
-
         <many-to-one field="responsiblePerson" target-entity="Sulu\Bundle\ContactBundle\Entity\Contact">
             <join-columns>
                 <join-column name="idResponsiblePerson" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
@@ -158,6 +157,19 @@
                 <order-by-field name="name" direction="ASC"/>
             </order-by>
         </many-to-many>
+
+        <many-to-one field="termsOfPayment" target-entity="Massive\Bundle\ContactBundle\Entity\TermsOfPayment">
+            <join-columns>
+                <join-column name="idTermsOfPayment" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
+            </join-columns>
+        </many-to-one>
+
+        <many-to-one field="termsOfDelivery" target-entity="Massive\Bundle\ContactBundle\Entity\TermsOfDelivery">
+            <join-columns>
+                <join-column name="idTermsOfDelivery" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
+            </join-columns>
+        </many-to-one>
+
         <gedmo:tree type="nested"/>
     </entity>
 </doctrine-mapping>

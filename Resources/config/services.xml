@@ -5,6 +5,8 @@
 
     <parameters>
         <parameter key="massive_contact.admin.class">Massive\Bundle\ContactBundle\Admin\MassiveContactAdmin</parameter>
+        <parameter key="massive_contact.admin.content_navigation.class">Massive\Bundle\ContactBundle\Admin\MassiveContactContentNavigation</parameter>
+
         <parameter key="massive_contact.contact.widgets.main_account.class">Massive\Bundle\ContactBundle\Widgets\MainAccount</parameter>
         <parameter key="massive_contact.contact.widgets.contact_accounts.class">Massive\Bundle\ContactBundle\Widgets\ContactAccounts</parameter>
         <parameter key="massive_contact.contact.widgets.account_info.class">Massive\Bundle\ContactBundle\Widgets\AccountInfo</parameter>
@@ -26,6 +28,11 @@
             <argument>%sulu_admin.name%</argument>
 
             <tag name="sulu.admin"/>
+            <tag name="sulu.context" context="admin"/>
+        </service>
+
+        <service id="massive_contact.admin.content_navigation" class="%massive_contact.admin.content_navigation.class%">
+            <tag name="sulu.contact.admin.content_navigation"/>
             <tag name="sulu.context" context="admin"/>
         </service>
 

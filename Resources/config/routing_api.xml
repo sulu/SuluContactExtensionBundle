@@ -5,5 +5,9 @@
 
     <import id="sulu_contact.accounts" resource="Massive\Bundle\ContactBundle\Controller\AccountController"
             type="rest"/>
+    <import id="massive_contact.termsofpayment" resource="Massive\Bundle\ContactBundle\Controller\TermsOfPaymentController"
+            type="rest"/>
+    <import id="massive_contact.termsofpayment" resource="Massive\Bundle\ContactBundle\Controller\TermsOfDeliveryController"
+            type="rest"/>
 
 </routes>

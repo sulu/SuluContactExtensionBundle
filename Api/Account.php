@@ -17,6 +17,8 @@ use JMS\Serializer\Annotation\VirtualProperty;
 use Sulu\Bundle\ContactBundle\Api\Account as SuluAccount;
 use Sulu\Bundle\ContactBundle\Api\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
+use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
+use Massive\Bundle\ContactBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
 /**
  * The Account class which will be exported to the API
@@ -78,5 +80,57 @@ class Account extends SuluAccount
         }
 
         return null;
+    }
+
+    /**
+     * Set termsOfPayment
+     *
+     * @param TermsOfPaymentEntity $termsOfPayment
+     * @return Account
+     */
+    public function setTermsOfPayment(TermsOfPaymentEntity $termsOfPayment = null)
+    {
+        $this->entity->setTermsOfPayment($termsOfPayment);
+
+        return $this;
+    }
+
+    /**
+     * Get termsOfPayment
+     *
+     * @return TermsOfPaymentEntity
+     * @VirtualProperty
+     * @SerializedName("termsOfPayment")
+     * @Groups({"fullAccount"})
+     */
+    public function getTermsOfPayment()
+    {
+        return $this->entity->getTermsOfPayment();
+    }
+
+    /**
+     * Set termsOfDelivery
+     *
+     * @param TermsOfDeliveryEntity $termsOfDelivery
+     * @return Account
+     */
+    public function setTermsOfDelivery(TermsOfDeliveryEntity $termsOfDelivery = null)
+    {
+        $this->entity->setTermsOfDelivery($termsOfDelivery);
+
+        return $this;
+    }
+
+    /**
+     * Get termsOfDelivery
+     *
+     * @return TermsOfDeliveryEntity
+     * @VirtualProperty
+     * @SerializedName("termsOfDelivery")
+     * @Groups({"fullAccount"})
+     */
+    public function getTermsOfDelivery()
+    {
+        return $this->entity->getTermsOfDelivery();
     }
 }

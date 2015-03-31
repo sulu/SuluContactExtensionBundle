@@ -31,6 +31,16 @@ class Account extends SuluAccount
     private $responsiblePerson;
 
     /**
+     * @var TermsOfPayment
+     */
+    private $termsOfPayment;
+
+    /**
+     * @var TermsOfDelivery
+     */
+    private $termsOfDelivery;
+
+    /**
      * Set responsiblePerson
      *
      * @param Contact $responsiblePerson
@@ -74,4 +84,35 @@ class Account extends SuluAccount
         return $this->type;
     }
 
+    /**
+     * @return TermsOfPayment
+     */
+    public function getTermsOfPayment()
+    {
+        return $this->termsOfPayment;
+    }
+
+    /**
+     * @param TermsOfPayment $termsOfPayment
+     */
+    public function setTermsOfPayment($termsOfPayment)
+    {
+        $this->termsOfPayment = $termsOfPayment;
+    }
+
+    /**
+     * @return TermsOfDelivery
+     */
+    public function getTermsOfDelivery()
+    {
+        return $this->termsOfDelivery;
+    }
+
+    /**
+     * @param TermsOfDelivery $termsOfDelivery
+     */
+    public function setTermsOfDelivery($termsOfDelivery)
+    {
+        $this->termsOfDelivery = $termsOfDelivery;
+    }
 }

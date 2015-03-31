@@ -20,17 +20,24 @@ use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
+use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
+use Massive\Bundle\ContactBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
 class AccountController extends SuluAccountController
 {
+    protected static $termsOfPaymentEntityName = 'MassiveContactBundle:TermsOfPayment';
+    protected static $termsOfDeliveryEntityName = 'MassiveContactBundle:TermsOfDelivery';
+
     /**
      * {@inheritdoc}
      */
     protected function doPost(Request $request)
     {
         $account = parent::doPost($request);
+
         $account->setType($request->get('type', 0));
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
+        $this->processTerms($request, $account);
 
         return $account;
     }
@@ -41,8 +48,21 @@ class AccountController extends SuluAccountController
     protected function doPut(AccountInterface $account, Request $request)
     {
         parent::doPut($account, $request);
+
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
+        $this->processTerms($request, $account);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doPatch(AccountInterface $account, Request $request, ObjectManager $entityManager)
+    {
+        parent::doPatch($account, $request, $entityManager);
+
+        $this->processTerms($request, $account);
+    }
+
 
     /**
      * set responsible person from request data to account
@@ -214,6 +234,41 @@ class AccountController extends SuluAccountController
         }
 
         return $types;
+    }
+
+    /**
+     * Processes terms of delivery and terms of payment for an account
+     *
+     * @param Request $request
+     * @param AccountInterface $account
+     * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
+     */
+    protected function processTerms(Request $request, AccountInterface $account)
+    {
+        if ($request->get('termsOfPayment') !== null) {
+            $id = $request->get('termsOfPayment')['id'];
+            /** @var TermsOfPaymentEntity $termsOfPayment */
+            $termsOfPayment = $this->getDoctrine()
+                ->getRepository(self::$termsOfPaymentEntityName)
+                ->find($id);
+
+            if (!$termsOfPayment) {
+                throw new EntityNotFoundException(self::$termsOfPaymentEntityName, $id);
+            }
+            $account->setTermsOfPayment($termsOfPayment);
+        }
+
+        if ($request->get('termsOfDelivery') !== null) {
+            $id = $request->get('termsOfDelivery')['id'];
+            /** @var TermsOfDeliveryEntity $termsOfDelivery */
+            $termsOfDelivery = $this->getDoctrine()
+                ->getRepository(self::$termsOfDeliveryEntityName)
+                ->find($id);
+            if (!$termsOfDelivery) {
+                throw new EntityNotFoundException(self::$termsOfDeliveryEntityName, $id);
+            }
+            $account->setTermsOfDelivery($termsOfDelivery);
+        }
     }
 
     protected function initFieldDescriptors()
