@@ -2,12 +2,12 @@
 
 namespace Massive\Bundle\ContactBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sulu\Bundle\ContactBundle\Controller\TemplateController as SuluContactTemplateController;
 
 /**
  * Serves templates for massive contact bundle
  */
-class TemplateController extends Controller
+class TemplateController extends SuluContactTemplateController
 {
     /**
      * Returns the financials form for accounts
