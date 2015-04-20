@@ -91,7 +91,7 @@ class AccountController extends SuluAccountController
 
         $type = $request->get('type');
         if ($type) {
-            $listBuilder->where($this->fieldDescriptors['type'], $type);
+            $listBuilder->where($this->getFieldDescriptors()['type'], $type);
         }
 
         return $listBuilder;
@@ -287,6 +287,4 @@ class AccountController extends SuluAccountController
             '150px'
         );
     }
-
-
 }
