@@ -245,5 +245,25 @@ define([
         }
     };
 
+    Account.prototype.goToList = function(account, noReload) {
+        var typeString = '';
+        if (!!account.type) {
+            for (var i in this.accountTypes) {
+                if (this.accountTypes[i].id === account.type) {
+                    typeString = '/type:' + i;
+                    break;
+                }
+            }
+        }
+
+        this.sandbox.emit(
+            'sulu.router.navigate',
+            'contacts/accounts' + typeString,
+            !noReload,
+            true,
+            true
+        );
+    };
+
     return new Account();
 });
