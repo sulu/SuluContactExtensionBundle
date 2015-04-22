@@ -78,7 +78,7 @@
 
         <service id="sulu_contact_extension.js_config" class="%sulu_contact_extension.js_config.class%">
             <tag name="sulu.js_config"/>
-            <argument>massive-contact</argument>
+            <argument>sulu-contact-extension</argument>
             <argument type="collection">
                 <argument key="accountTypes">%sulu_contact_extension.account_types%</argument>
             </argument>
