@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Loader;
 /**
  * This is the class that loads and manages bundle configuration for sulu contact extension bundle
  */
-class SuluContactExtension extends Extension implements PrependExtensionInterface
+class SuluContactExtensionExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritDoc}
