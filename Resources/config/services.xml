@@ -15,8 +15,6 @@
         <parameter key="sulu_contact_extension.contact.widgets.table.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Table</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.toolbar.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Toolbar</parameter>
         <parameter key="sulu_contact_extension.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
-        <parameter key="sulu_contact_extension.import.class">Sulu\Bundle\ContactExtensionBundle\Import\Import</parameter>
-        <parameter key="sulu_contact_extension.data_completer.class">Sulu\Bundle\ContactExtensionBundle\Import\DataCompleter</parameter>
 
         <!-- extend account -->
         <parameter key="sulu_contact.account.entity">SuluContactExtensionBundle:Account</parameter>
@@ -78,28 +76,12 @@
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
         </service>
 
-        <service id="sulu_contact_extension.import" class="%sulu_contact_extension.import.class%">
-            <argument type="service" id="doctrine.orm.entity_manager"/>
-            <argument type="service" id="sulu_contact.account_manager"/>
-            <argument type="service" id="sulu_contact.contact_manager"/>
-            <argument type="service" id="sulu_contact.account_factory"/>
-            <argument>%sulu_contact.defaults%</argument>
-            <argument>%sulu_contact_extension.account_types%</argument>
-            <argument>%sulu_contact.form_of_address%</argument>
-            <argument>%sulu_contact.account.entity%</argument>
-        </service>
-
         <service id="sulu_contact_extension.js_config" class="%sulu_contact_extension.js_config.class%">
             <tag name="sulu.js_config"/>
             <argument>massive-contact</argument>
             <argument type="collection">
                 <argument key="accountTypes">%sulu_contact_extension.account_types%</argument>
             </argument>
-        </service>
-
-        <service id="sulu_contact_extension.data_completer" class="%sulu_contact_extension.data_completer.class%">
-            <argument type="service" id="doctrine.orm.entity_manager"/>
-            <argument type="service" id="sulu_contact.account_repository"/>
         </service>
     </services>
 
