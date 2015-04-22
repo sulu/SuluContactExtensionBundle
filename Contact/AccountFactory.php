@@ -8,12 +8,12 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Contact;
+namespace Sulu\Bundle\ContactExtensionBundle\Contact;
 
 use Sulu\Bundle\ContactBundle\Contact\AccountFactory as SuluAccountFactory;
-use Massive\Bundle\ContactBundle\Entity\Account;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
-use Massive\Bundle\ContactBundle\Api\Account as ApiAccount;
+use Sulu\Bundle\ContactExtensionBundle\Api\Account as ApiAccount;
 
 /**
  * Override for account factory

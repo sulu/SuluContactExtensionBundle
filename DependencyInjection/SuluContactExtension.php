@@ -8,7 +8,7 @@
 * with this source code in the file LICENSE.
 */
 
-namespace Massive\Bundle\ContactBundle\DependencyInjection;
+namespace Sulu\Bundle\ContactExtensionBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -17,9 +17,9 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
- * This is the class that loads and manages bundle configuration for massive contact bundle
+ * This is the class that loads and manages bundle configuration for sulu contact extension bundle
  */
-class MassiveContactExtension extends Extension implements PrependExtensionInterface
+class SuluContactExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritDoc}
@@ -63,7 +63,7 @@ class MassiveContactExtension extends Extension implements PrependExtensionInter
         $loader->load('services.xml');
 
         $container->setParameter(
-            'massive_contact.account_types',
+            'sulu_contact_extension.account_types',
             $config['account_types']
         );
     }

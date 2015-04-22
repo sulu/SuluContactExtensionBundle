@@ -8,10 +8,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\RestController;
@@ -29,7 +29,7 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
     /**
      * {@inheritdoc}
      */
-    protected static $entityName = 'MassiveContactBundle:TermsOfDelivery';
+    protected static $entityName = 'SuluContactExtensionBundle:TermsOfDelivery';
     protected static $entityKey = 'termsOfDeliveries';
 
     /**
@@ -187,7 +187,6 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
 
             $i = 0;
             while ($item = $request->get($i)) {
-
                 if (!isset($item['terms'])) {
                     throw new RestException('There is no category-name for the account-category given');
                 }

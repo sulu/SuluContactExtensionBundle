@@ -8,7 +8,7 @@
   * with this source code in the file LICENSE.
   */
 
-namespace Massive\Bundle\ContactBundle\Widgets;
+namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Doctrine\ORM\EntityManager;
@@ -51,7 +51,7 @@ class AccountInfo implements WidgetInterface
      */
     public function getTemplate()
     {
-        return 'MassiveContactBundle:Widgets:account.info.html.twig';
+        return 'SuluContactExtensionBundle:Widgets:account.info.html.twig';
     }
 
     /**

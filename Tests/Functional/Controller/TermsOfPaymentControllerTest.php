@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Tests\Functional\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Controller;
 
-use Massive\Bundle\ContactBundle\Entity\TermsOfPayment;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
 
 class TermsOfPaymentControllerTest extends SuluTestCase

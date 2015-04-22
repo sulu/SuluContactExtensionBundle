@@ -3,7 +3,7 @@
  * (c) MASSIVE ART WebServices GmbH
  */
 
-namespace Massive\Bundle\ContactBundle\Import;
+namespace Sulu\Bundle\ContactExtensionBundle\Import;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Sulu\Bundle\ContactBundle\Entity\AccountAddress;

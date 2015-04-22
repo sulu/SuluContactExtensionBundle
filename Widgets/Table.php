@@ -8,7 +8,7 @@
   * with this source code in the file LICENSE.
   */
 
-namespace Massive\Bundle\ContactBundle\Widgets;
+namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 
@@ -34,7 +34,7 @@ class Table implements WidgetInterface
      */
     public function getTemplate()
     {
-        return 'MassiveContactBundle:Widgets:table.html.twig';
+        return 'SuluContactExtensionBundle:Widgets:table.html.twig';
     }
 
     /**

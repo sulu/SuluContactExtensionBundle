@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations\Post;
@@ -20,13 +20,13 @@ use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
-use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
-use Massive\Bundle\ContactBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
 class AccountController extends SuluAccountController
 {
-    protected static $termsOfPaymentEntityName = 'MassiveContactBundle:TermsOfPayment';
-    protected static $termsOfDeliveryEntityName = 'MassiveContactBundle:TermsOfDelivery';
+    protected static $termsOfPaymentEntityName = 'SuluContactExtensionBundle:TermsOfPayment';
+    protected static $termsOfDeliveryEntityName = 'SuluContactExtensionBundle:TermsOfDelivery';
 
     /**
      * {@inheritdoc}
@@ -166,7 +166,7 @@ class AccountController extends SuluAccountController
      */
     protected function convertToType(AccountInterface $account, $type)
     {
-        $config = $this->container->getParameter('massive_contact.account_types');
+        $config = $this->container->getParameter('sulu_contact_extension.account_types');
         $types = $this->getAccountTypes($config);
         $transitionsForType = $this->getAccountTypeTransitions(
             $config,

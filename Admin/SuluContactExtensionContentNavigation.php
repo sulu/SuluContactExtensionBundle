@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Admin;
+namespace Sulu\Bundle\ContactExtensionBundle\Admin;
 
 use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationInterface;
 use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationItem;
@@ -16,7 +16,7 @@ use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationItem;
 /**
  * Extends account form with financials
  */
-class MassiveContactContentNavigation implements ContentNavigationInterface
+class SuluContactExtensionContentNavigation implements ContentNavigationInterface
 {
     private $navigation = array();
 

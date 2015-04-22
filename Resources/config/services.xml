@@ -4,100 +4,100 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="massive_contact.admin.class">Massive\Bundle\ContactBundle\Admin\MassiveContactAdmin</parameter>
-        <parameter key="massive_contact.admin.content_navigation.class">Massive\Bundle\ContactBundle\Admin\MassiveContactContentNavigation</parameter>
+        <parameter key="sulu_contact_extension.admin.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionAdmin</parameter>
+        <parameter key="sulu_contact_extension.admin.content_navigation.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionContentNavigation</parameter>
 
-        <parameter key="massive_contact.contact.widgets.main_account.class">Massive\Bundle\ContactBundle\Widgets\MainAccount</parameter>
-        <parameter key="massive_contact.contact.widgets.contact_accounts.class">Massive\Bundle\ContactBundle\Widgets\ContactAccounts</parameter>
-        <parameter key="massive_contact.contact.widgets.account_info.class">Massive\Bundle\ContactBundle\Widgets\AccountInfo</parameter>
-        <parameter key="massive_contact.contact.widgets.contact_info.class">Massive\Bundle\ContactBundle\Widgets\ContactInfo</parameter>
-        <parameter key="massive_contact.contact.widgets.main_contact.class">Massive\Bundle\ContactBundle\Widgets\MainContact</parameter>
-        <parameter key="massive_contact.contact.widgets.table.class">Massive\Bundle\ContactBundle\Widgets\Table</parameter>
-        <parameter key="massive_contact.contact.widgets.toolbar.class">Massive\Bundle\ContactBundle\Widgets\Toolbar</parameter>
-        <parameter key="massive_contact.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
-        <parameter key="massive_contact.import.class">Massive\Bundle\ContactBundle\Import\Import</parameter>
-        <parameter key="massive_contact.data_completer.class">Massive\Bundle\ContactBundle\Import\DataCompleter</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.main_account.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainAccount</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.contact_accounts.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactAccounts</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.account_info.class">Sulu\Bundle\ContactExtensionBundle\Widgets\AccountInfo</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.contact_info.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactInfo</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.main_contact.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainContact</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.table.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Table</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.toolbar.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Toolbar</parameter>
+        <parameter key="sulu_contact_extension.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
+        <parameter key="sulu_contact_extension.import.class">Sulu\Bundle\ContactExtensionBundle\Import\Import</parameter>
+        <parameter key="sulu_contact_extension.data_completer.class">Sulu\Bundle\ContactExtensionBundle\Import\DataCompleter</parameter>
 
         <!-- extend account -->
-        <parameter key="sulu_contact.account.entity">MassiveContactBundle:Account</parameter>
-        <parameter key="sulu_contact.account_factory.class">Massive\Bundle\ContactBundle\Contact\AccountFactory</parameter>
+        <parameter key="sulu_contact.account.entity">SuluContactExtensionBundle:Account</parameter>
+        <parameter key="sulu_contact.account_factory.class">Sulu\Bundle\ContactExtensionBundle\Contact\AccountFactory</parameter>
     </parameters>
 
     <services>
-        <service id="massive_contact.admin" class="%massive_contact.admin.class%">
+        <service id="sulu_contact_extension.admin" class="%sulu_contact_extension.admin.class%">
             <argument>%sulu_admin.name%</argument>
 
             <tag name="sulu.admin"/>
             <tag name="sulu.context" context="admin"/>
         </service>
 
-        <service id="massive_contact.admin.content_navigation" class="%massive_contact.admin.content_navigation.class%">
+        <service id="sulu_contact_extension.admin.content_navigation" class="%sulu_contact_extension.admin.content_navigation.class%">
             <tag name="sulu.contact.admin.content_navigation"/>
             <tag name="sulu.context" context="admin"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.main_account" class="%massive_contact.contact.widgets.main_account.class%">
+        <service id="sulu_contact_extension.contact.widgets.main_account" class="%sulu_contact_extension.contact.widgets.main_account.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-main-account"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.contact_accounts" class="%massive_contact.contact.widgets.contact_accounts.class%">
+        <service id="sulu_contact_extension.contact.widgets.contact_accounts" class="%sulu_contact_extension.contact.widgets.contact_accounts.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-accounts"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.account_info" class="%massive_contact.contact.widgets.account_info.class%">
+        <service id="sulu_contact_extension.contact.widgets.account_info" class="%sulu_contact_extension.contact.widgets.account_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="string">%sulu_contact.account.entity%</argument>
 
             <tag name="sulu.widget" alias="sulu-contact-account-info"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.contact_info" class="%massive_contact.contact.widgets.contact_info.class%">
+        <service id="sulu_contact_extension.contact.widgets.contact_info" class="%sulu_contact_extension.contact.widgets.contact_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-contact-info"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.main_contact" class="%massive_contact.contact.widgets.main_contact.class%">
+        <service id="sulu_contact_extension.contact.widgets.main_contact" class="%sulu_contact_extension.contact.widgets.main_contact.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="string">%sulu_contact.account.entity%</argument>
 
             <tag name="sulu.widget" alias="sulu-contact-main-contact"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.table" class="%massive_contact.contact.widgets.table.class%">
+        <service id="sulu_contact_extension.contact.widgets.table" class="%sulu_contact_extension.contact.widgets.table.class%">
             <tag name="sulu.widget" alias="sulu-contact-table"/>
         </service>
 
-        <service id="massive_contact.contact.widgets.toolbar" class="%massive_contact.contact.widgets.toolbar.class%">
+        <service id="sulu_contact_extension.contact.widgets.toolbar" class="%sulu_contact_extension.contact.widgets.toolbar.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
         </service>
 
-        <service id="massive_contact.import" class="%massive_contact.import.class%">
+        <service id="sulu_contact_extension.import" class="%sulu_contact_extension.import.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="sulu_contact.account_manager"/>
             <argument type="service" id="sulu_contact.contact_manager"/>
             <argument type="service" id="sulu_contact.account_factory"/>
             <argument>%sulu_contact.defaults%</argument>
-            <argument>%massive_contact.account_types%</argument>
+            <argument>%sulu_contact_extension.account_types%</argument>
             <argument>%sulu_contact.form_of_address%</argument>
             <argument>%sulu_contact.account.entity%</argument>
         </service>
 
-        <service id="massive_contact.js_config" class="%massive_contact.js_config.class%">
+        <service id="sulu_contact_extension.js_config" class="%sulu_contact_extension.js_config.class%">
             <tag name="sulu.js_config"/>
             <argument>massive-contact</argument>
             <argument type="collection">
-                <argument key="accountTypes">%massive_contact.account_types%</argument>
+                <argument key="accountTypes">%sulu_contact_extension.account_types%</argument>
             </argument>
         </service>
 
-        <service id="massive_contact.data_completer" class="%massive_contact.data_completer.class%">
+        <service id="sulu_contact_extension.data_completer" class="%sulu_contact_extension.data_completer.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="sulu_contact.account_repository"/>
         </service>

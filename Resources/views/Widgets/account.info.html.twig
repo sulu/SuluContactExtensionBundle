@@ -6,15 +6,15 @@
     </div>
 
     {% if data.address is defined %}
-        {% include 'MassiveContactBundle:Widgets:Partials/address.partial.html.twig' with {'address': data.address} only %}
+        {% include 'SuluContactExtensionBundle:Widgets:Partials/address.partial.html.twig' with {'address': data.address} only %}
     {% endif %}
 
     {% if data.phone or data.fax  is not empty %}
-        {% include 'MassiveContactBundle:Widgets:Partials/phoneFax.partial.html.twig' with {'phone': data.phone, 'fax': data.fax} only %}
+        {% include 'SuluContactExtensionBundle:Widgets:Partials/phoneFax.partial.html.twig' with {'phone': data.phone, 'fax': data.fax} only %}
     {% endif %}
 
     {% if data.email or data.url is not empty %}
-        {% include 'MassiveContactBundle:Widgets:Partials/emailUrl.partial.html.twig' with {'email': data.email, 'url': data.url} only %}
+        {% include 'SuluContactExtensionBundle:Widgets:Partials/emailUrl.partial.html.twig' with {'email': data.email, 'url': data.url} only %}
     {% endif %}
 
     {% if data.company is defined %}

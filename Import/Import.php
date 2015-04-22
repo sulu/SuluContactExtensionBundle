@@ -8,14 +8,14 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Import;
+namespace Sulu\Bundle\ContactExtensionBundle\Import;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
-use Massive\Bundle\ContactBundle\Entity\Account;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\AccountContact;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Bundle\ContactBundle\Entity\Address;
@@ -29,7 +29,7 @@ use Sulu\Bundle\ContactBundle\Entity\Fax;
 use Sulu\Bundle\ContactBundle\Entity\Note;
 use Sulu\Bundle\ContactBundle\Entity\Phone;
 use Sulu\Bundle\ContactBundle\Entity\Url;
-use Massive\Bundle\ContactBundle\Import\Exception\ImportException;
+use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 use Sulu\Bundle\TagBundle\Entity\Tag;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;

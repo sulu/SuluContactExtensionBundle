@@ -8,7 +8,7 @@
   * with this source code in the file LICENSE.
   */
 
-namespace Massive\Bundle\ContactBundle\Widgets;
+namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 
@@ -34,7 +34,7 @@ class Toolbar implements WidgetInterface
      */
     public function getTemplate()
     {
-        return 'MassiveContactBundle:Widgets:toolbar.html.twig';
+        return 'SuluContactExtensionBundle:Widgets:toolbar.html.twig';
     }
 
     /**

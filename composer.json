@@ -1,5 +1,5 @@
 {
-    "name": "massive/contact-bundle",
+    "name": "sulu/contact-extension-bundle",
     "type": "sulu-bundle",
     "description": "This bundle appends the crm approach to the standard contact bundle",
     "license": "MIT",
@@ -12,9 +12,9 @@
     },
     "autoload": {
         "psr-0": {
-            "Massive\\Bundle\\ContactBundle": ""
+            "Sulu\\Bundle\\ContactExtensionBundle": ""
         }
     },
-    "target-dir": "Massive/Bundle/ContactBundle"
+    "target-dir": "Sulu/Bundle/ContactExtensionBundle"
 }
 

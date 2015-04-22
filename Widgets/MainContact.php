@@ -8,7 +8,7 @@
   * with this source code in the file LICENSE.
   */
 
-namespace Massive\Bundle\ContactBundle\Widgets;
+namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetException;
@@ -50,7 +50,7 @@ class MainContact implements WidgetInterface
      */
     public function getTemplate()
     {
-        return 'MassiveContactBundle:Widgets:account.main.contact.html.twig';
+        return 'SuluContactExtensionBundle:Widgets:account.main.contact.html.twig';
     }
 
     /**

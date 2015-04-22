@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Tests\Functional\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Controller;
 
 use DateTime;
 use Sulu\Bundle\ContactBundle\Entity\Account;

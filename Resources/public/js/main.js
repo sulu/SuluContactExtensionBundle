@@ -9,11 +9,11 @@
 
 require.config({
     paths: {
-        massivecontact: '../../massivecontact/js',
-        '__component__$accounts/components/form@sulucontact': '/bundles/massivecontact/js/components/accounts/components/form/main',
-        '__component__$accounts/components/list@sulucontact': '/bundles/massivecontact/js/components/accounts/components/list/main',
-        '__component__$accounts@sulucontact': '/bundles/massivecontact/js/components/accounts/main',
-        'accountsutil/header': '/bundles/massivecontact/js/components/accounts/util/header'
+        sulucontactextension: '../../sulucontactextension/js',
+        '__component__$accounts/components/form@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/form/main',
+        '__component__$accounts/components/list@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/list/main',
+        '__component__$accounts@sulucontact': '/bundles/sulucontactextension/js/components/accounts/main',
+        'accountsutil/header': '/bundles/sulucontactextension/js/components/accounts/util/header'
     }
 });
 
@@ -23,10 +23,10 @@ define(function() {
 
     return {
 
-        name: 'Massive Contact Bundle',
+        name: 'Sulu Contact Extension Bundle',
 
         initialize: function(app) {
-            app.components.addSource('massivecontact', '/bundles/massivecontact/js/components');
+            app.components.addSource('sulucontactextension', '/bundles/sulucontactextension/js/components');
 
             // list all accounts
             app.sandbox.mvc.routes.push({

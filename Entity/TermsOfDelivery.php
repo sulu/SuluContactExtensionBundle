@@ -1,6 +1,6 @@
 <?php
 
-namespace Massive\Bundle\ContactBundle\Entity;
+namespace Sulu\Bundle\ContactExtensionBundle\Entity;
 
 use JMS\Serializer\Annotation\Groups;
 
