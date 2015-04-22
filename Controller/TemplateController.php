@@ -1,11 +1,11 @@
 <?php
 
-namespace Massive\Bundle\ContactBundle\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
 use Sulu\Bundle\ContactBundle\Controller\TemplateController as SuluContactTemplateController;
 
 /**
- * Serves templates for massive contact bundle
+ * Serves templates for sulu contact extension bundle
  */
 class TemplateController extends SuluContactTemplateController
 {
@@ -15,6 +15,6 @@ class TemplateController extends SuluContactTemplateController
      */
     public function accountFinancialsAction()
     {
-        return $this->render('MassiveContactBundle:Template:account.financials.html.twig');
+        return $this->render('SuluContactExtensionBundle:Template:account.financials.html.twig');
     }
 }

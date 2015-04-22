@@ -1,6 +1,6 @@
 # define the account types and form of address
 # tabs key must match tab-id specified in content-navigation
-massive_contact:
+sulu_contact_extension:
     account_types:
         basic:
             id: 0

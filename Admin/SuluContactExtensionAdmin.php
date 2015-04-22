@@ -8,13 +8,13 @@
 * with this source code in the file LICENSE.
 */
 
-namespace Massive\Bundle\ContactBundle\Admin;
+namespace Sulu\Bundle\ContactExtensionBundle\Admin;
 
 use Sulu\Bundle\AdminBundle\Admin\Admin;
 use Sulu\Bundle\AdminBundle\Navigation\Navigation;
 use Sulu\Bundle\AdminBundle\Navigation\NavigationItem;
 
-class MassiveContactAdmin extends Admin
+class SuluContactExtensionAdmin extends Admin
 {
     public function __construct($title)
     {
@@ -25,6 +25,6 @@ class MassiveContactAdmin extends Admin
 
     public function getJsBundleName()
     {
-        return 'massivecontact';
+        return 'sulucontactextension';
     }
 }

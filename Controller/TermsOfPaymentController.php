@@ -8,10 +8,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use Massive\Bundle\ContactBundle\Entity\TermsOfPayment;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\RestController;
@@ -29,7 +29,7 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
     /**
      * {@inheritdoc}
      */
-    protected static $entityName = 'MassiveContactBundle:TermsOfPayment';
+    protected static $entityName = 'SuluContactExtensionBundle:TermsOfPayment';
 
     /**
      * {@inheritdoc}
@@ -191,7 +191,6 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
 
             $i = 0;
             while ($item = $request->get($i)) {
-
                 if (!isset($item['terms'])) {
                     throw new RestException('There is no term-name for the terms-of-payment given');
                 }

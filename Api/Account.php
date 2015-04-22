@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Api;
+namespace Sulu\Bundle\ContactExtensionBundle\Api;
 
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Groups;
@@ -17,8 +17,8 @@ use JMS\Serializer\Annotation\VirtualProperty;
 use Sulu\Bundle\ContactBundle\Api\Account as SuluAccount;
 use Sulu\Bundle\ContactBundle\Api\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
-use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
-use Massive\Bundle\ContactBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
 /**
  * The Account class which will be exported to the API

@@ -4,8 +4,8 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
 
-    <entity name="Massive\Bundle\ContactBundle\Entity\Account" table="ma_co_accounts"
-            repository-class="Massive\Bundle\ContactBundle\Entity\AccountRepository">
+    <entity name="Sulu\Bundle\ContactExtensionBundle\Entity\Account" table="ma_co_accounts"
+            repository-class="Sulu\Bundle\ContactExtensionBundle\Entity\AccountRepository">
         <field name="lft" type="integer" column="lft">
             <gedmo:tree-left/>
         </field>
@@ -158,13 +158,13 @@
             </order-by>
         </many-to-many>
 
-        <many-to-one field="termsOfPayment" target-entity="Massive\Bundle\ContactBundle\Entity\TermsOfPayment">
+        <many-to-one field="termsOfPayment" target-entity="Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment">
             <join-columns>
                 <join-column name="idTermsOfPayment" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
             </join-columns>
         </many-to-one>
 
-        <many-to-one field="termsOfDelivery" target-entity="Massive\Bundle\ContactBundle\Entity\TermsOfDelivery">
+        <many-to-one field="termsOfDelivery" target-entity="Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery">
             <join-columns>
                 <join-column name="idTermsOfDelivery" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
             </join-columns>

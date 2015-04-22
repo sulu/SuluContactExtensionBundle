@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Tests\Functional\Import;
+namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Import;
 
 use Sulu\Bundle\ContactBundle\Contact\AccountManager;
 use Sulu\Bundle\ContactBundle\Contact\ContactManager;

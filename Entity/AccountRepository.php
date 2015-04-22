@@ -8,7 +8,7 @@
 * with this source code in the file LICENSE.
 */
 
-namespace Massive\Bundle\ContactBundle\Entity;
+namespace Sulu\Bundle\ContactExtensionBundle\Entity;
 
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query;

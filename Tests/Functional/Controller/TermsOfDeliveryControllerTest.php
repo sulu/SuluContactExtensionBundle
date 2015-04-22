@@ -8,9 +8,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Tests\Functional\Controller;
+namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Controller;
 
-use Massive\Bundle\ContactBundle\Entity\TermsOfDelivery;
+use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
 
 class TermsOfDeliveryControllerTest extends SuluTestCase

@@ -5,7 +5,7 @@
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="account_financials" pattern="/template/account/financials.html">
-        <default key="_controller">MassiveContactBundle:Template:accountFinancials</default>
+        <default key="_controller">SuluContactExtensionBundle:Template:accountFinancials</default>
     </route>
 
 </routes>

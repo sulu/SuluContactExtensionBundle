@@ -8,7 +8,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Massive\Bundle\ContactBundle\Import\Exception;
+namespace Sulu\Bundle\ContactExtensionBundle\Import\Exception;
 
 use Exception;
 

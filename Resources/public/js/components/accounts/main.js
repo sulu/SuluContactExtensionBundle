@@ -9,8 +9,8 @@
 
 define([
     'accountsutil/header',
-    'massivecontact/model/termsOfPayment',
-    'massivecontact/model/termsOfDelivery',
+    'sulucontactextension/model/termsOfPayment',
+    'sulucontactextension/model/termsOfDelivery',
     'sulucontact/components/accounts/main'
 ], function(AccountsUtilHeader,
             TermsOfPayment,

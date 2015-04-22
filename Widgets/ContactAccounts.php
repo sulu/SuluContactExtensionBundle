@@ -8,7 +8,7 @@
   * with this source code in the file LICENSE.
   */
 
-namespace Massive\Bundle\ContactBundle\Widgets;
+namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
 use Doctrine\ORM\PersistentCollection;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
@@ -48,7 +48,7 @@ class ContactAccounts implements WidgetInterface
      */
     public function getTemplate()
     {
-        return 'MassiveContactBundle:Widgets:contact.accounts.html.twig';
+        return 'SuluContactExtensionBundle:Widgets:contact.accounts.html.twig';
     }
 
     /**
@@ -95,9 +95,9 @@ class ContactAccounts implements WidgetInterface
     protected function parseAccounts(PersistentCollection $accountsContact)
     {
         $length = count($accountsContact);
-        if($length > 0) {
+        if ($length > 0) {
             $data = [];
-            foreach($accountsContact as $accountContact) {
+            foreach ($accountsContact as $accountContact) {
                 $tmp = [];
                 $tmp['id'] = $accountContact->getAccount()->getId();
                 $tmp['name'] = $accountContact->getAccount()->getName();
