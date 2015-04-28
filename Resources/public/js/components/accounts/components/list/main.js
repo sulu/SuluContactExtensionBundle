@@ -47,7 +47,7 @@ define([
             items = [
                 {
                     id: 'all',
-                    title: this.sandbox.translate('public.all')
+                    name: this.sandbox.translate('public.all')
                 }
             ];
             // parse accounts for tabs
@@ -59,8 +59,7 @@ define([
                 type = accountTypes[index];
                 items.push({
                     id: parseInt(type.id, 10),
-                    name: type.name,
-                    title: this.sandbox.translate(type.translation)
+                    name: this.sandbox.translate(type.translation)
                 });
             }
 
@@ -82,9 +81,7 @@ define([
             return {
                 callback: selectFilter.bind(this),
                 preselector: 'position',
-                data: {
-                    items: items
-                },
+                data: items,
                 preselect: preselect
             };
         },

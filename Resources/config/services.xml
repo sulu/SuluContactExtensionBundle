@@ -15,6 +15,7 @@
         <parameter key="sulu_contact_extension.contact.widgets.table.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Table</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.toolbar.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Toolbar</parameter>
         <parameter key="sulu_contact_extension.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
+        <parameter key="sulu_contact_extension.account_navigation_provider.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionContentNavigation</parameter>
 
         <!-- extend account -->
         <parameter key="sulu_contact.account.entity">SuluContactExtensionBundle:Account</parameter>
@@ -74,6 +75,12 @@
             <argument type="service" id="doctrine.orm.entity_manager"/>
 
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
+        </service>
+
+        <service id="sulu_contact_extension.account_navigation_provider" class="%sulu_contact_extension.account_navigation_provider.class%">
+            <argument type="service" id="sulu_security.security_checker"/>
+            <tag name="sulu_admin.content_navigation" alias="account"/>
+            <tag name="sulu.context" context="admin"/>
         </service>
 
         <service id="sulu_contact_extension.js_config" class="%sulu_contact_extension.js_config.class%">
