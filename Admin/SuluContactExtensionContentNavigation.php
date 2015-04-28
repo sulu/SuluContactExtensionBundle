@@ -10,33 +10,36 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Admin;
 
-use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationInterface;
+use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationProviderInterface;
 use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationItem;
+use Sulu\Component\Security\Authorization\SecurityCheckerInterface;
 
 /**
  * Extends account form with financials
  */
-class SuluContactExtensionContentNavigation implements ContentNavigationInterface
+class SuluContactExtensionContentNavigation implements ContentNavigationProviderInterface
 {
-    private $navigation = array();
+    /**
+     * @var SecurityCheckerInterface
+     */
+    private $securityChecker;
 
-    public function __construct()
+    public function __construct(SecurityCheckerInterface $securityChecker)
+    {
+        $this->securityChecker = $securityChecker;
+    }
+
+    public function getNavigationItems(array $options = array())
     {
         // financial infos
         $item = new ContentNavigationItem('navigation.financials');
         $item->setAction('financials');
         $item->setId('financials');
         $item->setDisabled(true);
-        $item->setGroups(array('account'));
         $item->setComponent('accounts@sulucontact');
         $item->setComponentOptions(array('display' => 'financials'));
         $item->setDisplay(array('edit'));
-        $this->navigation[] = $item;
 
-    }
-
-    public function getNavigationItems()
-    {
-        return $this->navigation;
+        return array($item);
     }
 }

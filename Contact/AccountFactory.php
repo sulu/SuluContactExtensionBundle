@@ -23,9 +23,9 @@ class AccountFactory extends SuluAccountFactory
     /**
      * {@inheritdoc}
      */
-    public function create()
+    public function createEntity()
     {
-     return new Account();
+        return new Account();
     }
 
     /**
@@ -33,6 +33,6 @@ class AccountFactory extends SuluAccountFactory
      */
     public function createApiEntity(AccountInterface $account, $locale)
     {
-     return new ApiAccount($account, $locale);
+        return new ApiAccount($account, $locale);
     }
 }
