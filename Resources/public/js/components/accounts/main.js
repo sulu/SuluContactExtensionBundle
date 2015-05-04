@@ -238,7 +238,7 @@ define([
                 this.options.display,
                 'accounts-form-container',
                 {},
-                'massivecontact'
+                'sulucontactextension'
             ).then(this.setHeader.bind(this));
         } else {
             baseAccount.renderByDisplay.call(this);
