@@ -5,7 +5,6 @@
 
     <parameters>
         <parameter key="sulu_contact_extension.admin.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionAdmin</parameter>
-        <parameter key="sulu_contact_extension.admin.content_navigation.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionContentNavigation</parameter>
 
         <parameter key="sulu_contact_extension.contact.widgets.main_account.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainAccount</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.contact_accounts.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactAccounts</parameter>
