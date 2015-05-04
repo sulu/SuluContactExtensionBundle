@@ -4,7 +4,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
                   xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
 
-    <entity name="Sulu\Bundle\ContactExtensionBundle\Entity\Account" table="ma_co_accounts"
+    <entity name="Sulu\Bundle\ContactExtensionBundle\Entity\Account" table="co_ext_accounts"
             repository-class="Sulu\Bundle\ContactExtensionBundle\Entity\AccountRepository">
         <field name="lft" type="integer" column="lft">
             <gedmo:tree-left/>
@@ -40,7 +40,7 @@
         </many-to-one>
 
         <many-to-many field="categories" target-entity="Sulu\Bundle\CategoryBundle\Entity\Category">
-            <join-table name="ma_co_account_categories">
+            <join-table name="co_ext_account_categories">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
                 </join-columns>
@@ -54,7 +54,7 @@
         </many-to-many>
 
         <many-to-many field="medias" target-entity="Sulu\Bundle\MediaBundle\Entity\Media">
-            <join-table name="ma_co_account_medias">
+            <join-table name="co_ext_account_medias">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id" on-delete="CASCADE" nullable="false"/>
                 </join-columns>
@@ -67,7 +67,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="urls" target-entity="Sulu\Bundle\ContactBundle\Entity\Url" inversed-by="accounts">
-            <join-table name="ma_co_account_urls">
+            <join-table name="co_ext_account_urls">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -80,7 +80,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="phones" target-entity="Sulu\Bundle\ContactBundle\Entity\Phone" inversed-by="accounts">
-            <join-table name="ma_co_account_phones">
+            <join-table name="co_ext_account_phones">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -93,7 +93,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="emails" target-entity="Sulu\Bundle\ContactBundle\Entity\Email" inversed-by="accounts">
-            <join-table name="ma_co_account_emails">
+            <join-table name="co_ext_account_emails">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -106,7 +106,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="notes" target-entity="Sulu\Bundle\ContactBundle\Entity\Note" inversed-by="accounts">
-            <join-table name="ma_co_account_notes">
+            <join-table name="co_ext_account_notes">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -119,7 +119,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="faxes" target-entity="Sulu\Bundle\ContactBundle\Entity\Fax" inversed-by="accounts">
-            <join-table name="ma_co_account_faxes">
+            <join-table name="co_ext_account_faxes">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -132,7 +132,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="bankAccounts" target-entity="Sulu\Bundle\ContactBundle\Entity\BankAccount" inversed-by="accounts">
-            <join-table name="ma_co_account_bank_accounts">
+            <join-table name="co_ext_account_bank_accounts">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
@@ -145,7 +145,7 @@
             </order-by>
         </many-to-many>
         <many-to-many field="tags" target-entity="Sulu\Bundle\TagBundle\Entity\Tag">
-            <join-table name="ma_co_account_tags">
+            <join-table name="co_ext_account_tags">
                 <join-columns>
                     <join-column name="idAccounts" referenced-column-name="id"/>
                 </join-columns>
