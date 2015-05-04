@@ -5,7 +5,6 @@
 
     <parameters>
         <parameter key="sulu_contact_extension.admin.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionAdmin</parameter>
-        <parameter key="sulu_contact_extension.admin.content_navigation.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionContentNavigation</parameter>
 
         <parameter key="sulu_contact_extension.contact.widgets.main_account.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainAccount</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.contact_accounts.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactAccounts</parameter>
@@ -25,45 +24,34 @@
     <services>
         <service id="sulu_contact_extension.admin" class="%sulu_contact_extension.admin.class%">
             <argument>%sulu_admin.name%</argument>
-
             <tag name="sulu.admin"/>
-            <tag name="sulu.context" context="admin"/>
-        </service>
-
-        <service id="sulu_contact_extension.admin.content_navigation" class="%sulu_contact_extension.admin.content_navigation.class%">
-            <tag name="sulu.contact.admin.content_navigation"/>
             <tag name="sulu.context" context="admin"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.main_account" class="%sulu_contact_extension.contact.widgets.main_account.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-
             <tag name="sulu.widget" alias="sulu-contact-main-account"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.contact_accounts" class="%sulu_contact_extension.contact.widgets.contact_accounts.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-
             <tag name="sulu.widget" alias="sulu-contact-accounts"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.account_info" class="%sulu_contact_extension.contact.widgets.account_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="string">%sulu_contact.account.entity%</argument>
-
             <tag name="sulu.widget" alias="sulu-contact-account-info"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.contact_info" class="%sulu_contact_extension.contact.widgets.contact_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-
             <tag name="sulu.widget" alias="sulu-contact-contact-info"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.main_contact" class="%sulu_contact_extension.contact.widgets.main_contact.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="string">%sulu_contact.account.entity%</argument>
-
             <tag name="sulu.widget" alias="sulu-contact-main-contact"/>
         </service>
 
@@ -73,7 +61,6 @@
 
         <service id="sulu_contact_extension.contact.widgets.toolbar" class="%sulu_contact_extension.contact.widgets.toolbar.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
-
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
         </service>
 
