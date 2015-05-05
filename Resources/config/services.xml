@@ -18,6 +18,7 @@
 
         <!-- extend account -->
         <parameter key="sulu_contact.account.entity">SuluContactExtensionBundle:Account</parameter>
+        <parameter key="sulu_contact.account_repository.class">Sulu\Bundle\ContactExtensionBundle\Entity\AccountRepository</parameter>
         <parameter key="sulu_contact.account_factory.class">Sulu\Bundle\ContactExtensionBundle\Contact\AccountFactory</parameter>
     </parameters>
 
