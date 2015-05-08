@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-    <file source-language="en" datatype="plaintext" original="file.ext">
+    <file source-language="de" datatype="plaintext" original="file.ext">
         <body>
             <trans-unit id="1" resname="contact.accounts.responsiblePerson">
                 <source>contact.accounts.responsiblePerson</source>
-                <target>Responsible</target>
+                <target>Sachverständiger</target>
             </trans-unit>
             <trans-unit id="2" resname="navigation.financials">
                 <source>navigation.financials</source>
-                <target>Extensions</target>
+                <target>Zusatz</target>
             </trans-unit>
         </body>
     </file>
