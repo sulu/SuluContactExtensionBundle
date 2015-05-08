@@ -4,7 +4,7 @@
         <body>
             <trans-unit id="1" resname="contact.accounts.responsiblePerson">
                 <source>contact.accounts.responsiblePerson</source>
-                <target>Sachverständiger</target>
+                <target>Verantwortlicher</target>
             </trans-unit>
             <trans-unit id="2" resname="navigation.financials">
                 <source>navigation.financials</source>
