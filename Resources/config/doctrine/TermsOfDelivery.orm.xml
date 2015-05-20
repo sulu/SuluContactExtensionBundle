@@ -6,6 +6,6 @@
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO"/>
         </id>
-        <field name="terms" type="string" column="terms" length="255" unique="true"/>
+        <field name="terms" type="text" column="terms"/>
     </entity>
 </doctrine-mapping>
