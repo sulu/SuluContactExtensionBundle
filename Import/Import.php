@@ -12,6 +12,7 @@ namespace Sulu\Bundle\ContactExtensionBundle\Import;
 
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
@@ -83,7 +84,6 @@ class Import
     /**
      * define entity names
      */
-    protected $contactEntityName = 'SuluContactBundle:Contact';
     protected $accountEntityName;
     protected $accountContactEntityName = 'SuluContactBundle:AccountContact';
     protected $tagEntityName = 'SuluTagBundle:Tag';
@@ -295,10 +295,16 @@ class Import
      * @var array
      */
     protected $invalidNewLineCharacters = array();
+
     /**
      * @var AccountFactoryInterface
      */
     private $accountFactory;
+
+    /**
+     * @var EntityRepository
+     */
+    protected $contactRepository;
 
     /**
      * @param EntityManager $em
@@ -318,7 +324,8 @@ class Import
         $configDefaults,
         $configAccountTypes,
         $configFormOfAddress,
-        $accountEntityName
+        $accountEntityName,
+        EntityRepository $contactRepository
     ) {
         $this->em = $em;
         $this->configDefaults = $configDefaults;
@@ -328,6 +335,7 @@ class Import
         $this->contactManager = $contactManager;
         $this->accountFactory = $accountFactory;
         $this->accountEntityName = $accountEntityName;
+        $this->contactRepository = $contactRepository;
     }
 
     /**
@@ -1522,7 +1530,7 @@ class Import
         }
 
         /** @var ContactRepository $repo */
-        $repo = $this->em->getRepository($this->contactEntityName);
+        $repo = $this->contactRepository;
         $contact = $repo->findByCriteriaEmailAndPhone($criteria, $email, $phone);
 
         return $contact;
@@ -1577,7 +1585,7 @@ class Import
     protected function clearDatabase()
     {
         $this->clearTable($this->accountEntityName);
-        $this->clearTable($this->contactEntityName);
+        $this->clearTable($this->contactRepository->getClassName());
     }
 
     /**

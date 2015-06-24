@@ -10,10 +10,11 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
-use Doctrine\ORM\EntityManager;
 use Sulu\Bundle\ContactBundle\Entity\Contact;
 
 /**
@@ -21,14 +22,26 @@ use Sulu\Bundle\ContactBundle\Entity\Contact;
  */
 class MainAccount implements WidgetInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
 
+    /**
+     * @var string
+     */
     protected $widgetName = 'MainAccount';
-    protected $contactEntityName = 'SuluContactBundle:Contact';
 
-    public function __construct(EntityManager $em)
-    {
+    /**
+     * @param EntityManager $em
+     * @param EntityRepository $contactRepository
+     */
+    public function __construct(
+        EntityManager $em,
+        EntityRepository $contactRepository
+    ) {
         $this->em = $em;
+        $this->contactRepository = $contactRepository;
     }
 
     /**
@@ -55,8 +68,10 @@ class MainAccount implements WidgetInterface
      * returns data to render template
      *
      * @param array $options
+     *
      * @throws WidgetEntityNotFoundException
      * @throws WidgetParameterException
+     *
      * @return array
      */
     public function getData($options)
@@ -66,11 +81,11 @@ class MainAccount implements WidgetInterface
             !empty($options['contact'])
         ) {
             $id = $options['contact'];
-            $contact = $this->em->getRepository($this->contactEntityName)->find($id);
+            $contact = $this->contactRepository->find($id);
 
             if (!$contact) {
                 throw new WidgetEntityNotFoundException(
-                    'Entity ' . $this->contactEntityName . ' with id ' . $id . ' not found!',
+                    'Entity ' . $this->contactRepository->getClassName() . ' with id ' . $id . ' not found!',
                     $this->widgetName,
                     $id
                 );
@@ -90,6 +105,7 @@ class MainAccount implements WidgetInterface
      * Parses the main account data
      *
      * @param Contact $contact
+     *
      * @return array
      */
     protected function parseMainAccount(Contact $contact)

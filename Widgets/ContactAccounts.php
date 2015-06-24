@@ -10,29 +10,47 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\PersistentCollection;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Widget for all accounts of a contact
  */
 class ContactAccounts implements WidgetInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
 
+    /**
+     * @var string
+     */
     protected $widgetName = 'ContactAccounts';
-    protected $contactEntityName = 'SuluContactBundle:Contact';
 
-    public function __construct(EntityManager $em)
-    {
+    /**
+     * @var EntityRepository
+     */
+    protected $contactRepository;
+
+    /**
+     * @param EntityManager $em
+     * @param EntityRepository $contactRepository
+     */
+    public function __construct(
+        EntityManager $em,
+        EntityRepository $contactRepository
+    ) {
         $this->em = $em;
+        $this->contactRepository = $contactRepository;
     }
 
     /**
-     * return name of widget
+     * Return name of widget
      *
      * @return string
      */
@@ -42,7 +60,7 @@ class ContactAccounts implements WidgetInterface
     }
 
     /**
-     * returns template name of widget
+     * Returns template name of widget
      *
      * @return string
      */
@@ -52,7 +70,7 @@ class ContactAccounts implements WidgetInterface
     }
 
     /**
-     * returns data to render template
+     * Returns data to render template
      *
      * @param array $options
      * @throws WidgetEntityNotFoundException
@@ -66,11 +84,11 @@ class ContactAccounts implements WidgetInterface
             !empty($options['contact'])
         ) {
             $id = $options['contact'];
-            $contact = $this->em->getRepository($this->contactEntityName)->findContactWithAccountsById($id);
+            $contact = $this->contactRepository->findContactWithAccountsById($id);
 
             if (!$contact) {
                 throw new WidgetEntityNotFoundException(
-                    'Entity ' . $this->contactEntityName . ' with id ' . $id . ' not found!',
+                    'Entity ' . $this->contactRepository->getClassName() . ' with id ' . $id . ' not found!',
                     $this->widgetName,
                     $id
                 );

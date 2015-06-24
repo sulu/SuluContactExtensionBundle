@@ -31,11 +31,13 @@
 
         <service id="sulu_contact_extension.contact.widgets.main_account" class="%sulu_contact_extension.contact.widgets.main_account.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu.repository.contact"/>
             <tag name="sulu.widget" alias="sulu-contact-main-account"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.contact_accounts" class="%sulu_contact_extension.contact.widgets.contact_accounts.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu.repository.contact"/>
             <tag name="sulu.widget" alias="sulu-contact-accounts"/>
         </service>
 
@@ -47,6 +49,7 @@
 
         <service id="sulu_contact_extension.contact.widgets.contact_info" class="%sulu_contact_extension.contact.widgets.contact_info.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu.repository.contact"/>
             <tag name="sulu.widget" alias="sulu-contact-contact-info"/>
         </service>
 

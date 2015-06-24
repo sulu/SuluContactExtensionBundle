@@ -17,24 +17,42 @@ use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
+use Sulu\Component\Persistence\Repository\ORM\EntityRepository;
 
 /**
  * Widget to display contact info
  */
 class ContactInfo implements WidgetInterface
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
 
+    /**
+     * @var string
+     */
     protected $widgetName = 'ContactInfo';
-    protected $contactEntityName = 'SuluContactBundle:Contact';
 
-    public function __construct(EntityManager $em)
-    {
+    /**
+     * @var EntityRepository
+     */
+    protected $contactRepository;
+
+    /**
+     * @param EntityManager $em
+     * @param EntityRepository $contactRepository
+     */
+    public function __construct(
+        EntityManager $em,
+        EntityRepository $contactRepository
+    ) {
         $this->em = $em;
+        $this->contactRepository = $contactRepository;
     }
 
     /**
-     * return name of widget
+     * Return name of widget
      *
      * @return string
      */
@@ -44,7 +62,7 @@ class ContactInfo implements WidgetInterface
     }
 
     /**
-     * returns template name of widget
+     * Returns template name of widget
      *
      * @return string
      */
@@ -54,10 +72,12 @@ class ContactInfo implements WidgetInterface
     }
 
     /**
-     * returns data to render template
+     * Returns data to render template
      *
      * @param array $options
+     *
      * @throws WidgetException
+     *
      * @return array
      */
     public function getData($options)
@@ -67,11 +87,11 @@ class ContactInfo implements WidgetInterface
             !empty($options['contact'])
         ) {
             $id = $options['contact'];
-            $contact = $this->em->getRepository($this->contactEntityName)->find($id);
+            $contact = $this->contactRepository->find($id);
 
             if (!$contact) {
                 throw new WidgetEntityNotFoundException(
-                    'Entity ' . $this->contactEntityName . ' with id ' . $id . ' not found!',
+                    'Entity ' . $this->contactRepository->getClassName() . ' with id ' . $id . ' not found!',
                     $this->widgetName,
                     $id
                 );
@@ -91,6 +111,7 @@ class ContactInfo implements WidgetInterface
      * Returns the data neede for the contact list-sidebar
      *
      * @param Contact $contact
+     *
      * @return array
      */
     protected function parseContactForListSidebar(Contact $contact)
@@ -120,8 +141,7 @@ class ContactInfo implements WidgetInterface
             $data['address']['number'] = $contactAddress->getNumber();
             $data['address']['zip'] = $contactAddress->getZip();
             $data['address']['city'] = $contactAddress->getCity();
-            $data['address']['country'] = $contactAddress->getCountry(
-            )->getName();
+            $data['address']['country'] = $contactAddress->getCountry()->getName();
         }
 
         if ($contact->getMainAccount()) {
