@@ -15,6 +15,7 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use JMS\Serializer\SerializationContext;
 use Sulu\Bundle\ContactBundle\Controller\AccountController as SuluAccountController;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
+use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
@@ -63,12 +64,13 @@ class AccountController extends SuluAccountController
         $this->processTerms($request, $account);
     }
 
-
     /**
-     * set responsible person from request data to account
+     * Set responsible person from request data to account
+     *
      * @param ObjectManager $em
      * @param AccountInterface $account
-     * @param $responsiblePerson
+     * @param ContactInterface $responsiblePerson
+     *
      * @throws EntityNotFoundException
      */
     private function setResponsiblePerson(ObjectManager $em, AccountInterface $account, $responsiblePerson)
@@ -76,15 +78,24 @@ class AccountController extends SuluAccountController
         if (!!$responsiblePerson) {
             $id = $responsiblePerson['id'];
             /* @var ContactEntity $contact */
-            $contact = $em->getRepository(self::$contactEntityName)->find($id);
+            $contact = $em->getRepository($this->container->getParameter('sulu.model.contact.class'))
+                ->find($id);
 
             if (!$contact) {
-                throw new EntityNotFoundException(self::$contactEntityName, $id);
+                throw new EntityNotFoundException($this->container->getParameter('sulu.model.contact.class'), $id);
             }
             $account->setResponsiblePerson($contact);
         }
     }
 
+    /**
+     * Generates a list builder object
+     *
+     * @param Request $request
+     * @param array $filter
+     *
+     * @return \Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilder
+     */
     protected function generateFlatListBuilder(Request $request, $filter)
     {
         $listBuilder = parent::generateFlatListBuilder($request, $filter);
@@ -97,13 +108,13 @@ class AccountController extends SuluAccountController
         return $listBuilder;
     }
 
-
     /**
      * Converts an account to a different account type
      * @Post("/accounts/{id}")
      *
      * @param $id
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function postTriggerAction($id, Request $request)
@@ -146,7 +157,6 @@ class AccountController extends SuluAccountController
                     break;
                 default:
                     throw new RestException("Unrecognized action: " . $action);
-
             }
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
@@ -162,6 +172,7 @@ class AccountController extends SuluAccountController
      *
      * @param AccountInterface $account
      * @param $type string representation
+     *
      * @throws RestException
      */
     protected function convertToType(AccountInterface $account, $type)
@@ -187,6 +198,7 @@ class AccountController extends SuluAccountController
      * @param $transitionsForType
      * @param $newAccountType
      * @param $types
+     *
      * @return bool
      */
     protected function isTransitionAllowed($transitionsForType, $newAccountType, $types)
@@ -206,6 +218,7 @@ class AccountController extends SuluAccountController
      * @param $config
      * @param $types
      * @param $accountTypeName
+     *
      * @return array
      */
     protected function getAccountTypeTransitions($config, $types, $accountTypeName)
@@ -224,6 +237,7 @@ class AccountController extends SuluAccountController
      * Gets the account types and their numeric representation
      *
      * @param $config
+     *
      * @return array
      */
     protected function getAccountTypes($config)
@@ -241,6 +255,7 @@ class AccountController extends SuluAccountController
      *
      * @param Request $request
      * @param AccountInterface $account
+     *
      * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
      */
     protected function processTerms(Request $request, AccountInterface $account)
