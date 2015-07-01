@@ -245,7 +245,7 @@ define([
         }
     };
 
-    Account.prototype.goToList = function(account, noReload) {
+    Account.prototype.navigateToList = function(account, noReload) {
         var typeString = '';
         if (!!account.type) {
             for (var i in this.accountTypes) {
