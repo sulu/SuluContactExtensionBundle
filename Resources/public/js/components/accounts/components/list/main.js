@@ -189,6 +189,16 @@ define([
                 instanceName: 'accounts',
                 parentTemplate: 'default',
                 inHeader: true,
+                groups: [
+                    {
+                        id: 1,
+                        align: 'left'
+                    },
+                    {
+                        id: 2,
+                        align: 'right'
+                    }
+                ],
                 template: function() {
                     return this.getToolbarTemplate();
                 }.bind(this)
@@ -199,6 +209,7 @@ define([
                 resultKey: 'accounts',
                 searchInstanceName: 'accounts',
                 searchFields: ['name'],
+                instanceName: 'accounts',
                 contentFilters: {
                     // display account type name instead of type number
                     type: function(content) {
@@ -225,7 +236,9 @@ define([
                         fullWidth: true
                     }
                 }
-            }
+            },
+            'accounts',
+            '#companies-list-info'
         );
     };
 
