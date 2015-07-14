@@ -15,7 +15,11 @@ define([
 
     'use strict';
 
-    var BaseList = function() {
+    var constants = {
+            datagridInstanceName: 'accounts'
+        },
+
+        BaseList = function() {
         },
 
         List = function() {
@@ -92,7 +96,7 @@ define([
             if (item.id !== 'all') {
                 type = item.id;
             }
-            this.sandbox.emit('husky.datagrid.url.update', {'type': type});
+            this.sandbox.emit('husky.datagrid.' + constants.datagridInstanceName + '.url.update', {'type': type});
             this.sandbox.emit('sulu.contacts.accounts.list', item.name, true); // change url, but do not reload
         },
 
@@ -209,7 +213,7 @@ define([
                 resultKey: 'accounts',
                 searchInstanceName: 'accounts',
                 searchFields: ['name'],
-                instanceName: 'accounts',
+                instanceName: constants.datagridInstanceName,
                 contentFilters: {
                     // display account type name instead of type number
                     type: function(content) {
