@@ -10,8 +10,9 @@
 define([
     'mvc/relationalstore',
     'app-config',
-    'sulucontact/components/accounts/components/list/main'
-], function(RelationalStore, AppConfig, SuluBaseList) {
+    'sulucontact/components/accounts/components/list/main',
+    'widget-groups'
+], function(RelationalStore, AppConfig, SuluBaseList, WidgetGroups) {
 
     'use strict';
 
@@ -102,6 +103,18 @@ define([
 
         addNewAccount = function(type) {
             this.sandbox.emit('sulu.contacts.accounts.new', type);
+        },
+
+        clickCallback = function(id) {
+            // show sidebar for selected item
+            this.sandbox.emit(
+                'sulu.sidebar.set-widget',
+                '/admin/widget-groups/account-info?account=' + id
+            );
+        },
+
+        actionCallback = function(id) {
+            this.sandbox.emit('sulu.contacts.accounts.load', id);
         };
 
     BaseList.prototype = SuluBaseList;
@@ -224,22 +237,8 @@ define([
                         }
                     }.bind(this)
                 },
-                viewOptions: {
-                    table: {
-                        icons: [
-                            {
-                                icon: 'pencil',
-                                column: 'name',
-                                align: 'left',
-                                callback: function(id) {
-                                    this.sandbox.emit('sulu.contacts.accounts.load', id);
-                                }.bind(this)
-                            }
-                        ],
-                        highlightSelected: true,
-                        fullWidth: true
-                    }
-                }
+                clickCallback: (WidgetGroups.exists('account-info')) ? clickCallback.bind(this) : null,
+                actionCallback: actionCallback.bind(this)
             },
             'accounts',
             '#companies-list-info'
