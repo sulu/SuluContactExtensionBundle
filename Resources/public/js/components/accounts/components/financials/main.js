@@ -23,7 +23,9 @@ define(['widget-groups'], function(WidgetGroups) {
             overlaySelectorTermsOfDelivery: '#overlayContainerTermsOfDelivery',
 
             cgetTermsOfDeliveryURL: 'api/termsofdeliveries',
-            cgetTermsOfPaymentURL: 'api/termsofpayments'
+            cgetTermsOfPaymentURL: 'api/termsofpayments',
+
+            financialsFormSelector: '#financials-form'
         };
 
     return {
@@ -176,7 +178,18 @@ define(['widget-groups'], function(WidgetGroups) {
             this.sandbox.on('sulu.header.back', function() {
                 this.sandbox.emit('sulu.contacts.accounts.list');
             }, this);
+
+            this.sandbox.on('sulu.router.navigate', this.cleanUp.bind(this));
         },
+
+        /**
+         * Does some cleanup with aura components
+         */
+        cleanUp: function() {
+            // stop contact form before leaving
+            this.sandbox.stop(constants.financialsFormSelector);
+        },
+
 
         submit: function() {
             if (this.sandbox.form.validate(this.form)) {
@@ -245,7 +258,7 @@ define(['widget-groups'], function(WidgetGroups) {
                 {
                     name: 'contact-form@sulucontact',
                     options: {
-                        el: '#financials-form'
+                        el: constants.financialsFormSelector
                     }
                 }
             ]);
