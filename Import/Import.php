@@ -13,8 +13,10 @@ namespace Sulu\Bundle\ContactExtensionBundle\Import;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Doctrine\ORM\NonUniqueResultException;
+use Sulu\Bundle\ContactBundle\Contact\AccountManager;
+use Sulu\Bundle\ContactBundle\Contact\ContactManager;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
 use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
@@ -37,6 +39,7 @@ use Sulu\Component\Rest\Exception\EntityNotFoundException;
 
 /**
  * configures and executes an import for contact and account data from a CSV file
+ *
  * @package Sulu\Bundle\ContactBundle\Import
  */
 class Import
@@ -45,15 +48,19 @@ class Import
 
     /**
      * import options
+     *
      * @var array
+     *
      * @param {string=;} delimiter Delimiter that is used for csv import
      * @param {string="} enclosure Enclosure that is used for csv import
      * @param {Boolean=true} importIds defines if ids of import file should be imported
-     * @param {Boolean=false} streetNumberSplit defines if street is provided as street- number string and must be splitted
-     * @param {Boolean=false|int} fixedAccountType defines if accountType should be set to a fixed type for all imported accounts
-     * @param {Boolean=array} contactComparisonCriteria Array that defines which data should be used to identify if a contact already
-     *          exists in Database. This will only work if contact_id is not provided (then of course id is being used for this purpose)
-     *          parameters can be: firstName, lastName, email and phone
+     * @param {Boolean=false} streetNumberSplit defines if street is provided as street- number string and must be
+     *     splitted
+     * @param {Boolean=false|int} fixedAccountType defines if accountType should be set to a fixed type for all
+     *     imported accounts
+     * @param {Boolean=array} contactComparisonCriteria Array that defines which data should be used to identify if a
+     *     contact already exists in Database. This will only work if contact_id is not provided (then of course id is
+     *     being used for this purpose) parameters can be: firstName, lastName, email and phone
      */
     protected $options = array(
         'importIds' => true,
@@ -69,20 +76,22 @@ class Import
     );
 
     /**
-     * defines which columns should be excluded,
+     * Defines which columns should be excluded,
      *  - either with simple key value (e.g. 'column_exclude' => 'true')
+     *
      * @var array
      */
     protected $excludeConditions = array();
 
     /**
-     * defaults that are set for a specific key (if not set in data) e.g.: address1_label = 'mobile'
+     * Defaults that are set for a specific key (if not set in data) e.g.: address1_label = 'mobile'
+     *
      * @var array
      */
     protected $defaults = array();
 
     /**
-     * define entity names
+     * Define entity names
      */
     protected $accountContactEntityName = 'SuluContactBundle:AccountContact';
     protected $tagEntityName = 'SuluTagBundle:Tag';
@@ -91,7 +100,7 @@ class Import
     protected $countryEntityName = 'SuluContactBundle:Country';
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     protected $em;
 
@@ -106,70 +115,81 @@ class Import
     protected $contactManager;
 
     /**
-     * location of contacts import file
-     * @var $contactFile
+     * Location of contacts import file
+     *
+     * @var string $contactFile
      */
     private $contactFile;
 
     /**
-     * location of accounts import file
-     * @var $accountFile
+     * Location of accounts import file
+     *
+     * @var string $accountFile
      */
     private $accountFile;
 
     /**
-     * location of the mappings file
-     * @var $mappingsFile
+     * Location of the mappings file
+     *
+     * @var string $mappingsFile
      */
     private $mappingsFile;
 
     /**
      * Default values for different types, as defined in config (emailType, phoneType,..)
-     * @var $configDefaults
+     *
+     * @var array $configDefaults
      */
     protected $configDefaults;
     /**
      * AccountInterface Types
-     * @var $configAccountTypes
+     *
+     * @var array $configAccountTypes
      */
     protected $configAccountTypes;
     /**
-     * different forms of address
+     * Different forms of address
+     *
      * @var $configFormOfAddress
      */
     protected $configFormOfAddress;
 
     /**
-     * limit of rows to import
-     * @var
+     * Limit of rows to import
+     *
+     * @var int
      */
     private $limit;
 
     /**
-     * @var array $defaultTypes
+     * @var array
      */
     protected $defaultTypes = array();
 
     /**
-     * storage for log messages
+     * Storage for log messages
+     *
      * @var array
      */
     protected $log = array();
 
     /**
-     * storage for storing header data
+     * Storage of csv header data
+     *
      * @var array
      */
     protected $headerData = array();
 
     /**
-     * current row-number
-     * @var
+     * Current row-number
+     *
+     * @var int
      */
     protected $rowNumber;
 
     /**
-     * holds the amount of header variables
+     * Holds the amount of header variables
+     *
      * @var int
      */
     protected $headerCount;
@@ -177,6 +197,7 @@ class Import
     // TODO: split mappings for accounts and contacts
     /**
      * defines mappings of columns in import file
+     *
      * @var array
      *
      * defaults are:
@@ -214,6 +235,7 @@ class Import
     /**
      * // TODO: replace by mapping account_id
      * defines mappings of ids in import file
+     *
      * @var array
      */
     protected $idMappings = array(
@@ -226,13 +248,15 @@ class Import
     protected $countryMappings = array();
 
     /**
-     * mappings for form of address
+     * Mappings for form of address
+     *
      * @var array
      */
     protected $formOfAddressMappings = array();
 
     /**
-     * defines mappings of accountTypes in import file
+     * Defines mappings of accountTypes in import file
+     *
      * @var array
      */
     protected $accountTypeMappings = array(
@@ -243,7 +267,8 @@ class Import
     );
 
     /**
-     * defines mappings of address / url / email / phone / fax types in import file
+     * Defines mappings of address / url / email / phone / fax types in import file
+     *
      * @var array
      */
     protected $contactLabelMappings = array(
@@ -253,44 +278,51 @@ class Import
     );
 
     /**
-     * used as temp storage for newly created accounts
+     * Used as temp storage for newly created accounts
+     *
      * @var array
      */
     protected $accountExternalIds = array();
 
     /**
-     * used as temp associative storage for newly created accounts
+     * Used as temp associative storage for newly created accounts
+     *
      * @var array
      */
     protected $associativeAccounts = array();
 
     /**
-     * used as temp storage for account categories
+     * Used as temp storage for account categories
+     *
      * @var array
      */
     protected $accountCategories = array();
 
     /**
-     * used as temp storage for tags
+     * Used as temp storage for tags
+     *
      * @var array
      */
     protected $tags = array();
 
     /**
-     * used as temp storage for titles
+     * Used as temp storage for titles
+     *
      * @var array
      */
     protected $titles = array();
 
     /**
-     * used as temp storage for positions
+     * Used as temp storage for positions
+     *
      * @var array
      */
     protected $positions = array();
 
     /**
-     * defines possible new-line characters that should be replaced.
+     * Defines possible new-line characters that should be replaced.
      * e.g. '¶'
+     *
      * @var array
      */
     protected $invalidNewLineCharacters = array();
@@ -312,19 +344,19 @@ class Import
 
     /**
      * @param EntityManager $em
-     * @param $accountManager
-     * @param $contactManager
+     * @param AccountManager $accountManager
+     * @param ContactManager $contactManager
      * @param AccountFactoryInterface $accountFactory
-     * @param $configDefaults
-     * @param $configAccountTypes
-     * @param $configFormOfAddress
+     * @param array $configDefaults
+     * @param array $configAccountTypes
+     * @param array $configFormOfAddress
      * @param EntityRepository $accountRepository
      * @param EntityRepository $contactRepository
      */
     public function __construct(
         EntityManager $em,
-        $accountManager,
-        $contactManager,
+        AccountManager $accountManager,
+        ContactManager $contactManager,
         AccountFactoryInterface $accountFactory,
         $configDefaults,
         $configAccountTypes,
@@ -370,7 +402,6 @@ class Import
             if ($this->contactFile) {
                 $this->processContactFile($this->contactFile);
             }
-
         } catch (\Exception $e) {
             print($e->getMessage());
             throw $e;
@@ -378,7 +409,7 @@ class Import
     }
 
     /**
-     * loads type defaults, tags and account-categories
+     * Loads type defaults, tags and account-categories
      * gets called by processcsvloop
      */
     protected function initDefaults()
@@ -391,10 +422,13 @@ class Import
     }
 
     /**
-     * assigns mappings as defined in mappings file
-     * @param $mappingsFileContact
-     * @return bool|mixed
+     * Assigns mappings as defined in mappings file
+     *
+     * @param $mappingsFile
+     *
      * @throws \Symfony\Component\Translation\Exception\NotFoundResourceException
+     *
+     * @return bool|mixed
      */
     protected function processMappingsFile($mappingsFile)
     {
@@ -440,8 +474,9 @@ class Import
     }
 
     /**
-     * processes the account file
-     * @param string $filename path to fil file
+     * Processes the account file
+     *
+     * @param string $filename path to file
      */
     protected function processAccountFile($filename)
     {
@@ -465,7 +500,8 @@ class Import
     }
 
     /**
-     * processes the contact file
+     * Processes the contact file
+     *
      * @param string $filename path to file
      */
     protected function processContactFile($filename)
@@ -483,7 +519,7 @@ class Import
     }
 
     /**
-     * this function will be called after a contact was created (after flush)
+     * This function will be called after a contact was created (after flush)
      */
     protected function postFlushCreateContact($data, $row, $contact)
     {
@@ -491,10 +527,12 @@ class Import
 
     /**
      * Loads the CSV Files and the Entities for the import
+     *
      * @param string $filename path to file
      * @param callable $function will be called for each row in file
      * @param callable $postFlushCallback will be called after every flush
      * @param bool $flushOnEveryRow If defined flush will be executed on every data row
+     *
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
@@ -598,7 +636,10 @@ class Import
      * Checks if data row contains a value that is defined as exclude criteria (for a specific column)
      * (see excludeConditions)
      *
-     * @param $data
+     * @param array $data
+     * @param string|null $conditionKey
+     * @param string|null $conditionValue
+     *
      * @return bool
      */
     protected function rowContainsExlcudeData($data, &$conditionKey = null, &$conditionValue = null)
@@ -635,10 +676,12 @@ class Import
     }
 
     /**
-     * compares two string, by default it checks only if the string begins with the same value
-     * @param $needle
-     * @param $haystack
+     * Compares two strings, by default it checks only if the string begins with the same value
+     *
+     * @param string $needle
+     * @param string $haystack
      * @param bool $strict
+     *
      * @return bool
      */
     private function compareStrings($needle, $haystack, $strict = false)
@@ -651,8 +694,10 @@ class Import
     }
 
     /**
-     * creates a new account Entity
-     * @param null $externalId
+     * Creates a new account Entity
+     *
+     * @param int|null $externalId
+     *
      * @return AccountInterface
      */
     protected function createNewAccount($externalId = null)
@@ -667,11 +712,14 @@ class Import
     }
 
     /**
-     * creates an account for given row data
-     * @param $data
-     * @param $row
-     * @return AccountInterface
+     * Creates an account for given row data
+     *
+     * @param array $data
+     * @param int $row
+     *
      * @throws \Exception
+     *
+     * @return AccountInterface
      */
     protected function createAccount($data, $row)
     {
@@ -699,7 +747,6 @@ class Import
         else {
             $account = $this->createNewAccount();
         }
-
 
         if ($this->checkData('account_name', $data)) {
             $account->setName($data['account_name']);
@@ -759,9 +806,11 @@ class Import
     }
 
     /**
-     * iterate through data and find first of a specific type (which is enumerable)
-     * @param $identifier
-     * @param $data
+     * Iterate through data and find first of a specific type (which is enumerable)
+     *
+     * @param string $identifier
+     * @param array $data
+     *
      * @return string|bool
      */
     protected function getFirstOf($identifier, $data)
@@ -776,9 +825,11 @@ class Import
     }
 
     /**
-     * removes all white-spaces from a string
-     * @param $string
-     * @return mixed
+     * Removes all white-spaces from a string
+     *
+     * @param string
+     *
+     * @return string
      */
     protected function removeWhiteSpaces($string)
     {
@@ -786,9 +837,10 @@ class Import
     }
 
     /**
-     * adds emails to the entity
-     * @param $data
-     * @param $entity
+     * Adds emails to the entity
+     *
+     * @param array $data
+     * @param Entity $entity
      */
     protected function processEmails($data, $entity)
     {
@@ -818,9 +870,10 @@ class Import
     }
 
     /**
-     * adds phones to an entity
-     * @param $data
-     * @param $entity
+     * Adds phones to an entity
+     *
+     * @param array $data
+     * @param Entity $entity
      */
     protected function processPhones($data, $entity)
     {
@@ -850,9 +903,10 @@ class Import
     }
 
     /**
-     * adds faxes to an entity
-     * @param $data
-     * @param $entity
+     * Adds faxes to an entity
+     *
+     * @param array $data
+     * @param Entity $entity
      */
     protected function processFaxes($data, $entity)
     {
@@ -882,10 +936,10 @@ class Import
     }
 
     /**
-     * process tags
+     * Process tags
      *
-     * @param $data
-     * @param $entity
+     * @param array $data
+     * @param Entity $entity
      */
     protected function processTags($data, $entity)
     {
@@ -904,11 +958,11 @@ class Import
     }
 
     /**
-     * checks if tagindex exists in data and adds it to entity's tags
+     * Checks if tagindex exists in data and adds it to entity's tags
      *
-     * @param $tagIndex
-     * @param $data
-     * @param $entity
+     * @param string $tagIndex
+     * @param array $data
+     * @param Entity $entity
      */
     protected function checkAndAddTag($tagIndex, $data, $entity)
     {
@@ -918,9 +972,10 @@ class Import
     }
 
     /**
-     * adds urls to an entity
-     * @param $data
-     * @param $entity
+     * Adds urls to an entity
+     *
+     * @param array $data
+     * @param Entity $entity
      */
     protected function processUrls($data, $entity)
     {
@@ -951,9 +1006,11 @@ class Import
     }
 
     /**
-     * concats notes and adds it to the entity
-     * @param $data
-     * @param $entity
+     * Concats notes and adds it to the entity
+     *
+     * @param array $data
+     * @param Entity $entity
+     * @param string $prefix
      */
     protected function processNotes($data, $entity, $prefix = '')
     {
@@ -981,9 +1038,12 @@ class Import
     }
 
     /**
-     * replaces wrong new line characters with real ones (utf8)
-     * @param $text
-     * @return mixed
+     * Replaces wrong new line characters with real ones (utf8)
+     *
+     * @param string $text
+     *
+     * @return string
+     *
      */
     protected function replaceInvalidNewLineCharacters($text)
     {
@@ -998,8 +1058,9 @@ class Import
 
     /**
      * Adds a tag to an account / contact
-     * @param $tagName
-     * @param $entity
+     *
+     * @param string $tagName
+     * @param Entity $entity
      */
     protected function addTag($tagName, $entity)
     {
@@ -1017,8 +1078,9 @@ class Import
 
     /**
      * Adds a title to an account / contact
-     * @param $titleName
-     * @param $entity
+     *
+     * @param string $titleName
+     * @param Entity $entity
      */
     protected function addTitle($titleName, $entity)
     {
@@ -1036,8 +1098,9 @@ class Import
 
     /**
      * Adds a position to an account / contact
-     * @param $positionName
-     * @param $entity
+     *
+     * @param string $positionName
+     * @param Entity $entity
      */
     protected function addPosition($positionName, $entity)
     {
@@ -1054,9 +1117,10 @@ class Import
     }
 
     /**
-     * iterates through data and adds addresses
-     * @param $data
-     * @param $entity
+     * Iterates through data and adds addresses
+     *
+     * @param array $data
+     * @param Entity $entity
      */
     protected function createAddresses($data, $entity)
     {
@@ -1078,11 +1142,14 @@ class Import
     }
 
     /**
-     * creates an address entity based on passed data
-     * @param $data
+     * Creates an address entity based on passed data
+     *
+     * @param array $data
      * @param int $id index of the address in data array (e.g. 1 => address1_street)
-     * @return null|Address
+     *
      * @throws EntityNotFoundException
+     *
+     * @return null|Address
      */
     protected function createAddress($data, $id = 1)
     {
@@ -1220,8 +1287,10 @@ class Import
     }
 
     /**
-     * returns true if $value is true or y or j or 1
-     * @param $value
+     * Returns true if $value is true or y or j or 1
+     *
+     * @param string $value
+     *
      * @return bool
      */
     protected function getBoolValue($value)
@@ -1237,10 +1306,16 @@ class Import
         return false;
     }
 
-    // gets financial information and adds it
+    /**
+     * Gets financial information and adds it
+     *
+     * @param array $data
+     * @param Entity $entity
+     *
+     * @throws ImportException
+     */
     protected function addBankAccounts($data, $entity)
     {
-        // TODO handle one or more bank accounts
         for ($i = 0, $len = 10; ++$i < $len;) {
             $bankIndex = 'bank' . $i;
             $prefix = $bankIndex . '_';
@@ -1293,10 +1368,10 @@ class Import
     }
 
     /**
-     * function either appends a text to the existing note, or creates a new one
-     * @param $entity The entity containing the note
-     * @param $text Text to append
-     * @internal param $data
+     * Function either appends a text to the existing note, or creates a new one
+     *
+     * @param Entity $entity The entity containing the note
+     * @param string $text Text to append
      */
     protected function appendToNote($entity, $text)
     {
@@ -1315,9 +1390,11 @@ class Import
     }
 
     /**
-     * creates an contact for given row data
-     * @param $data
-     * @param $row
+     * Creates an contact for given row data
+     *
+     * @param array $data
+     * @param int $row
+     *
      * @return Contact
      */
     protected function createContact($data, $row)
@@ -1336,16 +1413,16 @@ class Import
             $this->setAccountContactRelations($data, $contact, $row);
 
             return $contact;
-
         } catch (NonUniqueResultException $nur) {
             $this->debug(sprintf("Non unique result for contact at row %d \n", $row));
         }
-
     }
 
     /**
+     * Sets data to Contact entity by given data array
+     *
      * @param Contact $contact
-     * @param $data
+     * @param array $data
      */
     protected function setContactData($data, Contact $contact)
     {
@@ -1398,9 +1475,11 @@ class Import
     }
 
     /**
-     * checks if a main account-contact relation exists
-     * @param $entity
-     * @return mixed
+     * Checks if a main account-contact relation exists
+     *
+     * @param Entity $entity
+     *
+     * @return bool
      */
     private function mainRelationExists($entity)
     {
@@ -1412,10 +1491,11 @@ class Import
     }
 
     /**
-     * either creates a single contact relation (contact_account) or multiple relations (contact_account1..n)
-     * @param $data
-     * @param $contact
-     * @param $row
+     * Either creates a single contact relation (contact_account) or multiple relations (contact_account1..n)
+     *
+     * @param array $data
+     * @param Contact $contact
+     * @param int $row
      */
     protected function setAccountContactRelations($data, $contact, $row)
     {
@@ -1434,11 +1514,12 @@ class Import
     }
 
     /**
-     * adds a accountcontact relation if not existent
-     * @param $data
-     * @param $contact
-     * @param $row
-     * @param $index - account-index in data array
+     * Adds a accountcontact relation if not existent
+     *
+     * @param array $data
+     * @param Contact $contact
+     * @param int $row
+     * @param string $index - account-index in data array
      */
     protected function setAccountContactRelation($data, $contact, $row, $index)
     {
@@ -1502,9 +1583,11 @@ class Import
     }
 
     /**
-     * returns a contact based on data array if it already exists in DB
-     * @param $data
-     * @return mixed
+     * Returns a contact based on data array if it already exists in DB
+     *
+     * @param array $data
+     *
+     * @return Contact
      */
     protected function getContactByData($data)
     {
@@ -1543,7 +1626,7 @@ class Import
     }
 
     /**
-     * checks data for validity
+     * Checks data for validity
      */
     protected function checkData($index, $data, $type = null, $maxLength = null)
     {
@@ -1564,7 +1647,7 @@ class Import
     }
 
     /**
-     * creates relation between parent and account
+     * Creates relation between parent and account
      */
     protected function createAccountParentRelation($data, $row)
     {
@@ -1586,7 +1669,7 @@ class Import
     }
 
     /**
-     * truncate table for account and contact
+     * Truncate table for account and contact
      */
     protected function clearDatabase()
     {
@@ -1595,7 +1678,8 @@ class Import
     }
 
     /**
-     * truncate one single table for given entity name
+     * Truncate one single table for given entity name
+     *
      * @param string $entityName name of entity
      */
     protected function clearTable($entityName)
@@ -1610,9 +1694,11 @@ class Import
     }
 
     /**
-     * returns an associative array of data mapped by configuration
+     * Returns an associative array of data mapped by configuration
+     *
      * @param array $data data of a single csv row
      * @param array $headerData header data of csv containing column names
+     *
      * @return array
      */
     protected function mapRowToAssociativeArray($data, $headerData)
@@ -1638,6 +1724,9 @@ class Import
         return array_merge($this->defaults, $associativeData);
     }
 
+    /**
+     * Load tags from database
+     */
     protected function loadTags()
     {
         $tags = $this->em->getRepository($this->tagEntityName)->findAll();
@@ -1647,6 +1736,9 @@ class Import
         }
     }
 
+    /**
+     * Load titles from database
+     */
     protected function loadTitles()
     {
         $titles = $this->em->getRepository($this->titleEntityName)->findAll();
@@ -1656,6 +1748,9 @@ class Import
         }
     }
 
+    /**
+     * load positions from Database
+     */
     protected function loadPositions()
     {
         $positions = $this->em->getRepository($this->positionEntityName)->findAll();
@@ -1666,7 +1761,8 @@ class Import
     }
 
     /**
-     * @param $countryCode
+     * @param string $countryCode
+     *
      * @return mixed|string
      */
     protected function mapCountryCode($countryCode)
@@ -1679,9 +1775,11 @@ class Import
     }
 
     /**
-     * returns form of addresses id, if defined
-     * @param $formOfAddress
-     * @return mixed
+     * Returns form of addresses id, if defined
+     *
+     * @param string $formOfAddress
+     *
+     * @return int|null
      */
     protected function mapFormOfAddress($formOfAddress)
     {
@@ -1689,8 +1787,9 @@ class Import
     }
 
     /**
-     * @param $typeString
-     * @return int|mixed
+     * @param string $typeString
+     *
+     * @return int
      */
     protected function mapAccountType($typeString)
     {
@@ -1702,8 +1801,9 @@ class Import
     }
 
     /**
-     * @param $typeString
-     * @return int|mixed
+     * @param string $typeString
+     *
+     * @return int
      */
     protected function mapContactLabels($typeString)
     {
@@ -1723,7 +1823,7 @@ class Import
     }
 
     /**
-     * @param mixed $contactFile
+     * @param string $contactFile
      */
     public function setContactFile($contactFile)
     {
@@ -1731,7 +1831,7 @@ class Import
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getContactFile()
     {
@@ -1739,8 +1839,7 @@ class Import
     }
 
     /**
-     * TODO
-     * @param mixed $accountFile
+     * @param string $accountFile
      */
     public function setAccountFile($accountFile)
     {
@@ -1748,7 +1847,7 @@ class Import
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAccountFile()
     {
@@ -1756,7 +1855,7 @@ class Import
     }
 
     /**
-     * @param mixed $limit
+     * @param int $limit
      */
     public function setLimit($limit)
     {
@@ -1764,7 +1863,7 @@ class Import
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getLimit()
     {
@@ -1788,7 +1887,8 @@ class Import
     }
 
     /**
-     * @param $key
+     * @param int $key
+     *
      * @return AccountInterface|null
      */
     public function getAccountByKey($key)
@@ -1853,7 +1953,7 @@ class Import
     }
 
     /**
-     * @param mixed $mappingsFile
+     * @param string $mappingsFile
      */
     public function setMappingsFile($mappingsFile)
     {
@@ -1863,6 +1963,7 @@ class Import
     /**
      * TODO outsource this into a service! also used in template controller
      * Returns the default values for the dropdowns
+     *
      * @return array
      */
     protected function getDefaults()
@@ -1904,8 +2005,9 @@ class Import
     }
 
     /**
-     * prints messages if debug is set to true
-     * @param $message
+     * Prints messages if debug is set to true
+     *
+     * @param string $message
      */
     protected function debug($message, $addToLog = true)
     {
@@ -1918,7 +2020,7 @@ class Import
     }
 
     /**
-     * creates a logfile in import-files folder
+     * Creates a logfile in import-files folder
      */
     public function createLogFile()
     {
@@ -1930,12 +2032,14 @@ class Import
     }
 
     /**
-     * maps a certain index to a mappings array and returns it's index as defined in config array
+     * Maps a certain index to a mappings array and returns it's index as defined in config array
      * mapping is defined as mappingindex => $index
-     * @param $index
+     *
+     * @param int|string $index
      * @param array $mappings
      * @param array $config
-     * @return mixed
+     *
+     * @return string
      */
     protected function mapByConfigId($index, $mappings, $config)
     {
@@ -1951,11 +2055,13 @@ class Import
     }
 
     /**
-     * maps a certain index to a mappings array and returns it's index as defined in config array
-     * @param $index
+     * Maps a certain index to a mappings array and returns it's index as defined in config array
+     *
+     * @param int|string $index
      * @param array $mappings
      * @param array $config
-     * @return mixed
+     *
+     * @return string
      */
     protected function mapReverseByConfigId($index, $mappings, $config)
     {
@@ -1972,11 +2078,14 @@ class Import
     }
 
     /**
-     * gets the external id of an account by providing the dataset
-     * @param $data
-     * @param $row
-     * @return mixed
+     * Gets the external id of an account by providing the dataset
+     *
+     * @param array $data
+     * @param int $row
+     *
      * @throws \Exception
+     *
+     * @return string
      */
     protected function getExternalId($data, $row)
     {
@@ -1992,11 +2101,11 @@ class Import
         }
 
         return $externalId;
-
     }
 
     /**
-     * @param $entity
+     * @param Contact|Account $entity
+     *
      * @return AbstractContactManager
      */
     protected function getManager($entity)
