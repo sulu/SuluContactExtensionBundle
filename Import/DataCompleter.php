@@ -12,9 +12,6 @@ use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountRepository;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 
-/**
- * @package Sulu\Bundle\ContactBundle\Import
- */
 class DataCompleter
 {
     /**
@@ -117,6 +114,10 @@ class DataCompleter
 
     /**
      * constructor
+     *
+     * @param EntityManagerInterface $em
+     * @param AccountRepository $accountRepository
+     * @param ContactRepository $contactRepository
      */
     public function __construct(
         EntityManagerInterface $em,
