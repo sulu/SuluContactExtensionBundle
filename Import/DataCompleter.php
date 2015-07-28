@@ -10,6 +10,7 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Component\Content\Query\ContentQueryBuilderInterface;
 use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountRepository;
+use Sulu\Bundle\ContactBundle\Entity\ContactRepository;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 
 /**
