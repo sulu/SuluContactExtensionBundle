@@ -12,10 +12,14 @@ use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountRepository;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 
+/**
+ * Class for either completing missing data in database
+ * or in a csv
+ */
 class DataCompleter
 {
     /**
-     * constants
+     * Constants
      */
     const DEBUG = true;
     const BATCH_SIZE = 20;
@@ -23,13 +27,15 @@ class DataCompleter
     const API_CALL_SLEEP_TIME = 2;
 
     /**
-     * geocode API
+     * Geocode API
+     *
      * @var string
      */
     private static $geocode_url = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 
     /**
-     * options
+     * Options
+     *
      * @var array
      */
     protected $options = array(
@@ -38,8 +44,8 @@ class DataCompleter
     );
 
     /**
-     * TODO create setter
-     * mappings
+     * Column mappings
+     *
      * @var array
      */
     protected $columnMappings = array(
@@ -56,44 +62,51 @@ class DataCompleter
     protected $headerData = array();
 
     /**
-     * language of the api results
+     * Language of the api results
+     *
      * @var string
      */
     protected $locale;
 
     /**
-     * logfile
+     * Logfile
+     *
      * @var array
      */
     protected $log;
 
     /**
-     * filepath of import file
+     * Filepath of import file
+     *
      * @var string
      */
     protected $file;
 
     /**
-     * limit execution
+     * Limit execution
+     *
      * @var int
      */
     protected $limit;
 
     /**
-     * currently processed row
+     * Currently processed row
+     *
      * @var int
      */
     protected $currentRow;
 
     /**
-     * timestamp of the last api call
+     * Timestamp of the last api call
+     *
      * @var int
      */
     protected $lastApiCallTime;
 
     /**
-     * number of api calls that are made in this sencond
-     * @var
+     * Number of api calls that are made in this sencond
+     *
+     * @var int
      */
     protected $lastApiCallCount;
 
@@ -113,18 +126,15 @@ class DataCompleter
     protected $contactRepository;
 
     /**
-     * constructor
-     *
      * @param EntityManagerInterface $em
      * @param AccountRepository $accountRepository
      * @param ContactRepository $contactRepository
      */
     public function __construct(
         EntityManagerInterface $em,
-        $accountRepository,
-        $contactRepository
-    )
-    {
+        AccountRepository $accountRepository,
+        ContactRepository $contactRepository
+    ) {
         $this->log = array();
 
         $this->em = $em;
@@ -133,9 +143,9 @@ class DataCompleter
     }
 
     /**
-     * set limit of rows to process
+     * Set limit of rows to process
      *
-     * @param $limit
+     * @param int $limit
      */
     public function setLimit($limit)
     {
@@ -143,9 +153,9 @@ class DataCompleter
     }
 
     /**
-     * set language of completion
+     * Set language of completion
      *
-     * @param $locale
+     * @param string $locale
      */
     public function setLocale($locale)
     {
@@ -153,8 +163,9 @@ class DataCompleter
     }
 
     /**
-     * set file to process
-     * @param $file
+     * Set file to process
+     *
+     * @param string $file
      */
     public function setFile($file)
     {
@@ -162,11 +173,12 @@ class DataCompleter
     }
 
     /**
-     * appends a string to a path + filename
+     * Appends a string to a path + filename
      *
-     * @param $oldPath
-     * @param $postfix
+     * @param string $oldPath
+     * @param string $postfix
      * @param bool $keepExtension
+     *
      * @return string
      */
     protected function extendFileName($oldPath, $postfix, $keepExtension = true)
@@ -176,11 +188,12 @@ class DataCompleter
         if ($keepExtension) {
             $filename .= '.' . $parts['extension'];
         }
+
         return $filename;
     }
 
     /**
-     * process csv file
+     * Process csv file
      */
     public function executeCsvCompletion()
     {
@@ -205,9 +218,10 @@ class DataCompleter
     }
 
     /**
-     * gets ids of all records for the specific entity
-     * 
-     * @param $entityRepository
+     * Gets ids of all records for the specific entity
+     *
+     * @param EntityRepository $entityRepository
+     *
      * @return array
      */
     public function getIdsOfEntity($entityRepository)
@@ -221,15 +235,16 @@ class DataCompleter
         }
 
         $ids = $qb->getQuery()->getScalarResult();
-     
+
         return array_column($ids, 'id');
     }
 
     /**
-     * batch completes states of account or contacts
+     * Batch completes states of account or contacts
      *
-     * @param $entityRepository
-     * @param $ids
+     * @param EntityRepository $entityRepository
+     * @param array $ids
+     * @param callable $getAddressesName
      */
     public function batchCompleteStates($entityRepository, $ids, $getAddressesName)
     {
@@ -250,7 +265,9 @@ class DataCompleter
     }
 
     /**
-     * process csv file
+     * Process csv file
+     *
+     * @param array $databaseOptions
      */
     public function executeDbCompletion($databaseOptions)
     {
@@ -271,8 +288,9 @@ class DataCompleter
     }
 
     /**
-     * @param $addresses
-     * @internal param $entity
+     * Updates state column in address entities by calling geolocation api of google
+     *
+     * @param array $addresses
      */
     protected function updateStateOfAddresses($addresses)
     {
@@ -298,9 +316,9 @@ class DataCompleter
     }
 
     /**
-     * callback loop
+     * Callback loop for processing a CSV file
      *
-     * @param $filename
+     * @param string $filename
      * @param callable $callback
      * @param callable $headerCallback
      */
@@ -308,8 +326,7 @@ class DataCompleter
         $filename,
         callable $callback,
         callable $headerCallback
-    )
-    {
+    ) {
         $row = 0;
         $this->currentRow = 0;
         $this->headerData = array();
@@ -336,7 +353,6 @@ class DataCompleter
                     }
 
                     $callback($data);
-
                 }
             } catch (\Exception $e) {
                 $this->debug(sprintf("ERROR while processing data row %d: %s \n", $row, $e->getMessage()));
@@ -359,10 +375,11 @@ class DataCompleter
     }
 
     /**
-     * function checks for missing
+     * Function completes an address
      *
-     * @param $data
-     * @return mixed
+     * @param array $data
+     *
+     * @return array
      */
     protected function completeAddress($data)
     {
@@ -372,7 +389,6 @@ class DataCompleter
         $country = $this->getColumnValue('country', $data);
         $zip = $this->getColumnValue('zip', $data);
         if ($city || $street || $state || $country || $zip) {
-
             // address data is given
             // check if country is set
             if (!$country) {
@@ -387,9 +403,11 @@ class DataCompleter
     }
 
     /**
-     * performs an api call and returns shorcode for a country
-     * @param $data
-     * @return null|void
+     * Performs an api call and returns shorcode for a country
+     *
+     * @param array $data
+     *
+     * @return null|string
      */
     protected function getCountryByApiCall($data = array())
     {
@@ -397,23 +415,28 @@ class DataCompleter
     }
 
     /**
-     * performs an api call and returns shorcode for a country
-     * @param $data
-     * @return null|void
+     * Performs an api call and returns shortcode for a country
+     *
+     * @param array $data
+     *
+     * @return null|string
      */
     protected function getStateByApiCall($data = array())
     {
         // FIXME: this is a workaround for a google geocode bug: austrian state names are only properly returned in
         //      short_name. for all other countries take long_name
         $resultKey = in_array('Austria', $data) ? 'short_name' : 'long_name';
+
         return $this->getDataByApiCall($data, array($this, 'getDataFromApiResultByKey'), array('administrative_area_level_1', $resultKey));
     }
 
     /**
-     * returns key from google geocode api result
-     * @param object $result
+     * Returns key from google geocode api result
+     *
+     * @param array $result
      * @param string $key
-     * @param $returnKey $key (either short_name or long_name)
+     * @param string $returnKey (either short_name or long_name)
+     *
      * @return null|string (short_name)
      */
     protected function getDataFromApiResultByKey($result, $key, $returnKey = 'short_name')
@@ -425,17 +448,18 @@ class DataCompleter
                 }
             }
         }
+
         return null;
     }
 
     /**
-     * performs an api call and returns shorcode for a country
+     * Performs an api call and returns shorcode for a country
      *
      * @param array $dataArray
      * @param callable $resultCallback will be called, passing the api-result object
      * @param array $callbackData Possibility to pass additional data to the callback
      *
-     * @return mixed|void
+     * @return string|null
      */
     protected function getDataByApiCall(
         $dataArray = array(),
@@ -446,6 +470,7 @@ class DataCompleter
         if ($this->lastApiCallTime == time()) {
             if ($this->lastApiCallCount >= static::API_CALL_LIMIT_PER_SECOND) {
                 sleep(static::API_CALL_SLEEP_TIME);
+
                 return $this->getDataByApiCall($dataArray, $resultCallback);
             }
             $this->lastApiCallCount++;
@@ -467,6 +492,7 @@ class DataCompleter
 
         if (count($results) === 0) {
             $this->debug(sprintf("ERROR: No valid data found at data %d (by api)", $this->currentRow, $params));
+
             return null;
         }
 
@@ -479,12 +505,14 @@ class DataCompleter
 
         if (!$data) {
             $this->debug(sprintf("ERROR: No data found in result for data %d", $this->currentRow));
+
             return null;
         }
 
         if (count($results) > 1) {
             $this->debug(
-                sprintf("Non unique result at row %d! chose data %s (params: %s)",
+                sprintf(
+                    "Non unique result at row %d! chose data %s (params: %s)",
                     $this->currentRow,
                     $data,
                     $params
@@ -496,8 +524,10 @@ class DataCompleter
     }
 
     /**
-     * prints messages if debug is set to true
-     * @param $message
+     * Prints messages if debug is set to true
+     *
+     * @param string $message
+     * @param bool $addToLog
      */
     protected function debug($message, $addToLog = true)
     {
@@ -510,8 +540,10 @@ class DataCompleter
     }
 
     /**
-     * gets index of a column
-     * @param $key
+     * Gets index of a column
+     *
+     * @param string $key
+     *
      * @return int
      */
     protected function getColumnIndex($key)
@@ -522,14 +554,16 @@ class DataCompleter
         }
 
         $index = array_search($key, $this->headerData);
+
         return $index;
     }
 
     /**
-     * returns value of a column
+     * Returns value of a column
      *
-     * @param $key
-     * @param $data
+     * @param string $key
+     * @param array $data
+     *
      * @return null|string
      */
     protected function getColumnValue($key, $data)
@@ -537,15 +571,17 @@ class DataCompleter
         if (($index = $this->getColumnIndex($key)) !== false) {
             return $data[$index];
         }
+
         return null;
     }
 
     /**
-     * set value of a column
+     * Set value of a column
      *
-     * @param $key
-     * @param $data
-     * @param $value
+     * @param string $key
+     * @param array $data
+     * @param mixed $value
+     *
      * @throws \Exception
      */
     protected function setColumnValue($key, &$data, $value)
@@ -558,7 +594,7 @@ class DataCompleter
     }
 
     /**
-     * creates a logfile in import-files folder
+     * Creates a logfile in import-files folder
      */
     public function createLogFile()
     {
