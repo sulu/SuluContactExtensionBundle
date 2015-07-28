@@ -1165,7 +1165,7 @@ class Import
                 preg_match('/(*UTF8)([^\d]+)\s?(.+)/iu', $street, $result); // UTF8 is to ensure correct utf8 encoding
 
                 // check if number is given, else do not apply preg match
-                if (array_key_exists(2, $result)) {
+                if (array_key_exists(2, $result) && $this->startsWithNumber($result[2])) {
                     $number = trim($result[2]);
                     $street = trim($result[1]);
                 }
@@ -2129,5 +2129,21 @@ class Import
     protected function getAccountManager()
     {
         return $this->accountManager;
+    }
+
+    /**
+     * Checks if a string starts with a number
+     *
+     * @param string $numberString
+     *
+     * @return bool
+     */
+    protected function startsWithNumber($numberString)
+    {
+        if (preg_match('/^[0-9]+.*/', $numberString)) {
+            return true;
+        }
+
+        return false;
     }
 }
