@@ -14,9 +14,9 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Bundle\ContactBundle\Contact\AccountManager;
 use Sulu\Bundle\ContactBundle\Contact\ContactManager;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
 use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
@@ -38,9 +38,7 @@ use Sulu\Bundle\TagBundle\Entity\Tag;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 
 /**
- * configures and executes an import for contact and account data from a CSV file
- *
- * @package Sulu\Bundle\ContactBundle\Import
+ * Configures and executes an import for contact and account data from a CSV file
  */
 class Import
 {
