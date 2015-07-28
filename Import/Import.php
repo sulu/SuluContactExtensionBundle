@@ -13,6 +13,7 @@ namespace Sulu\Bundle\ContactExtensionBundle\Import;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Doctrine\ORM\NonUniqueResultException;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
@@ -33,7 +34,6 @@ use Sulu\Bundle\ContactBundle\Entity\Url;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 use Sulu\Bundle\TagBundle\Entity\Tag;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * configures and executes an import for contact and account data from a CSV file
@@ -84,7 +84,6 @@ class Import
     /**
      * define entity names
      */
-    protected $accountEntityName;
     protected $accountContactEntityName = 'SuluContactBundle:AccountContact';
     protected $tagEntityName = 'SuluTagBundle:Tag';
     protected $titleEntityName = 'SuluContactBundle:ContactTitle';
@@ -304,6 +303,11 @@ class Import
     /**
      * @var EntityRepository
      */
+    protected $accountRepository;
+
+    /**
+     * @var EntityRepository
+     */
     protected $contactRepository;
 
     /**
@@ -314,7 +318,8 @@ class Import
      * @param $configDefaults
      * @param $configAccountTypes
      * @param $configFormOfAddress
-     * @param $accountEntityName
+     * @param EntityRepository $accountRepository
+     * @param EntityRepository $contactRepository
      */
     public function __construct(
         EntityManager $em,
@@ -324,7 +329,7 @@ class Import
         $configDefaults,
         $configAccountTypes,
         $configFormOfAddress,
-        $accountEntityName,
+        EntityRepository $accountRepository,
         EntityRepository $contactRepository
     ) {
         $this->em = $em;
@@ -334,7 +339,7 @@ class Import
         $this->accountManager = $accountManager;
         $this->contactManager = $contactManager;
         $this->accountFactory = $accountFactory;
-        $this->accountEntityName = $accountEntityName;
+        $this->accountRepository = $accountRepository;
         $this->contactRepository = $contactRepository;
     }
 
@@ -387,7 +392,7 @@ class Import
 
     /**
      * assigns mappings as defined in mappings file
-     * @param $mappingsFile
+     * @param $mappingsFileContact
      * @return bool|mixed
      * @throws \Symfony\Component\Translation\Exception\NotFoundResourceException
      */
@@ -440,10 +445,6 @@ class Import
      */
     protected function processAccountFile($filename)
     {
-        $createParentRelations = function ($data, $row) {
-            $this->createAccountParentRelation($data, $row);
-        };
-
         // create accounts
         $this->debug("Create Accounts:\n");
         $this->processCsvLoop(
@@ -455,7 +456,12 @@ class Import
 
         // check for parents
         $this->debug("Creating Account Parent Relations:\n");
-        $this->processCsvLoop($filename, $createParentRelations);
+        $this->processCsvLoop(
+            $filename,
+            function ($data, $row) {
+                $this->createAccountParentRelation($data, $row);
+            }
+        );
     }
 
     /**
@@ -651,7 +657,7 @@ class Import
      */
     protected function createNewAccount($externalId = null)
     {
-        $account = $this->accountFactory->create();
+        $account = $this->accountFactory->createEntity();
         if ($externalId) {
             $account->setExternalId($externalId);
         }
@@ -1584,7 +1590,7 @@ class Import
      */
     protected function clearDatabase()
     {
-        $this->clearTable($this->accountEntityName);
+        $this->clearTable($this->accountRepository->getClassName());
         $this->clearTable($this->contactRepository->getClassName());
     }
 
@@ -1787,7 +1793,7 @@ class Import
      */
     public function getAccountByKey($key)
     {
-        return $this->em->getRepository($this->accountEntityName)->findOneBy(array('externalId' => $key));
+        return $this->accountRepository->findOneBy(array('externalId' => $key));
     }
 
     /**
