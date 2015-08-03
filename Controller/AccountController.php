@@ -18,6 +18,7 @@ use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
+use Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilder;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
@@ -89,23 +90,19 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Generates a list builder object
+     * Applies the filter parameter and hasNoparent parameter for listbuilder.
      *
      * @param Request $request
      * @param array $filter
-     *
-     * @return \Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilder
+     * @param DoctrineListBuilder $listBuilder
      */
-    protected function generateFlatListBuilder(Request $request, $filter)
+    protected function applyRequestParameters(Request $request, $filter, $listBuilder)
     {
-        $listBuilder = parent::generateFlatListBuilder($request, $filter);
-
+        parent::applyRequestParameters($request, $filter, $listBuilder);
         $type = $request->get('type');
         if ($type) {
             $listBuilder->where($this->getFieldDescriptors()['type'], $type);
         }
-
-        return $listBuilder;
     }
 
     /**
