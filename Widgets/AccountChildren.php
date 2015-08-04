@@ -112,15 +112,14 @@ class AccountChildren implements WidgetInterface
         if ($length > 0) {
             $data = [];
             foreach ($accounts as $account) {
+                $accountAddress = $account->getMainAddress();
                 $tmp = [];
+
                 $tmp['id'] = $account->getId();
                 $tmp['name'] = $account->getName();
                 $tmp['phone'] = $account->getMainPhone();
                 $tmp['email'] = $account->getMainEmail();
                 $tmp['url'] = $account->getMainUrl();
-
-                /* @var Address $accountAddress */
-                $accountAddress = $account->getMainAddress();
 
                 if ($accountAddress) {
                     $tmp['address']['street'] = $accountAddress->getStreet();
@@ -129,7 +128,6 @@ class AccountChildren implements WidgetInterface
                     $tmp['address']['city'] = $accountAddress->getCity();
                     $tmp['address']['country'] = $accountAddress->getCountry()->getName();
                 }
-
                 $data[] = $tmp;
             }
 

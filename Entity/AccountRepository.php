@@ -126,6 +126,7 @@ class AccountRepository extends SuluAccountRepository
 
             return $query->getResult();
         } catch (NoResultException $ex) {
+
             return null;
         }
     }
