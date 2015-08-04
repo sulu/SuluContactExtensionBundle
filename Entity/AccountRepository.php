@@ -121,7 +121,6 @@ class AccountRepository extends SuluAccountRepository
                 ->where('account.parent = :parentAccountId');
 
             $query = $qb->getQuery();
-            $query->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true);
             $query->setParameter('parentAccountId', $id);
 
             return $query->getResult();
