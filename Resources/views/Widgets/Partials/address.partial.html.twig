@@ -1,14 +1,16 @@
 {% if address is defined %}
-    <div class="grid-row m-bottom-30">
-        <h5 class="label"><%=translate('public.address')%></h5>
-            <span class="block grey">
-                {{ address.street }}
-                {{ address.number }}{% if address.street or address.number is defined %},{% endif %}
+    <div {% if display is not defined or not 'small' %}class="grid-row m-bottom-30"{% endif %}>
+        {% if display is not defined or not 'small' %}
+            <h5 class="label"><%=translate('public.address')%></h5>
+        {% endif %}
+        <span class="block">
+            {{ address.street }}
+            {{ address.number }}{% if address.street or address.number is defined %},{% endif %}
 
-                {{ address.zip }}
-                {{ address.city }}{% if address.city or address.zip is defined %},{% endif %}
+            {{ address.zip }}
+            {{ address.city }}{% if address.city or address.zip is defined %},{% endif %}
 
-                {{ address.country }}
-            </span>
+            {{ address.country }}
+        </span>
     </div>
 {% endif %}

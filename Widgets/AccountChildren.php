@@ -16,6 +16,8 @@ use Doctrine\ORM\PersistentCollection;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
+use Sulu\Bundle\ContactBundle\Entity\Address;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 
 /**
  * Widget for all children of an accounts
@@ -50,7 +52,7 @@ class AccountChildren implements WidgetInterface
     }
 
     /**
-     * Return name of widget
+     * Return name of widget.
      *
      * @return string
      */
@@ -60,7 +62,7 @@ class AccountChildren implements WidgetInterface
     }
 
     /**
-     * Returns template name of widget
+     * Returns template name of widget.
      *
      * @return string
      */
@@ -70,9 +72,10 @@ class AccountChildren implements WidgetInterface
     }
 
     /**
-     * Returns data to render template
+     * Returns data to render template.
      *
      * @param array $options
+     *
      * @throws WidgetEntityNotFoundException
      * @throws WidgetParameterException
      * @return array
@@ -80,51 +83,56 @@ class AccountChildren implements WidgetInterface
     public function getData($options)
     {
         if (!empty($options) &&
-            array_key_exists('contact', $options) &&
-            !empty($options['contact'])
+            array_key_exists('account', $options) &&
+            !empty($options['account'])
         ) {
-            $id = $options['contact'];
-            $contact = $this->accountRepository->findContactWithAccountsById($id);
+            $id = $options['account'];
+            $accounts = $this->accountRepository->findSubsidiariesById($id);
 
-            if (!$contact) {
-                throw new WidgetEntityNotFoundException(
-                    'Entity ' . $this->accountRepository->getClassName() . ' with id ' . $id . ' not found!',
-                    $this->widgetName,
-                    $id
-                );
-            }
-
-            return $this->parseAccounts($contact->getAccountContacts());
+            return $this->parseAccounts($accounts);
         } else {
             throw new WidgetParameterException(
-                'Required parameter contact not found or empty!',
+                'Required parameter account not found or empty!',
                 $this->widgetName,
-                'contact'
+                'account'
             );
         }
     }
 
     /**
-     * Parses the main account data
+     * Parses the main account data.
      *
-     * @param PersistentCollection $accountsContact
+     * @param Account[] $accounts
+     *
      * @return array
      */
-    protected function parseAccounts(PersistentCollection $accountsContact)
+    protected function parseAccounts(array $accounts)
     {
-        $length = count($accountsContact);
+        $length = count($accounts);
         if ($length > 0) {
             $data = [];
-            foreach ($accountsContact as $accountContact) {
+            foreach ($accounts as $account) {
                 $tmp = [];
-                $tmp['id'] = $accountContact->getAccount()->getId();
-                $tmp['name'] = $accountContact->getAccount()->getName();
-                $tmp['phone'] = $accountContact->getAccount()->getMainPhone();
-                $tmp['email'] = $accountContact->getAccount()->getMainEmail();
-                $tmp['url'] = $accountContact->getAccount()->getMainUrl();
-                $tmp['main'] = $accountContact->getMain();
+                $tmp['id'] = $account->getId();
+                $tmp['name'] = $account->getName();
+                $tmp['phone'] = $account->getMainPhone();
+                $tmp['email'] = $account->getMainEmail();
+                $tmp['url'] = $account->getMainUrl();
+
+                /* @var Address $accountAddress */
+                $accountAddress = $account->getMainAddress();
+
+                if ($accountAddress) {
+                    $tmp['address']['street'] = $accountAddress->getStreet();
+                    $tmp['address']['number'] = $accountAddress->getNumber();
+                    $tmp['address']['zip'] = $accountAddress->getZip();
+                    $tmp['address']['city'] = $accountAddress->getCity();
+                    $tmp['address']['country'] = $accountAddress->getCountry()->getName();
+                }
+
                 $data[] = $tmp;
             }
+
             return $data;
         }
 
