@@ -11,6 +11,7 @@
         <parameter key="sulu_contact_extension.contact.widgets.account_info.class">Sulu\Bundle\ContactExtensionBundle\Widgets\AccountInfo</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.contact_info.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactInfo</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.main_contact.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainContact</parameter>
+        <parameter key="sulu_contact_extension.contact.widgets.account_children.class">Sulu\Bundle\ContactExtensionBundle\Widgets\AccountChildren</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.table.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Table</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.toolbar.class">Sulu\Bundle\ContactExtensionBundle\Widgets\Toolbar</parameter>
         <parameter key="sulu_contact_extension.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
@@ -28,6 +29,12 @@
             <argument>%sulu_admin.name%</argument>
             <tag name="sulu.admin"/>
             <tag name="sulu.context" context="admin"/>
+        </service>
+
+        <service id="sulu_contact_extension.contact.widgets.account_children" class="%sulu_contact_extension.contact.widgets.account_children.class%">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="sulu_contact.account_repository"/>
+            <tag name="sulu.widget" alias="sulu-contact-account-children"/>
         </service>
 
         <service id="sulu_contact_extension.contact.widgets.main_account" class="%sulu_contact_extension.contact.widgets.main_account.class%">

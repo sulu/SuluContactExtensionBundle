@@ -1,14 +1,22 @@
+{% set smallDisplay = (display is not defined or not 'small') ? true : false %}
+
 {% if address is defined %}
-    <div class="grid-row m-bottom-30">
-        <h5 class="label"><%=translate('public.address')%></h5>
-            <span class="block grey">
+    <div {% if smallDisplay %}class="grid-row m-bottom-30"{% endif %}>
+        {% if smallDisplay %}
+            <h5 class="label"><%=translate('public.address')%></h5>
+        {% endif %}
+        <span class="block">
+            {% if address.street is defined or address.number is defined %}
                 {{ address.street }}
-                {{ address.number }}{% if address.street or address.number is defined %},{% endif %}
+                {{ address.number }},
+            {% endif %}
 
+            {% if address.zip is defined or address.street is defined %}
                 {{ address.zip }}
-                {{ address.city }}{% if address.city or address.zip is defined %},{% endif %}
+                {{ address.street }},
+            {% endif %}
 
-                {{ address.country }}
-            </span>
+            {{ address.country }}
+        </span>
     </div>
 {% endif %}

@@ -10,6 +10,10 @@
                 <source>navigation.financials</source>
                 <target>Zusatz</target>
             </trans-unit>
+            <trans-unit id="3" resname="contacts.sidebar.company.subsidiaries">
+                <source>contacts.sidebar.company.subsidiaries</source>
+                <target>Filialen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

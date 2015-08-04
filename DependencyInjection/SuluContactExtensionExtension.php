@@ -33,10 +33,17 @@ class SuluContactExtensionExtension extends Extension implements PrependExtensio
                     array(
                         'widget_groups' => array(
                             'contact-info' => array(
-                                'mappings' => array('sulu-contact-contact-info')
+                                'mappings' => array(
+                                    'sulu-contact-contact-info',
+                                    'sulu-contact-accounts'
+                                )
                             ),
                             'account-info' => array(
-                                'mappings' => array('sulu-contact-account-info', 'sulu-contact-main-contact')
+                                'mappings' => array(
+                                    'sulu-contact-account-info',
+                                    'sulu-contact-main-contact',
+                                    'sulu-contact-account-children'
+                                )
                             ),
                             'contact-detail' => array(
                                 'mappings' => array('sulu-contact-accounts')

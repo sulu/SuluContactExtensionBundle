@@ -22,8 +22,10 @@ class AccountRepository extends SuluAccountRepository
 {
     /**
      * Get account by id
-     * @param $id
-     * @param $contacts
+     *
+     * @param mixed $id
+     * @param boolean $contacts
+     *
      * @return mixed
      */
     public function findAccountById($id, $contacts = false)
@@ -93,6 +95,37 @@ class AccountRepository extends SuluAccountRepository
 
             return $query->getSingleResult();
         } catch (NoResultException $ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets subsidiaries by parent account id
+     *
+     * @param mixed $id
+     *
+     * @return mixed
+     */
+    public function findSubsidiariesById($id)
+    {
+        try {
+            $qb = $this->createQueryBuilder('account')
+                ->leftJoin('account.accountAddresses', 'accountAddresses')
+                ->leftJoin('accountAddresses.address', 'addresses')
+                ->leftJoin('addresses.country', 'country')
+                ->leftJoin('addresses.addressType', 'addressType')
+                ->addSelect('accountAddresses')
+                ->addSelect('addresses')
+                ->addSelect('country')
+                ->addSelect('addressType')
+                ->where('account.parent = :parentAccountId');
+
+            $query = $qb->getQuery();
+            $query->setParameter('parentAccountId', $id);
+
+            return $query->getResult();
+        } catch (NoResultException $ex) {
+
             return null;
         }
     }
