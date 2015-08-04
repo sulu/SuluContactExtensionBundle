@@ -15,7 +15,8 @@ define([
 ], function(AccountsUtilHeader,
             TermsOfPayment,
             TermsOfDelivery,
-            SuluBaseAccount)
+            SuluBaseAccount
+)
 {
 
     'use strict';
@@ -199,10 +200,10 @@ define([
         this.sandbox.on('sulu.contacts.accounts.financials.save', saveFinancials.bind(this));
     };
 
-    Account.prototype.bindSidebarEvents = function(){
+    Account.prototype.bindSidebarEvents = function() {
         baseAccount.bindSidebarEvents.call(this);
 
-        this.sandbox.dom.on('#sidebar', 'click', function(event){
+        this.sandbox.dom.on('#sidebar', 'click', function(event) {
             var id = this.sandbox.dom.data(event.currentTarget, 'id');
             this.sandbox.emit('sulu.router.navigate', 'contacts/accounts/edit:' + id + '/details');
             this.sandbox.emit('husky.navigation.select-item', 'contacts/accounts');

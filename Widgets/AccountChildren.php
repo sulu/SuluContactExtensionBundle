@@ -78,6 +78,7 @@ class AccountChildren implements WidgetInterface
      *
      * @throws WidgetEntityNotFoundException
      * @throws WidgetParameterException
+     *
      * @return array
      */
     public function getData($options)
@@ -109,31 +110,31 @@ class AccountChildren implements WidgetInterface
     protected function parseAccounts(array $accounts)
     {
         $length = count($accounts);
-        if ($length > 0) {
-            $data = [];
-            foreach ($accounts as $account) {
-                $accountAddress = $account->getMainAddress();
-                $tmp = [];
-
-                $tmp['id'] = $account->getId();
-                $tmp['name'] = $account->getName();
-                $tmp['phone'] = $account->getMainPhone();
-                $tmp['email'] = $account->getMainEmail();
-                $tmp['url'] = $account->getMainUrl();
-
-                if ($accountAddress) {
-                    $tmp['address']['street'] = $accountAddress->getStreet();
-                    $tmp['address']['number'] = $accountAddress->getNumber();
-                    $tmp['address']['zip'] = $accountAddress->getZip();
-                    $tmp['address']['city'] = $accountAddress->getCity();
-                    $tmp['address']['country'] = $accountAddress->getCountry()->getName();
-                }
-                $data[] = $tmp;
-            }
-
-            return $data;
+        if ($length === 0) {
+            return null;
         }
 
-        return null;
+        $data = [];
+        foreach ($accounts as $account) {
+            $accountAddress = $account->getMainAddress();
+            $tmp = [];
+
+            $tmp['id'] = $account->getId();
+            $tmp['name'] = $account->getName();
+            $tmp['phone'] = $account->getMainPhone();
+            $tmp['email'] = $account->getMainEmail();
+            $tmp['url'] = $account->getMainUrl();
+
+            if ($accountAddress) {
+                $tmp['address']['street'] = $accountAddress->getStreet();
+                $tmp['address']['number'] = $accountAddress->getNumber();
+                $tmp['address']['zip'] = $accountAddress->getZip();
+                $tmp['address']['city'] = $accountAddress->getCity();
+                $tmp['address']['country'] = $accountAddress->getCountry()->getName();
+            }
+            $data[] = $tmp;
+        }
+
+        return $data;
     }
 }

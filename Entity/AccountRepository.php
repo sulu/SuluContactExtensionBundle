@@ -23,8 +23,8 @@ class AccountRepository extends SuluAccountRepository
     /**
      * Get account by id
      *
-     * @param $id
-     * @param $contacts
+     * @param mixed $id
+     * @param boolean $contacts
      *
      * @return mixed
      */
@@ -102,7 +102,7 @@ class AccountRepository extends SuluAccountRepository
     /**
      * Gets subsidiaries by parent account id
      *
-     * @param $id
+     * @param mixed $id
      *
      * @return mixed
      */
