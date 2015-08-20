@@ -32,7 +32,7 @@ define(function() {
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/type::typeid',
                 callback: function(accountType) {
-                    return '<div data-aura-component="accounts@sulucontact" data-aura-display="list" data-aura-account-type="' + accountType + '" />';
+                    return '<div data-aura-component="accounts/components/list@sulucontactextension" data-aura-account-type="' + accountType + '" />';
                 }
             });
 

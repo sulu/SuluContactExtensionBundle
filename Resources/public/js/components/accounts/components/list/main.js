@@ -10,7 +10,7 @@
 define([
     'mvc/relationalstore',
     'app-config',
-    'sulucontact/components/accounts/components/list/main',
+    'sulucontact/components/accounts/list/main',
     'widget-groups'
 ], function(RelationalStore, AppConfig, SuluBaseList, WidgetGroups) {
 
@@ -29,10 +29,10 @@ define([
         dataUrlAddition = '',
 
         /**
-         * Generates the options for the tabs in the header
+         * Generates the configs for the tabs in the header
          * @returns {object} tabs options
          */
-        getTabsOptions = function() {
+        getTabConfigs = function() {
             var items, i, index, type,
                 accountTypes,
                 contactSection = AppConfig.getSection('sulu-contact-extension'),
@@ -82,10 +82,12 @@ define([
             preselect = (!!accountType) ? parseInt(accountType.id, 10) + 1 : false;
 
             return {
-                callback: selectFilter.bind(this),
-                preselector: 'position',
+                componentOptions: {
+                    callback: selectFilter.bind(this),
+                    preselector: 'position',
+                    preselect: preselect,
+                },
                 data: items,
-                preselect: preselect
             };
         },
 
@@ -123,55 +125,49 @@ define([
     List.prototype.constructor = List;
 
     List.prototype.header = function() {
-        var header = baseList.header.call(this);
+        var header = baseList.header;
+        var tabs = false;
+        var tabConfigs = getTabConfigs.call(this);
 
-        var tabs = false,
-            tabOptions = getTabsOptions.call(this);
-
-        if (tabOptions) {
+        if (!!tabConfigs) {
             tabs = {
-                fullControl: true,
-                options: tabOptions
+                data: tabConfigs.data,
+                componentOptions: tabConfigs.componentOptions
             };
         }
-
         header.tabs = tabs;
+
+        header.toolbar.buttons.add = this.sandbox.util.extend(true, {}, header.toolbar.buttons.add, {
+            options: {
+                dropdownItems: [
+                    {
+                        id: 'add-basic',
+                        title: this.sandbox.translate('contact.account.add-basic'),
+                        callback: addNewAccount.bind(this, 'basic')
+                    },
+                    {
+                        id: 'add-lead',
+                        title: this.sandbox.translate('contact.account.add-lead'),
+                        callback: addNewAccount.bind(this, 'lead')
+                    },
+                    {
+                        id: 'add-customer',
+                        title: this.sandbox.translate('contact.account.add-customer'),
+                        callback: addNewAccount.bind(this, 'customer')
+                    },
+                    {
+                        id: 'add-supplier',
+                        title: this.sandbox.translate('contact.account.add-supplier'),
+                        callback: addNewAccount.bind(this, 'supplier')
+                    }
+                ]
+            }
+        });
 
         return header;
     };
 
-    List.prototype.getToolbarTemplate = function() {
-        var template = baseList.getToolbarTemplate.call(this);
-
-        template[0].items = [
-            {
-                id: 'add-basic',
-                title: this.sandbox.translate('contact.account.add-basic'),
-                callback: addNewAccount.bind(this, 'basic')
-            },
-            {
-                id: 'add-lead',
-                title: this.sandbox.translate('contact.account.add-lead'),
-                callback: addNewAccount.bind(this, 'lead')
-            },
-            {
-                id: 'add-customer',
-                title: this.sandbox.translate('contact.account.add-customer'),
-                callback: addNewAccount.bind(this, 'customer')
-            },
-            {
-                id: 'add-supplier',
-                title: this.sandbox.translate('contact.account.add-supplier'),
-                callback: addNewAccount.bind(this, 'supplier')
-            }
-        ];
-
-        return template;
-    };
-
     List.prototype.render = function() {
-        RelationalStore.reset(); //FIXME really necessary?
-
         this.sandbox.dom.html(this.$el, this.renderTemplate('/admin/contact/template/account/list'));
 
         var i,
@@ -202,21 +198,7 @@ define([
             {
                 el: this.$find('#list-toolbar-container'),
                 instanceName: 'accounts',
-                parentTemplate: 'default',
-                inHeader: true,
-                groups: [
-                    {
-                        id: 1,
-                        align: 'left'
-                    },
-                    {
-                        id: 2,
-                        align: 'right'
-                    }
-                ],
-                template: function() {
-                    return this.getToolbarTemplate();
-                }.bind(this)
+                template: 'default'
             },
             {
                 el: this.sandbox.dom.find('#companies-list', this.$el),
