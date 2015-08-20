@@ -20,11 +20,9 @@ define([
             datagridInstanceName: 'accounts'
         },
 
-        BaseList = function() {
-        },
+        BaseList = function() {},
 
-        List = function() {
-        },
+        List = function() {},
 
         baseList,
 
