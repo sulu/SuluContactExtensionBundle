@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-define(['config', 'widget-groups', 'sulucontact/components/accounts/components/form/main'], function(Config, WidgetGroups, SuluBaseForm) {
+define(['config', 'widget-groups', 'sulucontact/accounts/edit/details/main'], function(Config, WidgetGroups, SuluBaseForm) {
 
     'use strict';
 

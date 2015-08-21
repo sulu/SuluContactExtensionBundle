@@ -11,8 +11,8 @@ define([
     'mvc/relationalstore',
     'app-config',
     'sulucontact/components/accounts/list/main',
-    'widget-groups'
-], function(RelationalStore, AppConfig, SuluBaseList, WidgetGroups) {
+    'services/sulucontactextension/account-router'
+], function(RelationalStore, AppConfig, SuluBaseList, AccountRouter) {
 
     'use strict';
 
@@ -21,11 +21,8 @@ define([
         },
 
         BaseList = function() {},
-
         List = function() {},
-
         baseList,
-
         dataUrlAddition = '',
 
         /**
@@ -85,24 +82,26 @@ define([
                 componentOptions: {
                     callback: selectFilter.bind(this),
                     preselector: 'position',
-                    preselect: preselect,
+                    preselect: preselect
                 },
-                data: items,
+                data: items
             };
         },
 
         selectFilter = function(item) {
-            var type = null;
+            var type = null,
+                url = 'contacts/accounts';
 
             if (item.id !== 'all') {
                 type = item.id;
+                url += '/type:' + item.name.toLowerCase();
             }
             this.sandbox.emit('husky.datagrid.' + constants.datagridInstanceName + '.url.update', {'type': type});
-            this.sandbox.emit('sulu.contacts.accounts.list', item.name, true); // change url, but do not reload
+            this.sandbox.emit('sulu.router.navigate', url, false);
         },
 
         addNewAccount = function(type) {
-            this.sandbox.emit('sulu.contacts.accounts.new', type);
+            AccountRouter.toAdd(type);
         },
 
         clickCallback = function(id) {
@@ -111,10 +110,6 @@ define([
                 'sulu.sidebar.set-widget',
                 '/admin/widget-groups/account-info?account=' + id
             );
-        },
-
-        actionCallback = function(id) {
-            this.sandbox.emit('sulu.contacts.accounts.load', id);
         };
 
     BaseList.prototype = SuluBaseList;
@@ -167,18 +162,15 @@ define([
         return header;
     };
 
-    List.prototype.render = function() {
-        this.sandbox.dom.html(this.$el, this.renderTemplate('/admin/contact/template/account/list'));
-
-        var i,
+    List.prototype.getDatagridConfig = function() {
+        var config = baseList.getDatagridConfig.call(this),
             dataUrlAddition = '',
             accountType,
-        // get account types
             accountTypes = AppConfig.getSection('sulu-contact-extension').accountTypes,
             assocAccountTypes = {};
 
         // create LUT for accountTypes
-        for (i in accountTypes) {
+        for (var i in accountTypes) {
             assocAccountTypes[accountTypes[i].id] = accountTypes[i];
             // get current accountType
             if (!!this.options.accountType && i.toLowerCase() === this.options.accountType.toLowerCase()) {
@@ -193,36 +185,20 @@ define([
             dataUrlAddition += '&type=' + accountType.id;
         }
 
-        // init list-toolbar and datagrid
-        this.sandbox.sulu.initListToolbarAndList.call(this, 'accounts', '/admin/api/accounts/fields',
-            {
-                el: this.$find('#list-toolbar-container'),
-                instanceName: 'accounts',
-                template: 'default'
-            },
-            {
-                el: this.sandbox.dom.find('#companies-list', this.$el),
-                url: '/admin/api/accounts?flat=true' + dataUrlAddition,
-                resultKey: 'accounts',
-                searchInstanceName: 'accounts',
-                searchFields: ['name'],
-                instanceName: constants.datagridInstanceName,
-                contentFilters: {
-                    // display account type name instead of type number
-                    type: function(content) {
-                        if (!!content) {
-                            return this.sandbox.translate(assocAccountTypes[content].translation);
-                        } else {
-                            return '';
-                        }
-                    }.bind(this)
-                },
-                clickCallback: (WidgetGroups.exists('account-info')) ? clickCallback.bind(this) : null,
-                actionCallback: actionCallback.bind(this)
-            },
-            'accounts',
-            '#companies-list-info'
-        );
+        config.url = config.url + dataUrlAddition;
+        config.clickCallback = clickCallback.bind(this);
+        config.contentFilters = {
+            // display account type name instead of type number
+            type: function(content) {
+                if (!!content) {
+                    return this.sandbox.translate(assocAccountTypes[content].translation);
+                } else {
+                    return '';
+                }
+            }.bind(this)
+        };
+
+        return config;
     };
 
     return new List();

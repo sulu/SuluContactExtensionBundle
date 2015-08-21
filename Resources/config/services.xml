@@ -77,7 +77,6 @@
         </service>
 
         <service id="sulu_contact_extension.account_navigation_provider" class="%sulu_contact_extension.account_navigation_provider.class%">
-            <argument type="service" id="sulu_security.security_checker"/>
             <tag name="sulu_admin.content_navigation" alias="account"/>
             <tag name="sulu.context" context="admin"/>
         </service>
