@@ -10,9 +10,12 @@
 require.config({
     paths: {
         sulucontactextension: '../../sulucontactextension/js',
-        '__component__$accounts/components/form@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/form/main',
-        '__component__$accounts/components/list@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/list/main',
-        '__component__$accounts@sulucontact': '/bundles/sulucontactextension/js/components/accounts/main',
+        '__component__$documents-tab@sulucontact': '/bundles/sulucontactextension/js/components/documents-tab/main',
+        '__component__$accounts/edit/details@sulucontact': '/bundles/sulucontactextension/js/components/accounts/edit/details/main',
+        '__component__$contacts/edit/details@sulucontact': '/bundles/sulucontactextension/js/components/contacts/edit/details/main',
+        '__component__$accounts/edit/contacts@sulucontact': '/bundles/sulucontactextension/js/components/accounts/edit/contacts/main',
+        '__component__$accounts/list@sulucontact': '/bundles/sulucontactextension/js/components/accounts/list/main',
+        '__component__$contacts/list@sulucontact': '/bundles/sulucontactextension/js/components/contacts/list/main',
         'services/sulucontactextension/account-router': '../../sulucontactextension/js/services/account-router'
     }
 });
@@ -30,14 +33,6 @@ define(function() {
 
             // list all accounts
             app.sandbox.mvc.routes.push({
-                route: 'contacts/accounts',
-                callback: function() {
-                    return '<div data-aura-component="accounts/list@sulucontactextension"/>';
-                }
-            });
-
-            // list all accounts
-            app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/type::typeid',
                 callback: function(accountType) {
                     return '<div data-aura-component="accounts/list@sulucontactextension" data-aura-account-type="' + accountType + '"/>';
@@ -48,10 +43,9 @@ define(function() {
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/add/type::id',
                 callback: function(accountType) {
-                    return '<div data-aura-component="accounts/components/content@sulucontact" data-aura-account-type="' + accountType + '"/>';
+                    return '<div data-aura-component="accounts/edit@sulucontact" data-aura-account-type="' + accountType + '"/>';
                 }
             });
-
         }
     };
 });

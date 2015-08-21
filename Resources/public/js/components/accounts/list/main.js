@@ -11,8 +11,9 @@ define([
     'mvc/relationalstore',
     'app-config',
     'sulucontact/components/accounts/list/main',
-    'services/sulucontactextension/account-router'
-], function(RelationalStore, AppConfig, SuluBaseList, AccountRouter) {
+    'services/sulucontactextension/account-router',
+    'services/sulucontact/contact-router'
+], function(RelationalStore, AppConfig, SuluBaseList, AccountRouter, ContactRouter) {
 
     'use strict';
 
@@ -119,6 +120,15 @@ define([
     List.prototype = new BaseList();
     List.prototype.constructor = List;
 
+    List.prototype.layout = function() {
+        var layout = baseList.layout;
+        layout.sidebar = {
+            width: 'fixed',
+            cssClasses: 'sidebar-padding-50'
+        };
+        return layout;
+    };
+
     List.prototype.header = function() {
         var header = baseList.header;
         var tabs = false;
@@ -160,6 +170,26 @@ define([
         });
 
         return header;
+    };
+
+    List.prototype.initialize = function() {
+        baseList.initialize.call(this);
+        this.sandbox.dom.off('#sidebar');
+
+        this.sandbox.dom.on('#sidebar', 'click', function(event) {
+            var id = this.sandbox.dom.data(event.currentTarget, 'id');
+            AccountRouter.toEdit(id);
+        }.bind(this), '#sidebar-accounts-list');
+
+        this.sandbox.dom.on('#sidebar', 'click', function(event) {
+            var id = this.sandbox.dom.data(event.currentTarget, 'id');
+            ContactRouter.toEdit(id);
+        }.bind(this), '#main-contact');
+
+        this.sandbox.dom.on('#sidebar', 'click', function(event) {
+            var id = this.sandbox.dom.data(event.currentTarget, 'id');
+            AccountRouter.toEdit(id);
+        }.bind(this), '.subsidiary-account');
     };
 
     List.prototype.getDatagridConfig = function() {
