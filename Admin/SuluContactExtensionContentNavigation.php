@@ -27,6 +27,7 @@ class SuluContactExtensionContentNavigation implements ContentNavigationProvider
         $financials->setId('financials');
         $financials->setComponent('accounts/edit/financials@sulucontactextension');
         $financials->setDisplay(array('edit'));
+        $financials->setDisabled(true);
 
         return array($financials);
     }

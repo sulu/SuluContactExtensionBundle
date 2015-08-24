@@ -23,6 +23,15 @@ define(['services/husky/mediator', 'services/sulucontact/account-router'], funct
         mediator.emit('sulu.router.navigate', 'contacts/accounts/add/type:' + type, true, true);
     };
 
+    AccountRouter.prototype.toList = function(type) {
+        var url = '/contacts/accounts';
+        type = (type === 'all') ? 'basic' : type;
+        if (!!type) {
+            url += '/type:' + type;
+        }
+        mediator.emit('sulu.router.navigate', url);
+    };
+
     AccountRouter.getInstance = function() {
         if (instance === null) {
             instance = new AccountRouter();

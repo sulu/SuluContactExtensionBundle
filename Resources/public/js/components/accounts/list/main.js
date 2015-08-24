@@ -97,6 +97,7 @@ define([
                 type = item.id;
                 url += '/type:' + item.name.toLowerCase();
             }
+            this.sandbox.sulu.saveUserSetting('sulucontactextension.list-type', item.name.toLowerCase());
             this.sandbox.emit('husky.datagrid.' + constants.datagridInstanceName + '.url.update', {'type': type});
             this.sandbox.emit('sulu.router.navigate', url, false);
         },
@@ -209,6 +210,7 @@ define([
         }
         // define string urlAddition if accountType is set
         if (!!this.options.accountType) {
+            this.sandbox.sulu.saveUserSetting('sulucontactextension.list-type', this.options.accountType.toLowerCase());
             if (!accountType) {
                 throw 'accountType ' + accountType + ' does not exist!';
             }

@@ -140,7 +140,7 @@ class AccountController extends SuluAccountController
                     $em->flush();
 
                     // get api entity
-                    $accountManager = $this->getContactManager();
+                    $accountManager = $this->getAccountManager();
                     $locale = $this->getUser()->getLocale();
                     $acc = $accountManager->getAccount($accountEntity, $locale);
 
