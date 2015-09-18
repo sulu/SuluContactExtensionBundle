@@ -8,7 +8,7 @@
  */
 
 define([
-    'services/sulucontact/account-router',
+    'services/sulucontact/account-manager',
     'services/husky/util',
     'services/husky/mediator',
     'sulucontactextension/models/termsOfPayment',
