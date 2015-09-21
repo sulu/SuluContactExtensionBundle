@@ -63,9 +63,11 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * Returns items for header
-         * @param accountTypes
-         * @param key
+         * Returns items for header.
+         *
+         * @param {Object} accountTypes
+         * @param {String} key
+         *
          * @returns {Object}
          */
         getHeaderItem = function(accountTypes, key) {
@@ -87,7 +89,7 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * Sets header toolbar with conversion options according to configuration
+         * Sets header toolbar with conversion options according to configuration.
          */
         setHeaderToolbar = function(accountType) {
             if (!accountType.convertableTo || !Object.keys(accountType.convertableTo).length) {
@@ -98,7 +100,8 @@ define(['app-config'], function(AppConfig) {
     return {
 
         /**
-         * sets header data: breadcrumb, headline and content tabs for account
+         * Sets header data: breadcrumb, headline and content tabs for account.
+         *
          * @param {Object} account Backbone-Entity
          * @param {String} [accountTypeName] Name of account entity
          */
@@ -112,8 +115,10 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * Generates array of conversion options for a specific account type
-         * @param account the account data
+         * Generates array of conversion options for a specific account type.
+         *
+         * @param {Object} account the account data
+         *
          * @returns {Array}
          */
         getItemsForConvertOperation: function(account) {
@@ -133,9 +138,11 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * returns account Type-Object of a given account
-         * @param account account to get type from
-         * @param accountTypeName if just name of type is given
+         * Returns account Type-Object of a given account.
+         *
+         * @param {Object} account account to get type from
+         * @param {String} accountTypeName if just name of type is given
+         *
          * @returns {Object}
          */
         getAccountType: function(account, accountTypeName) {
@@ -143,8 +150,10 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * returns account-type–ID based on account-type-name
-         * @param accountTypeName
+         * Returns account-type–ID based on account-type-name.
+         *
+         * @param {String} accountTypeName
+         *
          * @returns {Number}
          */
         getAccountTypeIdByTypeName: function(accountTypeName) {
@@ -152,14 +161,23 @@ define(['app-config'], function(AppConfig) {
         },
 
         /**
-         * returns account-type–name based on account-type-id
-         * @param accountTypeId
+         * Returns account-type–name based on account-type-id.
+         *
+         * @param {Number} accountTypeId
+         *
          * @returns {String}
          */
         getAccountTypeNameById: function(accountTypeId) {
             return this.getAccountTypeById(accountTypeId).name;
         },
 
+        /**
+         * Returns account type by id.
+         *
+         * @param {Number} id
+         *
+         * @returns {String}
+         */
         getAccountTypeById: function(id) {
             return getAccountType.call(this, {id: id, type: id});
         }
