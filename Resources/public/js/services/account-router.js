@@ -7,7 +7,11 @@
  * with this source code in the file LICENSE.
  */
 
-define(['services/husky/mediator', 'services/sulucontact/account-router'], function(mediator, BaseRouter) {
+define([
+    'services/husky/mediator',
+    'services/sulucontactextension/account-header',
+    'services/sulucontact/account-router'
+], function(Mediator, AccountHeader, BaseRouter) {
 
     'use strict';
 
@@ -19,8 +23,9 @@ define(['services/husky/mediator', 'services/sulucontact/account-router'], funct
     AccountRouter.prototype = BaseRouter;
     AccountRouter.prototype.constructor = AccountRouter;
 
-    AccountRouter.prototype.toAdd = function(type) {
-        mediator.emit('sulu.router.navigate', 'contacts/accounts/add/type:' + type, true, true);
+    AccountRouter.prototype.toAdd = function(data) {
+        var typeName = AccountHeader.getAccountTypeNameById(data.type);
+        Mediator.emit('sulu.router.navigate', 'contacts/accounts/add/type:' + typeName, true, true);
     };
 
     AccountRouter.prototype.toList = function(type) {
@@ -29,7 +34,7 @@ define(['services/husky/mediator', 'services/sulucontact/account-router'], funct
         if (!!type) {
             url += '/type:' + type;
         }
-        mediator.emit('sulu.router.navigate', url);
+        Mediator.emit('sulu.router.navigate', url);
     };
 
     AccountRouter.getInstance = function() {

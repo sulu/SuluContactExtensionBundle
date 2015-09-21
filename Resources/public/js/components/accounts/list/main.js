@@ -60,7 +60,8 @@ define([
                 type = accountTypes[index];
                 items.push({
                     id: parseInt(type.id, 10),
-                    name: this.sandbox.translate(type.translation)
+                    name: this.sandbox.translate(type.translation),
+                    key: type.name
                 });
             }
 
@@ -95,7 +96,7 @@ define([
 
             if (item.id !== 'all') {
                 type = item.id;
-                url += '/type:' + item.name.toLowerCase();
+                url += '/type:' + item.key.toLowerCase();
             }
             this.sandbox.sulu.saveUserSetting('sulucontactextension.list-type', item.name.toLowerCase());
             this.sandbox.emit('husky.datagrid.' + constants.datagridInstanceName + '.url.update', {'type': type});
@@ -103,7 +104,7 @@ define([
         },
 
         addNewAccount = function(type) {
-            AccountRouter.toAdd(type);
+            AccountRouter.toAdd({type: type});
         },
 
         clickCallback = function(id) {
@@ -149,22 +150,22 @@ define([
                     {
                         id: 'add-basic',
                         title: this.sandbox.translate('contact.account.add-basic'),
-                        callback: addNewAccount.bind(this, 'basic')
+                        callback: addNewAccount.bind(this, 0)
                     },
                     {
                         id: 'add-lead',
                         title: this.sandbox.translate('contact.account.add-lead'),
-                        callback: addNewAccount.bind(this, 'lead')
+                        callback: addNewAccount.bind(this, 1)
                     },
                     {
                         id: 'add-customer',
                         title: this.sandbox.translate('contact.account.add-customer'),
-                        callback: addNewAccount.bind(this, 'customer')
+                        callback: addNewAccount.bind(this, 2)
                     },
                     {
                         id: 'add-supplier',
                         title: this.sandbox.translate('contact.account.add-supplier'),
-                        callback: addNewAccount.bind(this, 'supplier')
+                        callback: addNewAccount.bind(this, 3)
                     }
                 ]
             }
