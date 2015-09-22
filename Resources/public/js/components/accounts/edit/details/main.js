@@ -7,24 +7,20 @@
  * with this source code in the file LICENSE.
  */
 
-define(['config', 'widget-groups', 'sulucontact/components/accounts/components/form/main'], function(Config, WidgetGroups, SuluBaseForm) {
+define(['config', 'sulucontact/components/accounts/edit/details/main'], function(Config, SuluBaseForm) {
 
     'use strict';
 
 
-    var BaseForm = function() {
-        },
-
-        Form = function() {
-        },
-
+    var BaseForm = function() {},
+        Form = function() {},
         baseForm,
 
         initResponsibleContactSelect = function(formData) {
             var preselectedResponsibleContactId = !!formData.responsiblePerson ? formData.responsiblePerson.id : null;
             this.responsiblePersons = null;
 
-            this.sandbox.util.load(this.contactBySystemURL)
+            this.sandbox.util.load('api/contacts?bySystem=true')
                 .then(function(response) {
                     this.responsiblePersons = response._embedded.contacts;
                     this.sandbox.start([
@@ -55,6 +51,23 @@ define(['config', 'widget-groups', 'sulucontact/components/accounts/components/f
     Form.prototype = new BaseForm();
     Form.prototype.constructor = Form;
 
+    Form.prototype.layout = function() {
+        var layout = baseForm.layout.call(this);
+        layout.sidebar = {
+            width: 'max',
+            cssClasses: 'sidebar-padding-50'
+        };
+        return layout;
+    };
+
+    Form.prototype.initialize = function() {
+        baseForm.initialize.call(this);
+
+        if (!!this.data && !!this.data.id) {
+            this.sandbox.emit('sulu.sidebar.set-widget', '/admin/widget-groups/account-detail?account=' + this.data.id);
+        }
+    };
+
     Form.prototype.formInitializedHandler = function(data) {
         baseForm.formInitializedHandler.call(this, data);
 
@@ -66,7 +79,7 @@ define(['config', 'widget-groups', 'sulucontact/components/accounts/components/f
 
         this.sandbox.on('husky.select.responsible-person.selected.item', function(id) {
             if (id > 0) {
-                this.setHeaderBar(false);
+                this.sandbox.emit('sulu.tab.dirty');
             }
         }.bind(this));
     };

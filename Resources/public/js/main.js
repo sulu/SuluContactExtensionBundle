@@ -10,10 +10,16 @@
 require.config({
     paths: {
         sulucontactextension: '../../sulucontactextension/js',
-        '__component__$accounts/components/form@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/form/main',
-        '__component__$accounts/components/list@sulucontact': '/bundles/sulucontactextension/js/components/accounts/components/list/main',
-        '__component__$accounts@sulucontact': '/bundles/sulucontactextension/js/components/accounts/main',
-        'accountsutil/header': '/bundles/sulucontactextension/js/components/accounts/util/header'
+        '__component__$documents-tab@sulucontact': '/bundles/sulucontactextension/js/components/documents-tab/main',
+        '__component__$accounts/edit@sulucontact': '/bundles/sulucontactextension/js/components/accounts/edit/main',
+        '__component__$accounts/edit/details@sulucontact': '/bundles/sulucontactextension/js/components/accounts/edit/details/main',
+        '__component__$contacts/edit/details@sulucontact': '/bundles/sulucontactextension/js/components/contacts/edit/details/main',
+        '__component__$accounts/edit/contacts@sulucontact': '/bundles/sulucontactextension/js/components/accounts/edit/contacts/main',
+        '__component__$accounts/list@sulucontact': '/bundles/sulucontactextension/js/components/accounts/list/main',
+        '__component__$contacts/list@sulucontact': '/bundles/sulucontactextension/js/components/contacts/list/main',
+        'services/sulucontactextension/account-router': '../../sulucontactextension/js/services/account-router',
+        'services/sulucontactextension/account-manager': '../../sulucontactextension/js/services/account-manager',
+        'services/sulucontactextension/account-header': '../../sulucontactextension/js/services/account-header'
     }
 });
 
@@ -32,7 +38,7 @@ define(function() {
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/type::typeid',
                 callback: function(accountType) {
-                    this.html('<div data-aura-component="accounts@sulucontact" data-aura-display="list" data-aura-account-type="' + accountType + '" />');
+                    return '<div data-aura-component="accounts/list@sulucontactextension" data-aura-account-type="' + accountType + '"/>';
                 }
             });
 
@@ -40,12 +46,9 @@ define(function() {
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/add/type::id',
                 callback: function(accountType) {
-                    this.html(
-                        '<div data-aura-component="accounts/components/content@sulucontact" data-aura-account-type="' + accountType + '" />'
-                    );
+                    return '<div data-aura-component="accounts/edit@sulucontact" data-aura-account-type="' + accountType + '"/>';
                 }
             });
-
         }
     };
 });

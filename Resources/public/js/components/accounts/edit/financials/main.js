@@ -7,15 +7,12 @@
  * with this source code in the file LICENSE.
  */
 
-define(['widget-groups'], function(WidgetGroups) {
+define(['widget-groups', 'services/sulucontactextension/account-manager'], function(WidgetGroups, AccountManager) {
 
     'use strict';
 
     var formSelector = '#bank-account-form',
 
-        defaults = {
-            headline: 'contact.accounts.title'
-        },
         constants = {
             overlayIdTermsOfPayment: 'overlayContainerTermsOfPayment',
             overlayIdTermsOfDelivery: 'overlayContainerTermsOfDelivery',
@@ -47,15 +44,12 @@ define(['widget-groups'], function(WidgetGroups) {
         templates: ['/admin/contact/template/account/financials'],
 
         initialize: function() {
-
-            this.options = this.sandbox.util.extend(true, {}, defaults, this.options);
-            this.saved = true;
+            this.options = this.sandbox.util.extend(true, {}, this.options);
+            this.options.data = this.options.data();
 
             this.form = '#financials-form';
             this.termsOfDeliveryInstanceName = 'terms-of-delivery';
             this.termsOfPaymentInstanceName = 'terms-of-payment';
-
-            this.setHeaderBar(true);
 
             this.render();
 
@@ -64,6 +58,10 @@ define(['widget-groups'], function(WidgetGroups) {
             if (!!this.options.data && !!this.options.data.id && WidgetGroups.exists('account-detail')) {
                 this.initSidebar('/admin/widget-groups/account-detail?account=', this.options.data.id);
             }
+        },
+
+        destroy: function() {
+            this.cleanUp();
         },
 
         initSidebar: function(url, id) {
@@ -154,32 +152,13 @@ define(['widget-groups'], function(WidgetGroups) {
         },
 
         bindCustomEvents: function() {
-            // delete account
-            this.sandbox.on('sulu.header.toolbar.delete', function() {
-                this.sandbox.emit('sulu.contacts.account.delete', this.options.data.id);
-            }, this);
+            this.sandbox.on('husky.select.terms-of-delivery.save', AccountManager.saveTerms.bind(this, 'delivery'));
+            this.sandbox.on('husky.select.terms-of-payment.save', AccountManager.saveTerms.bind(this, 'payment'));
+            this.sandbox.on('husky.select.terms-of-delivery.delete', AccountManager.deleteTerms.bind(this, 'delivery'));
+            this.sandbox.on('husky.select.terms-of-payment.delete', AccountManager.deleteTerms.bind(this, 'payment'));
 
             // account saved
-            this.sandbox.on('sulu.contacts.accounts.financials.saved', function(data) {
-                // reset forms data
-                this.options.data = data;
-
-                // TODO needed? problems?
-                this.setFormData(data);
-                this.setHeaderBar(true);
-            }, this);
-
-            // account saved
-            this.sandbox.on('sulu.header.toolbar.save', function() {
-                this.submit();
-            }, this);
-
-            // back to list
-            this.sandbox.on('sulu.header.back', function() {
-                this.sandbox.emit('sulu.contacts.accounts.list');
-            }, this);
-
-            this.sandbox.on('sulu.router.navigate', this.cleanUp.bind(this));
+            this.sandbox.on('sulu.tab.save', this.submit.bind(this));
         },
 
         /**
@@ -194,49 +173,46 @@ define(['widget-groups'], function(WidgetGroups) {
         submit: function() {
             if (this.sandbox.form.validate(this.form)) {
                 var data = this.sandbox.form.getData(this.form);
-                // TODO create event for saving accounts
                 this.sandbox.emit('sulu.contacts.accounts.financials.save', data);
+                this.sandbox.emit('sulu.tab.saving');
+                AccountManager.saveFinancials(data).then(function(savedData) {
+                    this.sandbox.emit('sulu.tab.saved', savedData, true);
+                    this.options.data = savedData;
+                    // TODO needed? problems?
+                    this.setFormData(data);
+                }.bind(this));
             }
-        },
-
-        /** @var Bool saved - defines if saved state should be shown */
-        setHeaderBar: function(saved) {
-            if (saved !== this.saved) {
-                var type = (!!this.options.data && !!this.options.data.id) ? 'edit' : 'add';
-                this.sandbox.emit('sulu.header.toolbar.state.change', type, saved, true);
-            }
-            this.saved = saved;
         },
 
         listenForChange: function() {
             this.sandbox.dom.on(this.form, 'change', function() {
-                this.setHeaderBar(false);
+                this.sandbox.emit('sulu.tab.dirty');
             }.bind(this), '.changeListener select, ' +
                 '.changeListener input, ' +
                 '.changeListener textarea');
 
             this.sandbox.dom.on(this.form, 'keyup', function() {
-                this.setHeaderBar(false);
+                this.sandbox.emit('sulu.tab.dirty');
             }.bind(this), '.changeListener select, ' +
                 '.changeListener input, ' +
                 '.changeListener textarea');
 
             // if a field-type gets changed or a field gets deleted
             this.sandbox.on('sulu.contact-form.changed', function() {
-                this.setHeaderBar(false);
+                this.sandbox.emit('sulu.tab.dirty');
             }.bind(this));
 
             this.sandbox.on('husky.select.' + this.termsOfDeliveryInstanceName + '.selected.item', function(id) {
                 if (id > 0) {
                     this.selectedTermsOfDelivery = id;
-                    this.setHeaderBar(false);
+                    this.sandbox.emit('sulu.tab.dirty');
                 }
             }.bind(this));
 
             this.sandbox.on('husky.select.' + this.termsOfPaymentInstanceName + '.selected.item', function(id) {
                 if (id > 0) {
                     this.selectedTermsOfPayment = id;
-                    this.setHeaderBar(false);
+                    this.sandbox.emit('sulu.tab.dirty');
                 }
             }.bind(this));
         },
