@@ -8,7 +8,7 @@
  */
 
 define([
-    'sulucontact/components/accounts/edit/contacts/main',
+    'sulucontact/components/accounts/edit/contacts/main'
 ], function(SuluBaseContacts) {
 
     'use strict';
@@ -25,12 +25,15 @@ define([
     Contacts.prototype.constructor = Contacts;
 
     Contacts.prototype.layout = function() {
-        var layout = baseContacts.layout.call(this);
-        layout.sidebar = {
-            width: 'max',
-            cssClasses: 'sidebar-padding-50'
+        return {
+            content: {
+                width: 'fixed'
+            },
+            sidebar: {
+                width: 'max',
+                cssClasses: 'sidebar-padding-50'
+            }
         };
-        return layout;
     };
 
     Contacts.prototype.initialize = function() {

@@ -39,12 +39,17 @@ define([
     };
 
     Form.prototype.layout = function() {
-        var layout = baseForm.layout.call(this);
-        layout.sidebar = {
-            width: 'max',
-            cssClasses: 'sidebar-padding-50'
+        return {
+            content: {
+                width: 'fixed',
+                leftSpace: false,
+                rightSpace: false
+            },
+            sidebar: {
+                width: 'max',
+                cssClasses: 'sidebar-padding-50'
+            }
         };
-        return layout;
     };
 
     return new Form();

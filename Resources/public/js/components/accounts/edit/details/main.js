@@ -52,12 +52,17 @@ define(['config', 'sulucontact/components/accounts/edit/details/main'], function
     Form.prototype.constructor = Form;
 
     Form.prototype.layout = function() {
-        var layout = baseForm.layout.call(this);
-        layout.sidebar = {
-            width: 'max',
-            cssClasses: 'sidebar-padding-50'
+        return {
+            content: {
+                width: 'fixed',
+                leftSpace: false,
+                rightSpace: false
+            },
+            sidebar: {
+                width: 'max',
+                cssClasses: 'sidebar-padding-50'
+            }
         };
-        return layout;
     };
 
     Form.prototype.initialize = function() {
