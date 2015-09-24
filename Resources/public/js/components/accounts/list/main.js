@@ -137,6 +137,8 @@ define([
         var tabs = false;
         var tabConfigs = getTabConfigs.call(this);
 
+        header.title = 'contact.accounts.title';
+
         if (!!tabConfigs) {
             tabs = {
                 data: tabConfigs.data,
