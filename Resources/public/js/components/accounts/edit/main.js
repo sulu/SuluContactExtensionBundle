@@ -69,7 +69,8 @@ define([
     };
 
     Edit.prototype.toList = function() {
-        AccountRouter.toList(this.sandbox.sulu.getUserSetting('sulucontactextension.list-type'));
+        var accountType = AccountHeader.getAccountType(this.data);
+        AccountRouter.toList(accountType.name);
     };
 
     Edit.prototype.bindCustomEvents = function() {

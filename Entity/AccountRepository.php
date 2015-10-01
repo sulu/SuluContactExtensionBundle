@@ -90,7 +90,6 @@ class AccountRepository extends SuluAccountRepository
             }
 
             $query = $qb->getQuery();
-            $query->setHint(Query::HINT_FORCE_PARTIAL_LOAD, true);
             $query->setParameter('accountId', $id);
 
             return $query->getSingleResult();
