@@ -1,33 +1,51 @@
 {% if data is defined and data is not null %}
+    {% set displayedMainCompanyLabel = false %}
+    {% set displayedCompanyLabel = false %}
+
     {% for account in data %}
-            {% if loop.first %}
-            <div class="grid-row m-bottom-30">
-                <h5 class="label"><%=translate('contacts.sidebar.mainCompany')%></h5>
-            {% elseif loop.index0 == 1 %}
-            <div class="grid-row m-bottom-15 m-top-15">
-                <h5 class="label"><%=translate('contacts.sidebar.company')%></h5>
-            {% else %}
-                <div class="grid-row m-bottom-15 m-top-15">
-                {% endif %}
+        {% set rowCssClasses = 'm-bottom-15 m-top-15' %}
+        {% set companyLabel = '' %}
 
-            <h4 class="m-top-0 m-bottom-0 action" data-id="{{ account.id }}" id="main-account">{{ account.name }}</h4>
+        {% if account.main and not displayedMainCompanyLabel %}
+            {% set displayedMainCompanyLabel = true %}
+            {% set companyLabel = 'contacts.sidebar.mainCompany' %}
+            {% set rowCssClasses = 'm-bottom-30' %}
+        {% elseif not account.main and not displayedCompanyLabel %}
+            {% set displayedCompanyLabel = true %}
+            {% set companyLabel = 'contacts.sidebar.company' %}
+        {% endif %}
 
-            {% if account.phone is not empty %}
-                <span class="block grey">(<%=translate('public.phone')%>) {{ account.phone }}</span>
+        <div class="grid-row {{ rowCssClasses }}">
+            {% if companyLabel %}
+                <h5 class="label"><%=translate('{{ companyLabel }}')%></h5>
             {% endif %}
 
-            <span class="block">
-                <a class="action" href="mailto:{{ account.email }}">{{ account.email }}</a>
-            </span>
+            <h4 class="m-top-0 m-bottom-0 action" data-id="{{ account.id }}" id="main-account">
+                {{ account.name }}
+            </h4>
+
+            {% if account.phone is not empty %}
+                <span class="block grey">
+                    (<%=translate('public.phone')%>) {{ account.phone }}
+                </span>
+            {% endif %}
+
+            {% if account.email is not empty %}
+                <span class="block">
+                    <a class="action" href="mailto:{{ account.email }}">{{ account.email }}</a>
+                </span>
+            {% endif %}
 
             {% if account.url is not empty %}
-            <span class="block">
-                <a class="action" href="http://{{ account.url }}" target="_blank">{{ account.url }}</a>
-            </span>
+                <span class="block">
+                    <a class="action" href="{{ account.url }}" target="_blank">
+                        {{ account.url }}
+                    </a>
+                </span>
             {% endif %}
         </div>
         {% if not (loop.last or loop.first) %}
-        <hr/>
+            <hr/>
         {% endif %}
     {% endfor %}
 {% endif %}
