@@ -1,10 +1,12 @@
 {% set smallDisplay = (display is not defined or not 'small') ? true : false %}
+{% set smallDisplayClass = smallDisplay ? 'grid-row m-bottom-30' : '' %}
 
 {% if address is defined %}
-    <div {% if smallDisplay %}class="grid-row m-bottom-30"{% endif %}>
+    <div class="{{ smallDisplayClass }}">
         {% if smallDisplay %}
             <h5 class="label"><%=translate('public.address')%></h5>
         {% endif %}
+
         <span class="block">
             {% if address.street is defined or address.number is defined %}
                 {{ address.street }}
