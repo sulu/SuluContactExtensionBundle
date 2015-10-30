@@ -8,46 +8,68 @@
             <div id="image-content"></div>
             <div id="image-dropzone"></div>
         </div>
+
         <div class="content">
             <div class="form-group grid-row">
-                <label for="name" class="required"><%=translate('contact.accounts.name')%></label>
+                <label for="name" class="required">
+                    <%=translate('contact.accounts.name')%>
+                </label>
 
                 <div>
-                    <input class="form-element input-bold" type="text" id="name"
+                    <input class="form-element input-bold"
+                           type="text"
+                           id="name"
                            data-validation-required="true"
                            data-validation-min-length="3"
                            data-mapper-property="name"/>
                 </div>
             </div>
+
             <div class="grid-row">
                 <div class="grid-col-6">
                     <div class="from-group">
-                        <label for="corporation"><%=translate('contact.accounts.corporation')%></label>
+                        <label for="corporation">
+                            <%=translate('contact.accounts.corporation')%>
+                        </label>
                         <div>
-                            <input class="form-element" type="text" id="corporation" data-mapper-property="corporation"/>
+                            <input class="form-element"
+                                   type="text"
+                                   id="corporation"
+                                   data-mapper-property="corporation"/>
                         </div>
                     </div>
                 </div>
+
                 <div class="grid-col-6 form-group">
                     <div class="from-group">
-                        <label for="responsiblePerson"><%=translate('contact.accounts.responsiblePerson')%></label>
+                        <label for="responsiblePerson">
+                            <%=translate('contact.accounts.responsiblePerson')%>
+                        </label>
 
-                        <div id="responsiblePerson" data-mapper-property="responsiblePerson" data-type="husky-select"
+                        <div id="responsiblePerson"
+                             data-mapper-property="responsiblePerson"
+                             data-type="husky-select"
                              data-form="true"></div>
                     </div>
                 </div>
             </div>
+
             <div class="grid-row">
                 <div class="grid-col-6">
                     <div class="form-group">
-                        <label for="companyInput"><%=translate('contact.accounts.company')%></label>
+                        <label for="companyInput">
+                            <%=translate('contact.accounts.company')%>
+                        </label>
 
                         <div id="company"></div>
                     </div>
                 </div>
+
                 <div class="grid-col-6">
                     <div class="form-group">
-                        <label for="vat"><%=translate('contact.accounts.uid')%></label>
+                        <label for="vat">
+                            <%=translate('contact.accounts.uid')%>
+                        </label>
 
                         <div id="vat"
                              data-form="true"
@@ -66,7 +88,9 @@
 
     <div class="grid form-horizontal">
         <div class="grid-row form-group">
-            <label class="top p-top-10"><%= translate('contact.contacts.categories.label') %></label>
+            <label class="top p-top-10">
+                <%= translate('contact.contacts.categories.label') %>
+            </label>
 
             <div id="categories">
                 <div data-aura-component="datagrid@husky"

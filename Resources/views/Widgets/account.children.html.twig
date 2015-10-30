@@ -1,36 +1,44 @@
 {% if data is defined and data is not null %}
     {% for account in data %}
-        {% if loop.first %}
         <div class="grid-row m-bottom-15 m-top-15">
-            <h5 class="label"><%=translate('contacts.sidebar.company.subsidiaries')%></h5>
-        {% else %}
-            <div class="grid-row m-bottom-15 m-top-15">
-        {% endif %}
+            {% if loop.first %}
+                <h5 class="label"><%=translate('contacts.sidebar.company.subsidiaries')%></h5>
+            {% endif %}
 
-        <h4 class="m-top-0 m-bottom-0 action subsidiary-account" data-id="{{ account.id }}">{{ account.name }}</h4>
+            <h4 class="m-top-0 m-bottom-0 action subsidiary-account" data-id="{{ account.id }}">
+                {{ account.name }}
+            </h4>
 
-        {% if account.phone is not empty %}
-            <span class="block">(<%=translate('public.phone')%>) {{ account.phone }}</span>
-        {% endif %}
+            {% if account.phone is not empty %}
+                <span class="block">
+                    (<%=translate('public.phone')%>) {{ account.phone }}
+                </span>
+            {% endif %}
 
-        <span class="block">
-            <a class="action" href="mailto:{{ account.email }}">{{ account.email }}</a>
-        </span>
+            {% if account.email is not empty %}
+                <span class="block">
+                    <a class="action" href="mailto:{{ account.email }}">
+                        {{ account.email }}
+                    </a>
+                </span>
+            {% endif %}
 
-        {% if account.url is not empty %}
-        <span class="block">
-            <a class="action" href="http://{{ account.url }}" target="_blank">{{ account.url }}</a>
-        </span>
-        {% endif %}
+            {% if account.url is not empty %}
+                <span class="block">
+                    <a class="action" href="{{ account.url }}" target="_blank">
+                        {{ account.url }}
+                    </a>
+                </span>
+            {% endif %}
 
-        {% if account.address is defined %}
-            {% include 'SuluContactExtensionBundle:Widgets:Partials/address.partial.html.twig' with
-            {'address': account.address, 'display': 'small'} only %}
-        {% endif %}
+            {% if account.address is defined %}
+                {% include 'SuluContactExtensionBundle:Widgets:Partials/address.partial.html.twig' with
+                     {'address': account.address, 'display': 'small'} only %}
+            {% endif %}
 
         </div>
         {% if not (loop.last) %}
-        <hr/>
+            <hr/>
         {% endif %}
     {% endfor %}
 {% endif %}
