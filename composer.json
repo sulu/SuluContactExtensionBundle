@@ -3,11 +3,10 @@
     "type": "sulu-bundle",
     "description": "This bundle appends the crm approach to the standard contact bundle",
     "license": "MIT",
-    "version": "dev-develop",
     "keywords": ["contact", "crm"],
     "require": {
         "php": ">=5.4",
-        "sulu/sulu": "dev-develop"
+        "sulu/sulu": "1.1.*@dev"
     },
     "require-dev": {
 	"jackalope/jackalope-doctrine-dbal": "~1.2.0"
