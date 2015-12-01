@@ -328,7 +328,7 @@ class AccountController extends SuluAccountController
             'responsiblePerson',
             'contact.accounts.responsiblePerson',
             ' ',
-            false,
+            true,
             false,
             'string',
             '',
