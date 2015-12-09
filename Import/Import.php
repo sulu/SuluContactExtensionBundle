@@ -760,9 +760,6 @@ class Import
         if ($this->checkData('account_corporation', $data)) {
             $account->setCorporation($data['account_corporation']);
         }
-        if ($this->checkData('account_disabled', $data)) {
-            $account->setDisabled($this->getBoolValue($data['account_disabled']));
-        }
         if ($this->checkData('account_uid', $data)) {
             $account->setUid($this->removeWhiteSpaces($data['account_uid']));
         }
@@ -1451,10 +1448,6 @@ class Import
 
         if ($this->checkData('contact_birthday', $data)) {
             $contact->setBirthday(new \DateTime($data['contact_birthday']));
-        }
-
-        if ($this->checkData('contact_disabled', $data)) {
-            $contact->setDisabled($this->getBoolValue($data['contact_disabled']));
         }
 
         // check company
