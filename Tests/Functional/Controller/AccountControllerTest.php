@@ -59,19 +59,16 @@ class AccountControllerTest extends SuluTestCase
         $account = new Account();
         $account->setName('Company');
         $account->setType(Account::TYPE_BASIC);
-        $account->setDisabled(0);
         $account->setPlaceOfJurisdiction('Feldkirch');
 
         $parentAccount = new Account();
         $parentAccount->setName('Parent');
         $parentAccount->setType(Account::TYPE_BASIC);
-        $parentAccount->setDisabled(0);
         $parentAccount->setPlaceOfJurisdiction('Feldkirch');
 
         $childAccount = new Account();
         $childAccount->setName('Child');
         $childAccount->setType(Account::TYPE_BASIC);
-        $childAccount->setDisabled(0);
         $childAccount->setPlaceOfJurisdiction('Feldkirch');
         $childAccount->setParent($parentAccount);
 
@@ -160,7 +157,6 @@ class AccountControllerTest extends SuluTestCase
         $contact->setFirstName("Vorname");
         $contact->setLastName("Nachname");
         $contact->setMiddleName("Mittelname");
-        $contact->setDisabled(0);
         $contact->setFormOfAddress(0);
 
         $accountContact = new AccountContact();
