@@ -3,7 +3,6 @@
     "type": "sulu-bundle",
     "description": "This bundle appends the crm approach to the standard contact bundle",
     "license": "MIT",
-    "version": "dev-develop",
     "keywords": ["contact", "crm"],
     "require": {
         "php": ">=5.4",
