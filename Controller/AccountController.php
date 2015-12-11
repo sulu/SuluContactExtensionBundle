@@ -13,14 +13,16 @@ namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations\Post;
 use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Controller\AccountController as SuluAccountController;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilder;
+use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineConcatenationFieldDescriptor;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
-use Symfony\Component\HttpFoundation\Request;
+use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineJoinDescriptor;
 use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
@@ -297,6 +299,41 @@ class AccountController extends SuluAccountController
             false,
             '',
             '150px'
+        );
+
+        $responsibleContactJoin = array(
+            $this->container->getParameter('sulu.model.contact.class') => new DoctrineJoinDescriptor(
+                $this->container->getParameter('sulu.model.contact.class'),
+                $this->getAccountEntityName() . '.responsiblePerson'
+            )
+        );
+
+        $this->fieldDescriptors['responsiblePerson'] = new DoctrineConcatenationFieldDescriptor(
+            array(
+                new DoctrineFieldDescriptor(
+                    'firstName',
+                    'contact',
+                    $this->container->getParameter('sulu.model.contact.class'),
+                    'contact.contacts.contact',
+                    $responsibleContactJoin
+                ),
+                new DoctrineFieldDescriptor(
+                    'lastName',
+                    'contact',
+                    $this->container->getParameter('sulu.model.contact.class'),
+                    'contact.contacts.contact',
+                    $responsibleContactJoin
+                )
+            ),
+            'responsiblePerson',
+            'contact.accounts.responsiblePerson',
+            ' ',
+            true,
+            false,
+            'string',
+            '',
+            '160px',
+            false
         );
     }
 }
