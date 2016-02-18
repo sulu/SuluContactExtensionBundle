@@ -11,8 +11,9 @@ define([
     'sulucontact/components/accounts/edit/main',
     'services/sulucontactextension/account-header',
     'services/sulucontactextension/account-router',
-    'services/sulucontactextension/account-manager'
-], function(SuluBaseEdit, AccountHeader, AccountRouter, AccountManager) {
+    'services/sulucontactextension/account-manager',
+    'services/sulucontact/contact-router'
+], function(SuluBaseEdit, AccountHeader, AccountRouter, AccountManager, ContactRouter) {
 
     'use strict';
 
@@ -66,6 +67,13 @@ define([
     Edit.prototype.initialize = function() {
         baseEdit.initialize.call(this);
         AccountHeader.setHeader.call(this, this.data);
+
+        this.sandbox.dom.off('#sidebar');
+
+        this.sandbox.dom.on('#sidebar', 'click', function(event) {
+            var id = this.sandbox.dom.data(event.currentTarget, 'id');
+            ContactRouter.toEdit(id);
+        }.bind(this), '#main-contact');
     };
 
     Edit.prototype.toList = function() {
