@@ -10,6 +10,7 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Import;
 
+use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -544,7 +545,6 @@ class Import
         $this->initDefaults();
 
         $row = 0;
-        $this->rowNumber = $row;
         $successCount = 0;
         $errorCount = 0;
         $this->headerData = array();
@@ -558,6 +558,7 @@ class Import
 
         while (($data = fgetcsv($handle, 0, $this->options['delimiter'], $this->options['enclosure'])) !== false) {
             try {
+                $this->rowNumber = $row + 1;
                 // for first row, save headers
                 if ($row === 0) {
                     $this->headerData = $data;
@@ -578,7 +579,12 @@ class Import
                         $result = $callback($associativeData, $row);
                     } else {
                         $this->debug(
-                            sprintf("Exclude data row %d due to exclude condition %s = %s \n", $row, $key, $value)
+                            sprintf(
+                                "Exclude data row %d due to exclude condition %s = %s \n",
+                                $this->rowNumber,
+                                $key,
+                                $value
+                            )
                         );
                     }
 
@@ -607,7 +613,9 @@ class Import
                 $this->debug(sprintf("ABORTING DUE TO DATABASE ERROR: %s \n", $dbe->getMessage()));
                 throw $dbe;
             } catch (\Exception $e) {
-                $this->debug(sprintf("ERROR while processing data row %d: %s \n", $row, $e->getMessage()));
+                $this->debug(
+                    sprintf("\nERROR while processing data row %d: %s \n", $this->rowNumber, $e->getMessage())
+                );
                 $errorCount++;
             }
 
@@ -617,10 +625,9 @@ class Import
                 break;
             }
             $row++;
-            $this->rowNumber = $row;
 
             if (self::DEBUG) {
-                print(sprintf("%d ", $row));
+                print(sprintf("%d ", $this->rowNumber));
             }
         }
         // finish with a flush
@@ -1148,12 +1155,12 @@ class Import
      */
     protected function createAddress($data, $id = 1)
     {
-        // set address
+        // Set address
         $address = new Address();
         $addAddress = false;
         $prefix = 'address' . $id . '_';
 
-        // street
+        // Street
         if ($this->checkData($prefix . 'street', $data)) {
             $street = $data[$prefix . 'street'];
 
@@ -1173,7 +1180,7 @@ class Import
             $address->setStreet($street);
             $addAddress = true;
         }
-        // number
+        // Number
         if (isset($number) || $this->checkData($prefix . 'number', $data)) {
             $number = isset($number) ? $number : $data[$prefix . 'number'];
             if (!$number) {
@@ -1181,31 +1188,38 @@ class Import
             }
             $address->setNumber($number);
         }
-        // zip
+        // Title
+        $addressTitle = '';
+        if ($this->checkData($prefix . 'title', $data)) {
+            $addressTitle = $data[$prefix . 'title'];
+            $addAddress = true;
+        }
+        $address->setTitle($addressTitle);
+        // Zip
         if ($this->checkData($prefix . 'zip', $data)) {
             $address->setZip($data[$prefix . 'zip']);
             $addAddress = true;
         }
-        // city
+        // City
         if ($this->checkData($prefix . 'city', $data)) {
             $address->setCity($data[$prefix . 'city']);
             $addAddress = true;
         }
-        // state
+        // State
         if ($this->checkData($prefix . 'state', $data)) {
             $address->setState($data[$prefix . 'state']);
             $addAddress = true;
         }
-        // extension
+        // Extension
         if ($this->checkData($prefix . 'extension', $data)) {
             $address->setAddition($data[$prefix . 'extension']);
             $addAddress = true;
         }
 
-        // define if this is a normal address or just a postbox address
+        // Define if this is a normal address or just a postbox address
         $isNormalAddress = $addAddress;
 
-        // postbox
+        // Postbox
         if ($this->checkData($prefix . 'postbox', $data)) {
             $address->setPostboxNumber($data[$prefix . 'postbox']);
             $addAddress = true;
@@ -1218,32 +1232,32 @@ class Import
             $address->setPostboxCity($data[$prefix . 'postbox_city']);
             $addAddress = true;
         }
-        // note
+        // Note
         if ($this->checkData($prefix . 'note', $data)) {
             $address->setNote(
                 $this->replaceInvalidNewLineCharacters($data[$prefix . 'note'])
             );
             $addAddress = true;
         }
-        // billing address
+        // Billing address
         if ($this->checkData($prefix . 'isbilling', $data)) {
             $address->setBillingAddress(
                 $this->getBoolValue($data[$prefix . 'isbilling'])
             );
         }
-        // delivery address
+        // Delivery address
         if ($this->checkData($prefix . 'isdelivery', $data)) {
             $address->setDeliveryAddress(
                 $this->getBoolValue($data[$prefix . 'isdelivery'])
             );
         }
-        // primary address
+        // Primary address
         if ($this->checkData($prefix . 'isprimary', $data)) {
             $address->setPrimaryAddress(
                 $this->getBoolValue($data[$prefix . 'isprimary'])
             );
         }
-        // country
+        // Country
         if ($this->checkData($prefix . 'country', $data)) {
             $country = $this->em->getRepository($this->countryEntityName)->findOneByCode(
                 $this->mapCountryCode($data[$prefix . 'country'])
@@ -1257,12 +1271,12 @@ class Import
             $addAddress = $addAddress && true;
         } else {
             if ($addAddress && $isNormalAddress) {
-                $this->debug("no country defined at line " . $this->rowNumber);
+                $this->debug(sprintf("\nWarning: No country defined at line %s\n", $this->rowNumber));
             }
             $addAddress = false;
         }
 
-        // only add address if part of it is defined
+        // Only add address if part of it is defined
         if ($addAddress) {
             if ($this->checkData($prefix . 'label', $data)) {
                 $contactLabel = 'address.' . $this->mapContactLabels($data[$prefix . 'label']);
@@ -1315,7 +1329,7 @@ class Import
             $bankIndex = 'bank' . $i;
             $prefix = $bankIndex . '_';
 
-            // if iban is set, then add bank account
+            // If iban is set, then add bank account
             if ($this->checkData($prefix . 'iban', $data)) {
 
                 $bank = new BankAccount();
@@ -1331,7 +1345,7 @@ class Import
                 if ($this->checkData($bankIndex, $data)) {
                     $bank->setBankName($data[$bankIndex]);
                 }
-                // set bank to public
+                // Set bank to public
                 if ($this->checkData($prefix . 'public', $data, 'bool')) {
                     $bank->setPublic($data[$prefix . 'public']);
                 } else {
@@ -1342,7 +1356,7 @@ class Import
                 $entity->addBankAccount($bank);
             }
 
-            // create comments for old bank addresses
+            // Create comments for old bank addresses
             if ($this->checkData($prefix . 'blz', $data)) {
                 $noteTxt = 'Old Bank Account: ';
                 $noteTxt .= 'BLZ: ';
@@ -1385,7 +1399,7 @@ class Import
     }
 
     /**
-     * Creates an contact for given row data
+     * Creates an contact for given row data.
      *
      * @param array $data
      * @param int $row
@@ -1395,26 +1409,31 @@ class Import
     protected function createContact($data, $row)
     {
         try {
-            // check if contact already exists
+            // Check if contact already exists.
             $contact = $this->getContactByData($data);
 
-            // or create a new one
+            // Or create a new one.
             if (!$contact) {
                 $contact = new Contact();
                 $this->em->persist($contact);
+
+                // Set contact data.
                 $this->setContactData($data, $contact);
             }
-            // create account relation
+
+            // Create account relation.
             $this->setAccountContactRelations($data, $contact, $row);
 
             return $contact;
         } catch (NonUniqueResultException $nur) {
             $this->debug(sprintf("Non unique result for contact at row %d \n", $row));
         }
+
+        return null;
     }
 
     /**
-     * Sets data to Contact entity by given data array
+     * Sets data to Contact entity by given data array.
      *
      * @param Contact $contact
      * @param array $data
@@ -1447,7 +1466,8 @@ class Import
         }
 
         if ($this->checkData('contact_birthday', $data)) {
-            $contact->setBirthday(new \DateTime($data['contact_birthday']));
+            $birthday = $this->createDateFromString($data['contact_birthday']);
+            $contact->setBirthday($birthday);
         }
 
         // check company
@@ -1758,11 +1778,11 @@ class Import
      */
     protected function mapCountryCode($countryCode)
     {
-        if ($mappingIndex = array_search($countryCode, $this->countryMappings)) {
-            return $mappingIndex;
-        } else {
-            return mb_strtoupper($countryCode);
+        if (array_key_exists($countryCode, $this->countryMappings)) {
+            return $this->countryMappings[$countryCode];
         }
+
+        return mb_strtoupper($countryCode);
     }
 
     /**
@@ -2138,5 +2158,21 @@ class Import
         }
 
         return false;
+    }
+
+    /**
+     * Tries to parse string into date-time
+     *
+     * @param $dateString
+     *
+     * @return DateTime
+     */
+    protected function createDateFromString($dateString)
+    {
+        try {
+            return new DateTime($dateString);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }
