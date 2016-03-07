@@ -1558,24 +1558,20 @@ class Import
     protected function checkAndCreateAccountContactRelation($index, $data, $contact, $row)
     {
         if ($this->checkData($index, $data)) {
-            $this->setAccountContactRelation($data, $contact, $row, $index);
+            $this->createAccountContactRelation($data, $contact, $row, $index);
         }
     }
 
     /**
-     * Adds a accountcontact relation if not existent.
+     * Adds an AccountContact relation if not existent.
      *
      * @param array $data
      * @param Contact $contact
      * @param int $row
      * @param string $index - account-index in data array
      */
-    protected function setAccountContactRelation($data, $contact, $row, $index)
+    protected function createAccountContactRelation($data, $contact, $row, $index)
     {
-        if (!$this->checkData($index, $data)) {
-            return;
-        }
-
         $account = $this->getAccountByKey($data[$index]);
 
         if (!$account) {
@@ -1617,11 +1613,9 @@ class Import
             $main = false;
             if ($this->checkData('contact_account_is_main', $data)) {
                 $main = $this->getBoolValue($data['contact_account_is_main']);
-            } else {
+            } elseif (!$this->mainRelationExists($contact)) {
                 // Check if main relation exists.
-                if (!$this->mainRelationExists($contact)) {
-                    $main = true;
-                }
+                $main = true;
             }
             $accountContact->setMain($main);
 
@@ -1648,7 +1642,7 @@ class Import
         if ($this->options['importContactByIds'] == true && $this->checkData('contact_id', $data)) {
             $criteria['id'] = $data['contact_id'];
         } else {
-            // Check if contacts already exists
+            // Check if contacts already exists.
             if (array_search('firstName', $this->options['contactComparisonCriteria']) !== false) {
                 if ($this->checkData('contact_firstname', $data)) {
                     $criteria['firstName'] = $data['contact_firstname'];
