@@ -480,9 +480,7 @@ class Import
         $this->debug("Create Accounts:\n");
         $this->processCsvLoop(
             $filename,
-            [$this, 'createAccount'],
-            null,
-            true
+            [$this, 'createAccount']
         );
 
         // Check for parents.
@@ -524,10 +522,10 @@ class Import
     /**
      * Loads the CSV Files and the Entities for the import.
      *
-     * @param string $filename path to file
-     * @param callable $function will be called for each row in file
-     * @param callable $postFlushCallback will be called after every flush
-     * @param bool $flushOnEveryRow If defined flush will be executed on every data row
+     * @param string $filename Path to file.
+     * @param callable $callback Will be called for each row in file.
+     * @param callable $postFlushCallback Will be called after every flush.
+     * @param bool $flushOnEveryRow If defined flush will be executed on every data row.
      *
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
@@ -561,7 +559,6 @@ class Import
                     $this->headerData = $data;
                     $this->headerCount = count($data);
                 } else {
-
                     if ($this->headerCount !== count($data)) {
                         throw new ImportException('The number of fields does not match the number of header values');
                     }
