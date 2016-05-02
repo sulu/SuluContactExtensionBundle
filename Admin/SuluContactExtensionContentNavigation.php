@@ -18,17 +18,20 @@ use Sulu\Bundle\AdminBundle\Navigation\ContentNavigationItem;
  */
 class SuluContactExtensionContentNavigation implements ContentNavigationProviderInterface
 {
-
-    public function getNavigationItems(array $options = array())
+    /**
+     * {@inheritdoc}
+     */
+    public function getNavigationItems(array $options = [])
     {
         // financial infos
         $financials = new ContentNavigationItem('navigation.financials');
         $financials->setAction('financials');
+        $financials->setPosition(80);
         $financials->setId('financials');
         $financials->setComponent('accounts/edit/financials@sulucontactextension');
-        $financials->setDisplay(array('edit'));
+        $financials->setDisplay(['edit']);
         $financials->setDisabled(true);
 
-        return array($financials);
+        return [$financials];
     }
 }
