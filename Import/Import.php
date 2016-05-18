@@ -15,6 +15,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Bundle\ContactBundle\Contact\AccountManager;
 use Sulu\Bundle\ContactBundle\Contact\ContactManager;
@@ -63,7 +64,7 @@ class Import
      *    contact already exists in Database. This will only work if contact_id is not provided (then of course id is
      *    being used for this purpose) parameters can be: firstName, lastName, email and phone.
      */
-    protected $options = array(
+    protected $options = [
         'importContactByIds' => false,
         'streetNumberSplit' => false,
         'delimiter' => ';',
@@ -74,7 +75,7 @@ class Import
             'email',
         ),
         'fixedAccountType' => false,
-    );
+    ];
 
     /**
      * Defines which columns should be excluded,
@@ -738,9 +739,10 @@ class Import
                 // If not, create new one.
                 $account = $this->createNewAccount($externalId);
             } else {
-                // Clear all relations.
+                // Otherwise, clear all relations.
                 $this->em->refresh($account);
-                $this->getAccountManager()->deleteAllRelations($account);
+
+                // $this->getAccountManager()->deleteAllRelations($account);
             }
             $this->accountExternalIds[] = $externalId;
         } // Otherwise just create a new account.
@@ -749,7 +751,7 @@ class Import
         }
 
         if ($this->checkData('account_name', $data)) {
-            $account->setName($data['account_name']);
+            $account->setName(trim($data['account_name']));
         } else {
             $this->em->detach($account);
             throw new \Exception('ERROR: account name not set');
@@ -861,11 +863,130 @@ class Import
                 }
                 $email->setEmailType($type);
 
-                $this->em->persist($email);
-                $entity->addEmail($email);
+                if (!$this->isEmailAlreadyAssigned($email, $entity)) {
+                    $this->em->persist($email);
+                    $entity->addEmail($email);
+                }
             }
         }
         $this->getContactManager()->setMainEmail($entity);
+    }
+
+    /**
+     * Checks if given email is already assigned to entity.
+     *
+     * @param Email $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isEmailAlreadyAssigned(Email $search, $entity)
+    {
+        /** @var Email $email */
+        foreach ($entity->getEmails() as $email) {
+            if ($email->getEmail() === $search->getEmail()
+                && $email->getEmailType()->getId() === $search->getEmailType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /**
+     * Checks if given address is already assigned to entity.
+     *
+     * @param Address $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isAddressAlreadyAssigned(Address $search, $entity)
+    {
+        /** @var AccountAddress $email */
+        foreach ($this->getManager($entity)->getAddressRelations($entity) as $addressRelation) {
+            /** @var Address $address */
+            $address = $addressRelation->getAddress();
+            if ($address->getStreet() === $search->getStreet()
+                && $address->getNumber() === $search->getNumber()
+                && $address->getCity() === $search->getCity()
+                && $address->getCountry() === $search->getCountry()
+                && $address->getAddressType()->getId() === $search->getAddressType()->getId()
+                && $address->getPostboxNumber() === $search->getPostboxNumber()
+                && $address->getPostboxPostcode() === $search->getPostboxPostcode()
+                && $address->getPostboxCity() === $search->getPostboxCity()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given phone is already assigned to entity.
+     *
+     * @param Phone $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isPhoneAlreadyAssigned(Phone $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getPhones() as $phone) {
+            if ($phone->getPhone() === $search->getPhone()
+                && $phone->getPhoneType()->getId() === $search->getPhoneType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given fax is already assigned to entity.
+     *
+     * @param Fax $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isFaxAlreadyAssigned(Fax $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getFaxes() as $fax) {
+            if ($fax->getFax() === $search->getFax()
+                && $fax->getFaxType()->getId() === $search->getFaxType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given url is already assigned to entity.
+     *
+     * @param Url $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isUrlAlreadyAssigned(Url $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getUrls() as $url) {
+            if ($url->getUrl() === $search->getUrl()
+                && $url->getUrlType()->getId() === $search->getUrlType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -896,8 +1017,10 @@ class Import
                 }
                 $phone->setPhoneType($type);
 
-                $this->em->persist($phone);
-                $entity->addPhone($phone);
+                if (!$this->isPhoneAlreadyAssigned($phone, $entity)) {
+                    $this->em->persist($phone);
+                    $entity->addPhone($phone);
+                }
             }
         }
         $this->getContactManager()->setMainPhone($entity);
@@ -932,8 +1055,10 @@ class Import
                 }
                 $fax->setFaxType($type);
 
-                $this->em->persist($fax);
-                $entity->addFax($fax);
+                if (!$this->isFaxAlreadyAssigned($fax, $entity)) {
+                    $this->em->persist($fax);
+                    $entity->addFax($fax);
+                }
             }
         }
         $this->getContactManager()->setMainFax($entity);
@@ -1004,9 +1129,10 @@ class Import
                 }
                 $url->setUrlType($type);
 
-                // Persist.
-                $this->em->persist($url);
-                $entity->addUrl($url);
+                if (!$this->isUrlAlreadyAssigned($url, $entity)) {
+                    $this->em->persist($url);
+                    $entity->addUrl($url);
+                }
             }
         }
         $this->getContactManager()->setMainUrl($entity);
@@ -1080,7 +1206,11 @@ class Import
             $this->em->persist($tag);
             $this->tags[$tag->getName()] = $tag;
         }
-        $entity->addTag($tag);
+
+        // Check if tag is not already assigned.
+        if (!$entity->getTags()->contains($tag)) {
+            $entity->addTag($tag);
+        }
     }
 
     /**
@@ -1147,7 +1277,6 @@ class Import
      */
     protected function createAddresses($data, $entity)
     {
-        // Add urls.
         $first = true;
         for ($i = 0, $len = 10; ++$i < $len;) {
             foreach ($data as $key => $value) {
@@ -1155,8 +1284,10 @@ class Import
                     $address = $this->createAddress($data, $i);
                     // Add address to entity.
                     if ($address !== null) {
-                        $first = $first || $address->getPrimaryAddress();
-                        $this->getManager($entity)->addAddress($entity, $address, $first);
+                        if (!$this->isAddressAlreadyAssigned($address, $entity)) {
+                            $first = $first || $address->getPrimaryAddress();
+                            $this->getManager($entity)->addAddress($entity, $address, $first);
+                        }
                     }
                     break;
                 }
@@ -1215,7 +1346,7 @@ class Import
             $addressTitle = $data[$prefix . 'title'];
             $addAddress = true;
         }
-        $address->setTitle($addressTitle);
+        $address->setTitle(trim($addressTitle));
         // Zip
         if ($this->checkData($prefix . 'zip', $data)) {
             $address->setZip($data[$prefix . 'zip']);
@@ -1428,7 +1559,7 @@ class Import
      *
      * @return Contact
      */
-    protected function createContact($data, $row)
+    protected function createContact(array $data, $row)
     {
         try {
             // Check if contact already exists.
@@ -1438,17 +1569,16 @@ class Import
             if (!$contact) {
                 $contact = new Contact();
                 $this->em->persist($contact);
-
-                // Set contact data.
-                $this->setContactData($data, $contact);
             }
 
+            // Set data on contact.
+            $this->setContactData($data, $contact);
             // Create account relation.
             $this->createAccountContactRelations($data, $contact, $row);
 
             return $contact;
         } catch (NonUniqueResultException $nur) {
-            $this->debug(sprintf("\nNon unique result for contact at row %d \n", $row));
+            $this->debug(sprintf("\nNon unique result for contact at row %d \n", $this->rowNumber));
         }
 
         return null;
@@ -1457,10 +1587,10 @@ class Import
     /**
      * Sets data to Contact entity by given data array.
      *
-     * @param Contact $contact
      * @param array $data
+     * @param Contact $contact
      */
-    protected function setContactData($data, Contact $contact)
+    protected function setContactData(array $data, Contact $contact)
     {
         if ($this->checkData('contact_firstname', $data)) {
             $contact->setFirstName($data['contact_firstname']);
@@ -1491,9 +1621,6 @@ class Import
             $birthday = $this->createDateFromString($data['contact_birthday']);
             $contact->setBirthday($birthday);
         }
-
-        // Check company.
-        $this->em->persist($contact);
 
         // Add address if set.
         $this->createAddresses($data, $contact);
@@ -1574,9 +1701,11 @@ class Import
         if (!$account) {
             $this->debug(
                 sprintf(
-                    "Could not assign contact at row %d to %s. (account could not be found)\n",
+                    "%sCould not assign contact at row %d to %s. (account could not be found)%s",
+                    PHP_EOL,
                     $row,
-                    $data[$index]
+                    $data[$index],
+                    PHP_EOL
                 )
             );
         } else {
@@ -1674,7 +1803,12 @@ class Import
         if ($isDataSet) {
             if ($type !== null) {
                 // TODO check for types
-                if ($type === 'bool' && $data[$index] != 'true' && $data[$index] != 'false' && $data[$index] != '1' && $data[$index] != '0') {
+                if ($type === 'bool'
+                    && $data[$index] != 'true'
+                    && $data[$index] != 'false'
+                    && $data[$index] != '1'
+                    && $data[$index] != '0'
+                ) {
                     throw new \InvalidArgumentException($data[$index] . ' is not a boolean!');
                 }
             }
