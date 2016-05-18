@@ -904,9 +904,9 @@ class Import
     protected function isAddressAlreadyAssigned(Address $search, $entity)
     {
         /** @var AccountAddress $email */
-        foreach ($entity->getAccountAddresses() as $accountAddress) {
+        foreach ($this->getManager($entity)->getAddressRelations($entity) as $addressRelation) {
             /** @var Address $address */
-            $address = $accountAddress->getAddress();
+            $address = $addressRelation->getAddress();
             if ($address->getStreet() === $search->getStreet()
                 && $address->getNumber() === $search->getNumber()
                 && $address->getCity() === $search->getCity()
