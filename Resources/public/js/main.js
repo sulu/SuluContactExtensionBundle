@@ -36,6 +36,14 @@ define(function() {
 
             // list all accounts
             app.sandbox.mvc.routes.push({
+                route: 'contacts/accounts',
+                callback: function() {
+                    return '<div data-aura-component="accounts/list@sulucontactextension" />';
+                }
+            });
+
+            // list all accounts with type filter
+            app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/type::typeid',
                 callback: function(accountType) {
                     return '<div data-aura-component="accounts/list@sulucontactextension" data-aura-account-type="' + accountType + '"/>';
