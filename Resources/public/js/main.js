@@ -34,7 +34,7 @@ define(function() {
         initialize: function(app) {
             app.components.addSource('sulucontactextension', '/bundles/sulucontactextension/js/components');
 
-            // list all accounts
+            // List all accounts.
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts',
                 callback: function() {
@@ -42,7 +42,7 @@ define(function() {
                 }
             });
 
-            // list all accounts with type filter
+            // List all accounts with type filter.
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/type::typeid',
                 callback: function(accountType) {
@@ -50,7 +50,7 @@ define(function() {
                 }
             });
 
-            //show for a new account
+            // Show for a new account.
             app.sandbox.mvc.routes.push({
                 route: 'contacts/accounts/add/type::id',
                 callback: function(accountType) {
