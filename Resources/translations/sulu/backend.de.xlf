@@ -14,6 +14,10 @@
                 <source>contacts.sidebar.company.subsidiaries</source>
                 <target>Filialen</target>
             </trans-unit>
+            <trans-unit id="4" resname="contacts.customer.is-active">
+                <source>contacts.customer.is-active</source>
+                <target>Aktiver Kunde</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

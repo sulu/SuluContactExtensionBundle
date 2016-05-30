@@ -49,7 +49,20 @@ define([
                     dropdownItems: AccountHeader.getItemsForConvertOperation.call(this, this.data)
                 }
             };
+
+            if (this.data.type === AccountHeader.getAccountTypeIdByTypeName('customer')) {
+                var togglerState = this.data.isActiveCustomer  ? 'toggler-on' : 'toggler';
+
+                header.toolbar.buttons.isActive = {
+                    parent: togglerState,
+                    options: {
+                        title: 'contacts.customer.is-active',
+                        hidden: true
+                    }
+                };
+            }
         }
+
         return header;
     };
 
