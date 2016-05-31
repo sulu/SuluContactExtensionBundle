@@ -300,7 +300,7 @@ class AccountController extends SuluAccountController
     protected function processIsActive(AccountInterface $account, array $data, $patch = false)
     {
         if (isset($data['isActive'])) {
-            $active = !!$data['isActive'];
+            $active = !!json_decode($data['isActive']);
             $account->setIsActive($active);
         } elseif (!$patch) {
             $account->setIsActive(null);
@@ -326,17 +326,19 @@ class AccountController extends SuluAccountController
             '150px'
         );
 
-        $this->fieldDescriptors['isActive'] = new DoctrineFieldDescriptor(
-            'isActive',
-            'isActive',
-            $this->getAccountEntityName(),
-            'contacts.is-active',
-            array(),
-            true,
-            false,
-            'checkbox_readonly',
-            '150px'
-        );
+        if ($this->container->getParameter('sulu_contact_extension.display_account_active_toggle')) {
+            $this->fieldDescriptors['isActive'] = new DoctrineFieldDescriptor(
+                'isActive',
+                'isActive',
+                $this->getAccountEntityName(),
+                'contacts.is-active',
+                array(),
+                true,
+                false,
+                'checkbox_readonly',
+                '150px'
+            );
+        }
 
         $responsibleContactJoin = array(
             $this->container->getParameter('sulu.model.contact.class') => new DoctrineJoinDescriptor(
