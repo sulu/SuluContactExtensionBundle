@@ -130,13 +130,13 @@ class Account extends SuluAccount
 
     /**
      * @VirtualProperty
-     * @SerializedName("isActiveCustomer")
+     * @SerializedName("isActive")
      * @Groups({"fullAccount"})
      *
      * @return bool
      */
-    public function isActiveCustomer()
+    public function isActive()
     {
-        return $this->entity->isActiveCustomer();
+        return $this->entity->isActive();
     }
 }

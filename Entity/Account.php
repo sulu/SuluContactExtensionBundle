@@ -43,7 +43,7 @@ class Account extends SuluAccount
     /**
      * @var bool
      */
-    private $isActiveCustomer = true;
+    private $isActive = true;
 
     /**
      * @param Contact $responsiblePerson
@@ -118,19 +118,19 @@ class Account extends SuluAccount
     /**
      * @return bool
      */
-    public function isActiveCustomer()
+    public function isActive()
     {
-        return $this->isActiveCustomer;
+        return $this->isActive;
     }
 
     /**
-     * @param bool $isActiveCustomer
+     * @param bool $isActive
      *
      * @return self
      */
-    public function setIsActiveCustomer($isActiveCustomer)
+    public function setIsActive($isActive)
     {
-        $this->isActiveCustomer = $isActiveCustomer;
+        $this->isActive = $isActive;
 
         return $this;
     }

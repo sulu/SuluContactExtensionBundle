@@ -18,7 +18,7 @@
 
         <field name="type" type="integer" column="type" nullable="false" />
 
-        <field name="isActiveCustomer" type="boolean" column="isActiveCustomer" nullable="false">
+        <field name="isActive" type="boolean" column="isActive" nullable="false">
             <options>
                 <option name="default">1</option>
             </options>

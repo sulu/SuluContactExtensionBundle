@@ -50,17 +50,15 @@ define([
                 }
             };
 
-            if (this.data.type === AccountHeader.getAccountTypeIdByTypeName('customer')) {
-                var togglerState = this.data.isActiveCustomer  ? 'toggler-on' : 'toggler';
+            var togglerState = this.data.isActive  ? 'toggler-on' : 'toggler';
 
-                header.toolbar.buttons.isActive = {
-                    parent: togglerState,
-                    options: {
-                        title: 'contacts.customer.is-active',
-                        hidden: true
-                    }
-                };
-            }
+            header.toolbar.buttons.isActive = {
+                parent: togglerState,
+                options: {
+                    title: 'contacts.is-active',
+                    hidden: true
+                }
+            };
         }
 
         return header;
