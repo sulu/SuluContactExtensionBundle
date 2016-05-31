@@ -13,6 +13,7 @@ namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations\Post;
 use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Controller\AccountController as SuluAccountController;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
@@ -40,6 +41,7 @@ class AccountController extends SuluAccountController
         $account = parent::doPost($request);
 
         $account->setType($request->get('type', 0));
+        $this->processIsActiveCustomer($account, $request->request->all());
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
         $this->processTerms($request, $account);
 
@@ -53,6 +55,7 @@ class AccountController extends SuluAccountController
     {
         parent::doPut($account, $request);
 
+        $this->processIsActiveCustomer($account, $request->request->all());
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
         $this->processTerms($request, $account);
     }
@@ -64,11 +67,12 @@ class AccountController extends SuluAccountController
     {
         parent::doPatch($account, $request, $entityManager);
 
+        $this->processIsActiveCustomer($account, $request->request->all(), true);
         $this->processTerms($request, $account);
     }
 
     /**
-     * Set responsible person from request data to account
+     * Set responsible person from request data to account.
      *
      * @param ObjectManager $em
      * @param AccountInterface $account
@@ -108,13 +112,14 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Converts an account to a different account type
-     * @Post("/accounts/{id}")
+     * Converts an account to a different account type.
      *
      * @param $id
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Post("/accounts/{id}")
+     *
+     * @return Response
      */
     public function postTriggerAction($id, Request $request)
     {
@@ -167,10 +172,10 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Converts an account to another account type when allowed
+     * Converts an account to another account type when allowed.
      *
      * @param AccountInterface $account
-     * @param $type string representation
+     * @param string $type string representation
      *
      * @throws RestException
      */
@@ -192,11 +197,11 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Checks whether transition from one type to another is allowed
+     * Checks whether transition from one type to another is allowed.
      *
-     * @param $transitionsForType
-     * @param $newAccountType
-     * @param $types
+     * @param array $transitionsForType
+     * @param int $newAccountType
+     * @param array $types
      *
      * @return bool
      */
@@ -212,11 +217,11 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Returns valid transitions for a specific accoun type
+     * Returns valid transitions for a specific accoun type.
      *
-     * @param $config
-     * @param $types
-     * @param $accountTypeName
+     * @param array $config
+     * @param array $types
+     * @param string $accountTypeName
      *
      * @return array
      */
@@ -233,9 +238,9 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Gets the account types and their numeric representation
+     * Gets the account types and their numeric representation.
      *
-     * @param $config
+     * @param array $config
      *
      * @return array
      */
@@ -250,12 +255,12 @@ class AccountController extends SuluAccountController
     }
 
     /**
-     * Processes terms of delivery and terms of payment for an account
+     * Processes terms of delivery and terms of payment for an account.
      *
      * @param Request $request
      * @param AccountInterface $account
      *
-     * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
+     * @throws EntityNotFoundException
      */
     protected function processTerms(Request $request, AccountInterface $account)
     {
@@ -285,6 +290,26 @@ class AccountController extends SuluAccountController
         }
     }
 
+    /**
+     * Processes is active customer flag.
+     *
+     * @param AccountInterface $account
+     * @param array $data
+     * @param bool $patch
+     */
+    protected function processIsActiveCustomer(AccountInterface $account, array $data, $patch = false)
+    {
+        if (isset($data['isActiveCustomer'])) {
+            $active = !!$data['isActiveCustomer'];
+            $account->setIsActiveCustomer($active);
+        } elseif (!$patch) {
+            $account->setIsActiveCustomer(null);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function initFieldDescriptors()
     {
         parent::initFieldDescriptors();
@@ -298,6 +323,18 @@ class AccountController extends SuluAccountController
             true,
             false,
             '',
+            '150px'
+        );
+
+        $this->fieldDescriptors['isActiveCustomer'] = new DoctrineFieldDescriptor(
+            'isActiveCustomer',
+            'isActiveCustomer',
+            $this->getAccountEntityName(),
+            'contact.customer.is-active',
+            array(),
+            true,
+            false,
+            'int',
             '150px'
         );
 

@@ -21,7 +21,7 @@ class Account extends SuluAccount
     const TYPE_SUPPLIER = 3;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $type = self::TYPE_BASIC;
 
@@ -41,10 +41,14 @@ class Account extends SuluAccount
     private $termsOfDelivery;
 
     /**
-     * Set responsiblePerson
-     *
+     * @var bool
+     */
+    private $isActiveCustomer = true;
+
+    /**
      * @param Contact $responsiblePerson
-     * @return Account
+     *
+     * @return self
      */
     public function setResponsiblePerson(Contact $responsiblePerson = null)
     {
@@ -52,9 +56,7 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get responsiblePerson
-     *
-     * @return \Sulu\Bundle\ContactBundle\Entity\Contact
+     * @return Contact
      */
     public function getResponsiblePerson()
     {
@@ -62,10 +64,9 @@ class Account extends SuluAccount
     }
 
     /**
-     * Set type
+     * @param int $type
      *
-     * @param integer $type
-     * @return Account
+     * @return self
      */
     public function setType($type)
     {
@@ -75,9 +76,7 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get type
-     *
-     * @return integer
+     * @return int
      */
     public function getType()
     {
@@ -114,5 +113,25 @@ class Account extends SuluAccount
     public function setTermsOfDelivery($termsOfDelivery)
     {
         $this->termsOfDelivery = $termsOfDelivery;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActiveCustomer()
+    {
+        return $this->isActiveCustomer;
+    }
+
+    /**
+     * @param bool $isActiveCustomer
+     *
+     * @return self
+     */
+    public function setIsActiveCustomer($isActiveCustomer)
+    {
+        $this->isActiveCustomer = $isActiveCustomer;
+
+        return $this;
     }
 }
