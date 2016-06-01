@@ -8,12 +8,13 @@
  */
 
 define([
+    'config',
     'sulucontact/components/accounts/edit/main',
     'services/sulucontactextension/account-header',
     'services/sulucontactextension/account-router',
     'services/sulucontactextension/account-manager',
     'services/sulucontact/contact-router'
-], function(SuluBaseEdit, AccountHeader, AccountRouter, AccountManager, ContactRouter) {
+], function(Config, SuluBaseEdit, AccountHeader, AccountRouter, AccountManager, ContactRouter) {
 
     'use strict';
 
@@ -50,13 +51,15 @@ define([
                 }
             };
 
-            if (this.data.type === AccountHeader.getAccountTypeIdByTypeName('customer')) {
-                var togglerState = this.data.isActiveCustomer  ? 'toggler-on' : 'toggler';
+            var displayToggle = Config.get('sulu-contact-extension').displayAccountActiveToggle;
+
+            if (displayToggle) {
+                var togglerState = this.data.isActive  ? 'toggler-on' : 'toggler';
 
                 header.toolbar.buttons.isActive = {
                     parent: togglerState,
                     options: {
-                        title: 'contacts.customer.is-active',
+                        title: 'contacts.is-active',
                         hidden: true
                     }
                 };

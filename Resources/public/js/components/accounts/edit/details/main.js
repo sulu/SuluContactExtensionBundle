@@ -96,7 +96,7 @@ define(['config', 'sulucontact/components/accounts/edit/details/main'], function
         }.bind(this));
 
         this.sandbox.on('husky.toggler.sulu-toolbar.changed', function(value) {
-            this.data.isActiveCustomer = value;
+            this.data.isActive = value;
             this.sandbox.emit('sulu.tab.dirty');
         }.bind(this));
     };

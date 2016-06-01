@@ -41,7 +41,7 @@ class AccountController extends SuluAccountController
         $account = parent::doPost($request);
 
         $account->setType($request->get('type', 0));
-        $this->processIsActiveCustomer($account, $request->request->all());
+        $this->processIsActive($account, $request->request->all());
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
         $this->processTerms($request, $account);
 
@@ -55,7 +55,7 @@ class AccountController extends SuluAccountController
     {
         parent::doPut($account, $request);
 
-        $this->processIsActiveCustomer($account, $request->request->all());
+        $this->processIsActive($account, $request->request->all());
         $this->setResponsiblePerson($this->getDoctrine()->getManager(), $account, $request->get('responsiblePerson'));
         $this->processTerms($request, $account);
     }
@@ -67,7 +67,7 @@ class AccountController extends SuluAccountController
     {
         parent::doPatch($account, $request, $entityManager);
 
-        $this->processIsActiveCustomer($account, $request->request->all(), true);
+        $this->processIsActive($account, $request->request->all(), true);
         $this->processTerms($request, $account);
     }
 
@@ -297,13 +297,13 @@ class AccountController extends SuluAccountController
      * @param array $data
      * @param bool $patch
      */
-    protected function processIsActiveCustomer(AccountInterface $account, array $data, $patch = false)
+    protected function processIsActive(AccountInterface $account, array $data, $patch = false)
     {
-        if (isset($data['isActiveCustomer'])) {
-            $active = !!$data['isActiveCustomer'];
-            $account->setIsActiveCustomer($active);
+        if (isset($data['isActive'])) {
+            $active = !!json_decode($data['isActive']);
+            $account->setIsActive($active);
         } elseif (!$patch) {
-            $account->setIsActiveCustomer(null);
+            $account->setIsActive(null);
         }
     }
 
@@ -326,17 +326,19 @@ class AccountController extends SuluAccountController
             '150px'
         );
 
-        $this->fieldDescriptors['isActiveCustomer'] = new DoctrineFieldDescriptor(
-            'isActiveCustomer',
-            'isActiveCustomer',
-            $this->getAccountEntityName(),
-            'contact.customer.is-active',
-            array(),
-            true,
-            false,
-            'int',
-            '150px'
-        );
+        if ($this->container->getParameter('sulu_contact_extension.display_account_active_toggle')) {
+            $this->fieldDescriptors['isActive'] = new DoctrineFieldDescriptor(
+                'isActive',
+                'isActive',
+                $this->getAccountEntityName(),
+                'contacts.is-active',
+                array(),
+                true,
+                false,
+                'checkbox_readonly',
+                '150px'
+            );
+        }
 
         $responsibleContactJoin = array(
             $this->container->getParameter('sulu.model.contact.class') => new DoctrineJoinDescriptor(

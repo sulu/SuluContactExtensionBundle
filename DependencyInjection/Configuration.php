@@ -47,6 +47,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('display_account_active_toggle')->defaultValue(true)->end()
             ->end();
 
         return $treeBuilder;

@@ -14,9 +14,9 @@
                 <source>contacts.sidebar.company.subsidiaries</source>
                 <target>Subsidiaries</target>
             </trans-unit>
-            <trans-unit id="4" resname="contacts.customer.is-active">
-                <source>contacts.customer.is-active</source>
-                <target>Active customer</target>
+            <trans-unit id="4" resname="contacts.is-active">
+                <source>contacts.is-active</source>
+                <target>Active</target>
             </trans-unit>
         </body>
     </file>
