@@ -20,6 +20,13 @@ class Account extends SuluAccount
     const TYPE_CUSTOMER = 2;
     const TYPE_SUPPLIER = 3;
 
+    const DEFAULT_IS_ACTIVE = true;
+
+    /**
+     * @var bool
+     */
+    private $isActive = self::DEFAULT_IS_ACTIVE;
+
     /**
      * @var int
      */
@@ -39,11 +46,6 @@ class Account extends SuluAccount
      * @var TermsOfDelivery
      */
     private $termsOfDelivery;
-
-    /**
-     * @var bool
-     */
-    private $isActive = true;
 
     /**
      * @param Contact $responsiblePerson
