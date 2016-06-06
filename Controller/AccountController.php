@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Sulu\Bundle\ContactBundle\Controller\AccountController as SuluAccountController;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
@@ -303,7 +304,7 @@ class AccountController extends SuluAccountController
             $active = !!json_decode($data['isActive']);
             $account->setIsActive($active);
         } elseif (!$patch) {
-            $account->setIsActive(null);
+            $account->setIsActive(Account::DEFAULT_IS_ACTIVE);
         }
     }
 
