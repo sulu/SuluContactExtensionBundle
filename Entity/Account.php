@@ -10,7 +10,6 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Entity;
 
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\AbstractAccount as SuluAccount;
 
 class Account extends SuluAccount

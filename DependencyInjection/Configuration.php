@@ -47,6 +47,18 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('contact_types')
+                    ->useAttributeAsKey('title')
+                    ->prototype('array')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('id')->end()
+                            ->scalarNode('name')->end()
+                            ->scalarNode('translation')->end()
+                            ->scalarNode('addTranslation')->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->scalarNode('display_account_active_toggle')->defaultValue(true)->end()
             ->end();
 
