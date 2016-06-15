@@ -25,16 +25,17 @@ use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescri
 use Sulu\Component\Rest\ListBuilder\ListRepresentation;
 use Sulu\Component\Rest\RestHelperInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContactController extends SuluContactController
 {
     /**
-     * lists all contacts
-     * optional parameter 'flat' calls listAction.
+     * List all contacts.
+     * Optional parameter 'flat' calls listAction.
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function cgetAction(Request $request)
     {
@@ -56,7 +57,7 @@ class ContactController extends SuluContactController
                     static::$contactSerializationGroups
                 );
             }
-            // convert to api-contacts
+            // Convert to api-contacts.
             $apiContacts = [];
             foreach ($contacts as $contact) {
                 $apiContacts[] = $this->getContactManager()->getContact($contact, $locale);
@@ -72,7 +73,7 @@ class ContactController extends SuluContactController
 
         $view = $this->view($list, 200);
 
-        // set serialization groups
+        // Set serialization groups.
         if (count($serializationGroups) > 0) {
             $view->setSerializationContext(
                 SerializationContext::create()->setGroups(
@@ -89,7 +90,7 @@ class ContactController extends SuluContactController
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function postAction(Request $request)
     {
@@ -177,7 +178,7 @@ class ContactController extends SuluContactController
      * @param Request $request
      * @param DoctrineListBuilder $listBuilder
      */
-    protected function applyRequestParameters(Request $request, $listBuilder)
+    protected function applyRequestParameters(Request $request, DoctrineListBuilder $listBuilder)
     {
         $type = $request->get('type');
         if ($type) {

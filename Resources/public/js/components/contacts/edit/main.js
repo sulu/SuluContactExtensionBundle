@@ -34,6 +34,7 @@ define([
             }
             promise.resolve(data);
         }.bind(this));
+        
         return promise;
     };
 

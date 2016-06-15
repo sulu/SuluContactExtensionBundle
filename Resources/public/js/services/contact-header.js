@@ -11,7 +11,7 @@ define(['app-config'], function(AppConfig) {
 
     'use strict';
 
-    // get contact type based on information given
+    // Get contact type based on information given.
     var getContactType = function(data, contactTypeName) {
             var typeInfo, compareAttribute, i, type,
                 contactType = 0,
@@ -56,7 +56,6 @@ define(['app-config'], function(AppConfig) {
          * @returns {Object}
          */
         getHeaderItem = function(contactTypes, key) {
-
             var item;
             this.sandbox.util.each(contactTypes, function(name, el) {
                 if (el.name === key) {
@@ -83,12 +82,10 @@ define(['app-config'], function(AppConfig) {
         };
 
     return {
-
         /**
          * Sets header data: breadcrumb, headline and content tabs for contact.
          *
          * @param {Object} contact Backbone-Entity
-         * @param {String} [contactTypeName] Name of contact entity
          */
         setHeader: function(contact) {
             var contactType = getContactType.call(this, {id: contact.type, type: contact.type});

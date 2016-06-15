@@ -40,6 +40,7 @@ define([
         if (instance === null) {
             instance = new ContactRouter();
         }
+        
         return instance;
     };
 

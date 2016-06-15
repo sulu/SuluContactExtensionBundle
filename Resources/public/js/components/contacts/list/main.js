@@ -25,7 +25,8 @@ define([
         },
 
         /**
-         * Generates the configs for the tabs in the header
+         * Generates the configs for the tabs in the header.
+         *
          * @returns {object} tabs options
          */
         getTabConfigs = function() {
@@ -35,21 +36,21 @@ define([
                 contactType,
                 preselect;
 
-            // check if contactTypes exist
+            // Check if contactTypes exist.
             if (!contactSection || !contactSection.hasOwnProperty('contactTypes') ||
                 contactSection.contactTypes.length < 1) {
                 return false;
             }
 
             contactTypes = contactSection.contactTypes;
-            // generate items
+            // Generate items.
             items = [
                 {
                     id: 'all',
                     name: this.sandbox.translate('public.all')
                 }
             ];
-            // parse accounts for tabs
+            // Parse accounts for tabs.
             for (index in contactTypes) {
                 if (index === 'basic') {
                     // exclude basic type from tabs
@@ -87,6 +88,7 @@ define([
                 data: items
             };
         },
+
         addNewContact = function(typeName) {
             ContactRouter.toAdd({type: typeName});
         },
@@ -160,8 +162,8 @@ define([
 
         var dropdownItems = [];
         var contactTypes = AppConfig.getSection('sulu-contact-extension').contactTypes;
+
         this.sandbox.util.each(contactTypes, function (index, value) {
-            console.log(this.sandbox.translate(value.addTranslation));
             dropdownItems.push({
                 id: value.id,
                 title: this.sandbox.translate(value.addTranslation),
