@@ -75,6 +75,11 @@ class SuluContactExtensionExtension extends Extension implements PrependExtensio
         );
 
         $container->setParameter(
+            'sulu_contact_extension.contact_types',
+            $config['contact_types']
+        );
+
+        $container->setParameter(
             'sulu_contact_extension.display_account_active_toggle',
             $config['display_account_active_toggle']
         );

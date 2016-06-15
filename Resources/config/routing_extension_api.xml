@@ -4,6 +4,8 @@
         xsi:schemaLocation="http://friendsofsymfony.github.com/schema/rest https://raw.github.com/FriendsOfSymfony/FOSRestBundle/master/Resources/config/schema/routing/rest_routing-1.0.xsd">
     <import id="sulu_contact.accounts" resource="Sulu\Bundle\ContactExtensionBundle\Controller\AccountController"
             type="rest"/>
+    <import id="sulu_contact.contacts" resource="Sulu\Bundle\ContactExtensionBundle\Controller\ContactController"
+            type="rest"/>
     <import id="sulu_contact_extension.termsofpayment" resource="Sulu\Bundle\ContactExtensionBundle\Controller\TermsOfPaymentController"
             type="rest"/>
     <import id="sulu_contact_extension.termsofdelivery" resource="Sulu\Bundle\ContactExtensionBundle\Controller\TermsOfDeliveryController"
