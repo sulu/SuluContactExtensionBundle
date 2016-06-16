@@ -171,11 +171,13 @@ define([
             });
         }.bind(this));
 
-        header.toolbar.buttons.add = this.sandbox.util.extend(true, {}, header.toolbar.buttons.add, {
-            options: {
-                dropdownItems: dropdownItems
-            }
-        });
+        if (dropdownItems.length > 0) {
+            header.toolbar.buttons.add = this.sandbox.util.extend(true, {}, header.toolbar.buttons.add, {
+                options: {
+                    dropdownItems: dropdownItems
+                }
+            });
+        }
 
         return header;
     };

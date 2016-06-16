@@ -24,7 +24,11 @@ define([
     ContactRouter.prototype.constructor = ContactRouter;
 
     ContactRouter.prototype.toAdd = function(data) {
-        Mediator.emit('sulu.router.navigate', 'contacts/contacts/add/type:' + data.type, true, true);
+        var url = 'contacts/contacts/add';
+        if (!!data && !!data.type) {
+            url += '/type:' + data.type;
+        }
+        Mediator.emit('sulu.router.navigate', url, true, true);
     };
 
     ContactRouter.prototype.toList = function(type) {
