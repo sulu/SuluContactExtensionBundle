@@ -80,11 +80,20 @@ define(function() {
 
             // Show for a new contact.
             app.sandbox.mvc.routes.push({
+                route: 'contacts/contacts/add',
+                callback: function() {
+                    return '<div data-aura-component="contacts/edit@sulucontact"/>';
+                }
+            });
+
+            // Show for a new contact.
+            app.sandbox.mvc.routes.push({
                 route: 'contacts/contacts/add/type::id',
                 callback: function(contactType) {
                     return '<div data-aura-component="contacts/edit@sulucontact" data-aura-contact-type="' + contactType + '"/>';
                 }
             });
+
         }
     };
 });
