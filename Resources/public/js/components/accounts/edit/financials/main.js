@@ -7,13 +7,14 @@
  * with this source code in the file LICENSE.
  */
 
-define(['widget-groups', 'services/sulucontactextension/account-manager'], function(WidgetGroups, AccountManager) {
+define([
+    'widget-groups',
+    'services/sulucontactextension/account-manager'
+], function(WidgetGroups, AccountManager) {
 
     'use strict';
 
-    var formSelector = '#bank-account-form',
-
-        constants = {
+    var constants = {
             overlayIdTermsOfPayment: 'overlayContainerTermsOfPayment',
             overlayIdTermsOfDelivery: 'overlayContainerTermsOfDelivery',
             overlaySelectorTermsOfPayment: '#overlayContainerTermsOfPayment',
@@ -43,11 +44,14 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
 
         templates: ['/admin/contact/template/account/financials'],
 
+        /**
+         * Constructor.
+         */
         initialize: function() {
             this.options = this.sandbox.util.extend(true, {}, this.options);
             this.options.data = this.options.data();
 
-            this.form = '#financials-form';
+            this.form = constants.financialsFormSelector;
             this.termsOfDeliveryInstanceName = 'terms-of-delivery';
             this.termsOfPaymentInstanceName = 'terms-of-payment';
 
@@ -60,14 +64,26 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             }
         },
 
+        /**
+         * Cleanups on exit.
+         */
         destroy: function() {
             this.cleanUp();
         },
 
+        /**
+         * Initializes sidebar.
+         *
+         * @param {String} url
+         * @param {Number} id
+         */
         initSidebar: function(url, id) {
             this.sandbox.emit('sulu.sidebar.set-widget', url + id);
         },
 
+        /**
+         * Render function.
+         */
         render: function() {
             var data = this.options.data;
 
@@ -79,8 +95,12 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             this.bindCustomEvents();
         },
 
+        /**
+         * Initializes husky-selects for displaying terms.
+         *
+         * @param {Object} formData
+         */
         initTermsSelect: function(formData) {
-
             this.preselectedTermsOfPaymentId =
                 !!formData.termsOfPayment ? [formData.termsOfPayment.id] : '';
             this.preselectedTermsOfDeliveryId =
@@ -122,9 +142,13 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             ]);
         },
 
+        /**
+         * Initializes form.
+         *
+         * @param {Object} data
+         */
         initForm: function(data) {
             var formObject = this.sandbox.form.create(this.form);
-            this.initFormHandling(data);
 
             formObject.initialized.then(function() {
                 this.setFormData(data);
@@ -132,9 +156,13 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             }.bind(this));
         },
 
+        /**
+         * Sets data to form.
+         *
+         * @param data
+         */
         setFormData: function(data) {
-            // add collection filters to form
-            this.sandbox.emit('sulu.contact-form.add-collectionfilters', this.form);
+            // Add collection filters to form.
             this.sandbox.form.setData(this.form, data).then(function() {
                 this.sandbox.start(this.form);
             }.bind(this)).fail(function(error) {
@@ -142,7 +170,11 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             }.bind(this));
         },
 
+        /**
+         * Bind dom events.
+         */
         bindDomEvents: function() {
+            // Submit on enter.
             this.sandbox.dom.keypress(this.form, function(event) {
                 if (event.which === 13) {
                     event.preventDefault();
@@ -151,13 +183,16 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
             }.bind(this));
         },
 
+        /**
+         * Bind custom events.
+         */
         bindCustomEvents: function() {
             this.sandbox.on('husky.select.terms-of-delivery.save', AccountManager.saveTerms.bind(this, 'delivery'));
             this.sandbox.on('husky.select.terms-of-payment.save', AccountManager.saveTerms.bind(this, 'payment'));
             this.sandbox.on('husky.select.terms-of-delivery.delete', AccountManager.deleteTerms.bind(this, 'delivery'));
             this.sandbox.on('husky.select.terms-of-payment.delete', AccountManager.deleteTerms.bind(this, 'payment'));
 
-            // account saved
+            // Account saved.
             this.sandbox.on('sulu.tab.save', this.submit.bind(this));
         },
 
@@ -165,25 +200,30 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
          * Does some cleanup with aura components
          */
         cleanUp: function() {
-            // stop contact form before leaving
+            // Stop contact form before leaving.
             this.sandbox.stop(constants.financialsFormSelector);
         },
 
-
+        /**
+         * Submits data (save account).
+         */
         submit: function() {
             if (this.sandbox.form.validate(this.form)) {
                 var data = this.sandbox.form.getData(this.form);
                 this.sandbox.emit('sulu.contacts.accounts.financials.save', data);
                 this.sandbox.emit('sulu.tab.saving');
+
                 AccountManager.saveFinancials(data).then(function(savedData) {
+                    var savedData = savedData.toJSON();
                     this.sandbox.emit('sulu.tab.saved', savedData, true);
                     this.options.data = savedData;
-                    // TODO needed? problems?
-                    this.setFormData(data);
                 }.bind(this));
             }
         },
 
+        /**
+         * Listens for changes in form and activates save button.
+         */
         listenForChange: function() {
             this.sandbox.dom.on(this.form, 'change', function() {
                 this.sandbox.emit('sulu.tab.dirty');
@@ -197,47 +237,22 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
                 '.changeListener input, ' +
                 '.changeListener textarea');
 
-            // if a field-type gets changed or a field gets deleted
+            // If a field-type gets changed or a field gets deleted.
             this.sandbox.on('sulu.contact-form.changed', function() {
                 this.sandbox.emit('sulu.tab.dirty');
             }.bind(this));
 
             this.sandbox.on('husky.select.' + this.termsOfDeliveryInstanceName + '.selected.item', function(id) {
                 if (id > 0) {
-                    this.selectedTermsOfDelivery = id;
                     this.sandbox.emit('sulu.tab.dirty');
                 }
             }.bind(this));
 
             this.sandbox.on('husky.select.' + this.termsOfPaymentInstanceName + '.selected.item', function(id) {
                 if (id > 0) {
-                    this.selectedTermsOfPayment = id;
                     this.sandbox.emit('sulu.tab.dirty');
                 }
             }.bind(this));
-        },
-
-        initFormHandling: function(data) {
-            // when  contact-form is initalized
-            this.sandbox.on('sulu.contact-form.initialized', function() {
-
-                this.sandbox.emit('sulu.contact-form.add-collectionfilters', this.form);
-                var formObject = this.sandbox.form.create(formSelector);
-                formObject.initialized.then(function() {
-                    this.setFormData(data);
-                }.bind(this));
-
-            }.bind(this));
-
-            // initialize contact form
-            this.sandbox.start([
-                {
-                    name: 'contact-form@sulucontact',
-                    options: {
-                        el: constants.financialsFormSelector
-                    }
-                }
-            ]);
         }
     };
 });
