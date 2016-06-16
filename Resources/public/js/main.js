@@ -93,7 +93,6 @@ define(function() {
                     return '<div data-aura-component="contacts/edit@sulucontact" data-aura-contact-type="' + contactType + '"/>';
                 }
             });
-
         }
     };
 });
