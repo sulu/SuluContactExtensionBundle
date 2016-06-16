@@ -71,7 +71,14 @@ define(['config', 'sulucontact/components/accounts/edit/details/main'], function
         if (!!this.data && !!this.data.id) {
             this.sandbox.emit('sulu.sidebar.set-widget', '/admin/widget-groups/account-detail?account=' + this.data.id);
         }
+
+        // Show toggler.
+        this.sandbox.emit('sulu.header.toolbar.item.show', 'isActive');
     };
+
+    Form.prototype.destroy = function() {
+        this.sandbox.emit('sulu.header.toolbar.item.hide', 'isActive');
+    },
 
     Form.prototype.formInitializedHandler = function(data) {
         baseForm.formInitializedHandler.call(this, data);
@@ -86,6 +93,11 @@ define(['config', 'sulucontact/components/accounts/edit/details/main'], function
             if (id > 0) {
                 this.sandbox.emit('sulu.tab.dirty');
             }
+        }.bind(this));
+
+        this.sandbox.on('husky.toggler.sulu-toolbar.changed', function(value) {
+            this.data.isActive = value;
+            this.sandbox.emit('sulu.tab.dirty');
         }.bind(this));
     };
 

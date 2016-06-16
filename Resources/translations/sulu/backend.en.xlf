@@ -14,6 +14,34 @@
                 <source>contacts.sidebar.company.subsidiaries</source>
                 <target>Subsidiaries</target>
             </trans-unit>
+            <trans-unit id="4" resname="contacts.is-active">
+                <source>contacts.is-active</source>
+                <target>Active</target>
+            </trans-unit>
+            <trans-unit id="5" resname="contact.contact.type.customer">
+                <source>contact.contact.type.customer</source>
+                <target>Customer</target>
+            </trans-unit>
+            <trans-unit id="6" resname="contact.contact.type.supplier">
+                <source>contact.contact.type.supplier</source>
+                <target>Supplier</target>
+            </trans-unit>
+            <trans-unit id="7" resname="contact.contact.type.basic">
+                <source>contact.contact.type.basic</source>
+                <target>Basic</target>
+            </trans-unit>
+            <trans-unit id="8" resname="contact.contact.add-basic">
+                <source>contact.contact.add-basic</source>
+                <target>Add new Contact</target>
+            </trans-unit>
+            <trans-unit id="9" resname="contact.contact.add-customer">
+                <source>contact.contact.add-customer</source>
+                <target>Add new customer contact</target>
+            </trans-unit>
+            <trans-unit id="10" resname="contact.contact.add-supplier">
+                <source>contact.contact.add-supplier</source>
+                <target>Add new supplier contact</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

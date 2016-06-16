@@ -27,10 +27,9 @@ use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEn
 class Account extends SuluAccount
 {
     /**
-     * Set type
+     * @param int $type
      *
-     * @param integer $type
-     * @return Account
+     * @return self
      */
     public function setType($type)
     {
@@ -40,12 +39,11 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get type
-     *
-     * @return integer
      * @VirtualProperty
      * @SerializedName("type")
      * @Groups({"fullAccount", "partialAccount"})
+     *
+     * @return int
      */
     public function getType()
     {
@@ -53,10 +51,9 @@ class Account extends SuluAccount
     }
 
     /**
-     * Set responsiblePerson
-     *
      * @param ContactEntity $responsiblePerson
-     * @return Account
+     *
+     * @return self
      */
     public function setResponsiblePerson(ContactEntity $responsiblePerson = null)
     {
@@ -66,12 +63,11 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get responsiblePerson
-     *
-     * @return Account
      * @VirtualProperty
      * @SerializedName("responsiblePerson")
      * @Groups({"fullAccount"})
+     *
+     * @return Contact
      */
     public function getResponsiblePerson()
     {
@@ -83,10 +79,9 @@ class Account extends SuluAccount
     }
 
     /**
-     * Set termsOfPayment
-     *
      * @param TermsOfPaymentEntity $termsOfPayment
-     * @return Account
+     *
+     * @return self
      */
     public function setTermsOfPayment(TermsOfPaymentEntity $termsOfPayment = null)
     {
@@ -96,12 +91,11 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get termsOfPayment
-     *
-     * @return TermsOfPaymentEntity
      * @VirtualProperty
      * @SerializedName("termsOfPayment")
      * @Groups({"fullAccount"})
+     *
+     * @return TermsOfPaymentEntity
      */
     public function getTermsOfPayment()
     {
@@ -112,6 +106,7 @@ class Account extends SuluAccount
      * Set termsOfDelivery
      *
      * @param TermsOfDeliveryEntity $termsOfDelivery
+     *
      * @return Account
      */
     public function setTermsOfDelivery(TermsOfDeliveryEntity $termsOfDelivery = null)
@@ -122,15 +117,26 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get termsOfDelivery
-     *
-     * @return TermsOfDeliveryEntity
      * @VirtualProperty
      * @SerializedName("termsOfDelivery")
      * @Groups({"fullAccount"})
+     *
+     * @return TermsOfDeliveryEntity
      */
     public function getTermsOfDelivery()
     {
         return $this->entity->getTermsOfDelivery();
+    }
+
+    /**
+     * @VirtualProperty
+     * @SerializedName("isActive")
+     * @Groups({"fullAccount"})
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->entity->isActive();
     }
 }

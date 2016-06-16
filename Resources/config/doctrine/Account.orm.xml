@@ -18,6 +18,12 @@
 
         <field name="type" type="integer" column="type" nullable="false" />
 
+        <field name="isActive" type="boolean" column="isActive" nullable="false">
+            <options>
+                <option name="default">1</option>
+            </options>
+        </field>
+
         <one-to-many field="accountContacts" target-entity="Sulu\Bundle\ContactBundle\Entity\AccountContact" mapped-by="account"/>
 
         <one-to-many field="accountAddresses" target-entity="Sulu\Bundle\ContactBundle\Entity\AccountAddress" mapped-by="account"/>

@@ -15,6 +15,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use Sulu\Bundle\ContactBundle\Contact\AccountManager;
 use Sulu\Bundle\ContactBundle\Contact\ContactManager;
@@ -63,7 +64,7 @@ class Import
      *    contact already exists in Database. This will only work if contact_id is not provided (then of course id is
      *    being used for this purpose) parameters can be: firstName, lastName, email and phone.
      */
-    protected $options = array(
+    protected $options = [
         'importContactByIds' => false,
         'streetNumberSplit' => false,
         'delimiter' => ';',
@@ -74,7 +75,7 @@ class Import
             'email',
         ),
         'fixedAccountType' => false,
-    );
+    ];
 
     /**
      * Defines which columns should be excluded,
@@ -205,7 +206,6 @@ class Import
      * 'account_disabled'
      * 'account_uid'
      * 'account_registerNumber'
-     * 'account_category'
      * 'account_tag'
      * 'email1' (1..n)
      * 'url1' (1..n)
@@ -377,25 +377,25 @@ class Import
      */
     public function execute()
     {
-        // enable garbage collector
+        // Enable garbage collector.
         gc_enable();
-        // disable sql logger
+        // Disable sql logger.
         $this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 
         try {
-            // process mappings file
+            // Process mappings file.
             if ($this->mappingsFile) {
                 $this->processMappingsFile($this->mappingsFile);
             }
 
             // TODO clear database: $this->clearDatabase();
 
-            // process account file if exists
+            // Process account file if exists.
             if ($this->accountFile) {
                 $this->processAccountFile($this->accountFile);
             }
 
-            // process contact file if exists
+            // Process contact file if exists.
             if ($this->contactFile) {
                 $this->processContactFile($this->contactFile);
             }
@@ -411,7 +411,7 @@ class Import
      */
     protected function initDefaults()
     {
-        // set default types
+        // Set default types.
         $this->defaultTypes = $this->getDefaults();
         $this->loadTags();
         $this->loadTitles();
@@ -430,7 +430,7 @@ class Import
     protected function processMappingsFile($mappingsFile)
     {
         try {
-            // set mappings
+            // Set mappings.
             if ($mappingsFile && ($mappingsContent = file_get_contents($mappingsFile))) {
                 $mappings = json_decode($mappingsContent, true);
                 if (!$mappings) {
@@ -477,16 +477,14 @@ class Import
      */
     protected function processAccountFile($filename)
     {
-        // create accounts
+        // Create accounts.
         $this->debug("Create Accounts:\n");
         $this->processCsvLoop(
             $filename,
-            function ($data, $row) {
-                $this->createAccount($data, $row);
-            }
+            [$this, 'createAccount']
         );
 
-        // check for parents
+        // Check for parents.
         $this->debug("Creating Account Parent Relations:\n");
         $this->processCsvLoop(
             $filename,
@@ -510,7 +508,7 @@ class Import
             return call_user_func(array($this, 'postFlushCreateContact'), $data, $row, $result);
         };
 
-        // create contacts
+        // Create contacts.
         $this->debug("Create Contacts:\n");
         $this->processCsvLoop($filename, $createContact, $postFlushContact, true);
     }
@@ -525,10 +523,10 @@ class Import
     /**
      * Loads the CSV Files and the Entities for the import.
      *
-     * @param string $filename path to file
-     * @param callable $function will be called for each row in file
-     * @param callable $postFlushCallback will be called after every flush
-     * @param bool $flushOnEveryRow If defined flush will be executed on every data row
+     * @param string $filename Path to file.
+     * @param callable $callback Will be called for each row in file.
+     * @param callable $postFlushCallback Will be called after every flush.
+     * @param bool $flushOnEveryRow If defined flush will be executed on every data row.
      *
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
@@ -539,7 +537,7 @@ class Import
         callable $postFlushCallback = null,
         $flushOnEveryRow = false
     ) {
-        // initialize default values
+        // Initialize default values.
         $this->initDefaults();
 
         $row = 0;
@@ -548,7 +546,7 @@ class Import
         $this->headerData = array();
 
         try {
-            // load all Files
+            // Load all Files.
             $handle = fopen($filename, 'r');
         } catch (\Exception $e) {
             throw new NotFoundResourceException($filename);
@@ -557,23 +555,22 @@ class Import
         while (($data = fgetcsv($handle, 0, $this->options['delimiter'], $this->options['enclosure'])) !== false) {
             try {
                 $this->rowNumber = $row + 1;
-                // for first row, save headers
+                // For first row, save headers.
                 if ($row === 0) {
                     $this->headerData = $data;
                     $this->headerCount = count($data);
                 } else {
-
                     if ($this->headerCount !== count($data)) {
                         throw new ImportException('The number of fields does not match the number of header values');
                     }
 
-                    // get associativeData
+                    // Get associativeData.
                     $associativeData = $this->mapRowToAssociativeArray($data, $this->headerData);
 
-                    // check if row contains data that should be excluded
+                    // Check if row contains data that should be excluded.
                     $exclude = $this->rowContainsExlcudeData($associativeData, $key, $value);
                     if (!$exclude) {
-                        // call callback function
+                        // Call callback function.
                         $result = $callback($associativeData, $row);
                     } else {
                         $this->debug(
@@ -601,7 +598,7 @@ class Import
                         }
                         $this->em->clear();
                         gc_collect_cycles();
-                        // reinitialize defaults (lost with call of clear)
+                        // Reinitialize defaults (lost with call of clear).
                         $this->initDefaults();
                     }
 
@@ -617,7 +614,7 @@ class Import
                 $errorCount++;
             }
 
-            // check limit and break loop if necessary
+            // Check limit and break loop if necessary.
             $limit = $this->getLimit();
             if (!is_null($limit) && $row >= $limit) {
                 break;
@@ -628,7 +625,7 @@ class Import
                 print(sprintf("%d ", $this->rowNumber));
             }
         }
-        // finish with a flush
+        // Finish with a flush.
         $this->em->flush();
 
         $this->debug("\n");
@@ -648,10 +645,10 @@ class Import
     protected function rowContainsExlcudeData($data, &$conditionKey = null, &$conditionValue = null)
     {
         if (count($this->excludeConditions) > 0) {
-            // iterate through all defined exclude conditions
+            // Iterate through all defined exclude conditions.
             foreach ($this->excludeConditions as $key => $value) {
                 if (isset($data[$key])) {
-                    // if condition is an array - compare with every value
+                    // If condition is an array - compare with every value.
                     if (is_array($value)) {
                         foreach ($value as $childValue) {
                             if ($this->compareStrings($childValue, $data[$key])) {
@@ -661,9 +658,9 @@ class Import
                                 return true;
                             }
                         }
-                        // else if simple value - just compare
+                        // Else if simple value - just compare.
                     } else {
-                        // if match
+                        // If match.
                         if ($this->compareStrings($value, $data[$key])) {
                             $conditionKey = $key;
                             $conditionValue = $value;
@@ -726,7 +723,7 @@ class Import
      */
     protected function createAccount($data, $row)
     {
-        // check if id mapping is defined
+        // Check if id mapping is defined.
         if (array_key_exists('account_id', $this->idMappings)) {
             if (!array_key_exists($this->idMappings['account_id'], $data)) {
                 $this->accountExternalIds[] = null;
@@ -742,8 +739,10 @@ class Import
                 // If not, create new one.
                 $account = $this->createNewAccount($externalId);
             } else {
-                // Clear all relations.
-                $this->getAccountManager()->deleteAllRelations($account);
+                // Otherwise, clear all relations.
+                $this->em->refresh($account);
+
+                // $this->getAccountManager()->deleteAllRelations($account);
             }
             $this->accountExternalIds[] = $externalId;
         } // Otherwise just create a new account.
@@ -752,7 +751,7 @@ class Import
         }
 
         if ($this->checkData('account_name', $data)) {
-            $account->setName($data['account_name']);
+            $account->setName(trim($data['account_name']));
         } else {
             $this->em->detach($account);
             throw new \Exception('ERROR: account name not set');
@@ -777,15 +776,15 @@ class Import
         if ($this->checkData('account_jurisdiction', $data)) {
             $account->setPlaceOfJurisdiction($data['account_jurisdiction']);
         }
-        // set account type
+        // Set account type.
         if ($this->options['fixedAccountType'] != false && is_numeric($this->options['fixedAccountType'])) {
-            // set account type to a fixed number
+            // Set account type to a fixed number.
             $account->setType($this->options['fixedAccountType']);
         } elseif ($this->checkData('account_type', $data)) {
             $account->setType($this->mapAccountType($data['account_type']));
         }
 
-        // process emails, phones, faxes, urls and notes
+        // Process emails, phones, faxes, urls and notes.
         $this->processTags($data, $account);
         $this->processEmails($data, $account);
         $this->processPhones($data, $account);
@@ -793,13 +792,13 @@ class Import
         $this->processUrls($data, $account);
         $this->processNotes($data, $account, 'account_');
 
-        // add address if set
+        // Add address if set.
         $address = $this->createAddresses($data, $account);
         if ($address !== null) {
             $this->getAccountManager()->addAddress($account, $address, true);
         }
 
-        // add bank accounts
+        // Add bank accounts.
         $this->addBankAccounts($data, $account);
 
         return $account;
@@ -844,7 +843,7 @@ class Import
      */
     protected function processEmails($data, $entity)
     {
-        // add emails
+        // Add emails.
         for ($i = 0, $len = 10; ++$i < $len;) {
             if ($this->checkData('email' . $i, $data)) {
                 $emailIndex = 'email' . $i;
@@ -853,7 +852,7 @@ class Import
                 $email = new Email();
                 $email->setEmail($data[$emailIndex]);
 
-                // Set label
+                // Set label.
                 $type = null;
                 if ($this->checkData($prefix . 'label', $data)) {
                     $contactLabel = 'email.' . $this->mapContactLabels($data[$prefix . 'label']);
@@ -864,11 +863,130 @@ class Import
                 }
                 $email->setEmailType($type);
 
-                $this->em->persist($email);
-                $entity->addEmail($email);
+                if (!$this->isEmailAlreadyAssigned($email, $entity)) {
+                    $this->em->persist($email);
+                    $entity->addEmail($email);
+                }
             }
         }
         $this->getContactManager()->setMainEmail($entity);
+    }
+
+    /**
+     * Checks if given email is already assigned to entity.
+     *
+     * @param Email $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isEmailAlreadyAssigned(Email $search, $entity)
+    {
+        /** @var Email $email */
+        foreach ($entity->getEmails() as $email) {
+            if ($email->getEmail() === $search->getEmail()
+                && $email->getEmailType()->getId() === $search->getEmailType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /**
+     * Checks if given address is already assigned to entity.
+     *
+     * @param Address $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isAddressAlreadyAssigned(Address $search, $entity)
+    {
+        /** @var AccountAddress $email */
+        foreach ($this->getManager($entity)->getAddressRelations($entity) as $addressRelation) {
+            /** @var Address $address */
+            $address = $addressRelation->getAddress();
+            if ($address->getStreet() === $search->getStreet()
+                && $address->getNumber() === $search->getNumber()
+                && $address->getCity() === $search->getCity()
+                && $address->getCountry() === $search->getCountry()
+                && $address->getAddressType()->getId() === $search->getAddressType()->getId()
+                && $address->getPostboxNumber() === $search->getPostboxNumber()
+                && $address->getPostboxPostcode() === $search->getPostboxPostcode()
+                && $address->getPostboxCity() === $search->getPostboxCity()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given phone is already assigned to entity.
+     *
+     * @param Phone $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isPhoneAlreadyAssigned(Phone $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getPhones() as $phone) {
+            if ($phone->getPhone() === $search->getPhone()
+                && $phone->getPhoneType()->getId() === $search->getPhoneType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given fax is already assigned to entity.
+     *
+     * @param Fax $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isFaxAlreadyAssigned(Fax $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getFaxes() as $fax) {
+            if ($fax->getFax() === $search->getFax()
+                && $fax->getFaxType()->getId() === $search->getFaxType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if given url is already assigned to entity.
+     *
+     * @param Url $search
+     * @param Contact|AccountInterface $entity
+     *
+     * @return bool
+     */
+    protected function isUrlAlreadyAssigned(Url $search, $entity)
+    {
+        /** @var Phone $phone */
+        foreach ($entity->getUrls() as $url) {
+            if ($url->getUrl() === $search->getUrl()
+                && $url->getUrlType()->getId() === $search->getUrlType()->getId()
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -879,7 +997,7 @@ class Import
      */
     protected function processPhones($data, $entity)
     {
-        // add phones
+        // Add phones.
         for ($i = 0, $len = 10; ++$i < $len;) {
             if ($this->checkData('phone' . $i, $data, null, 60)) {
                 $phoneIndex = 'phone' . $i;
@@ -888,7 +1006,7 @@ class Import
                 $phone = new Phone();
                 $phone->setPhone($data[$phoneIndex]);
 
-                // Set label
+                // Set label.
                 $type = null;
                 if ($this->checkData($prefix . 'label', $data)) {
                     $contactLabel = 'phone.' . $this->mapContactLabels($data[$prefix . 'label']);
@@ -899,8 +1017,10 @@ class Import
                 }
                 $phone->setPhoneType($type);
 
-                $this->em->persist($phone);
-                $entity->addPhone($phone);
+                if (!$this->isPhoneAlreadyAssigned($phone, $entity)) {
+                    $this->em->persist($phone);
+                    $entity->addPhone($phone);
+                }
             }
         }
         $this->getContactManager()->setMainPhone($entity);
@@ -914,17 +1034,17 @@ class Import
      */
     protected function processFaxes($data, $entity)
     {
-        // Add faxes
+        // Add faxes.
         for ($i = 0, $len = 10; ++$i < $len;) {
             if ($this->checkData('fax' . $i, $data, null, 60)) {
                 $faxIndex = 'fax' . $i;
                 $prefix = $faxIndex . '_';
 
                 $fax = new Fax();
-                // Set fax
+                // Set fax.
                 $fax->setFax($data[$faxIndex]);
 
-                // Set label
+                // Set label.
                 $type = null;
                 if ($this->checkData($prefix . 'label', $data)) {
                     $contactLabel = 'fax.' . $this->mapContactLabels($data[$prefix . 'label']);
@@ -935,8 +1055,10 @@ class Import
                 }
                 $fax->setFaxType($type);
 
-                $this->em->persist($fax);
-                $entity->addFax($fax);
+                if (!$this->isFaxAlreadyAssigned($fax, $entity)) {
+                    $this->em->persist($fax);
+                    $entity->addFax($fax);
+                }
             }
         }
         $this->getContactManager()->setMainFax($entity);
@@ -954,7 +1076,7 @@ class Import
         if ($entity instanceof Contact) {
             $prefix = 'contact_';
         }
-        // add tags
+        // Add tags.
         $tagPrefix = $prefix . 'tag';
         $this->checkAndAddTag($tagPrefix, $data, $entity);
 
@@ -986,17 +1108,17 @@ class Import
      */
     protected function processUrls($data, $entity)
     {
-        // add urls
+        // Add urls.
         for ($i = 0, $len = 10; ++$i < $len;) {
             if ($this->checkData('url' . $i, $data, null, 255)) {
                 $urlIndex = 'url' . $i;
                 $prefix = $urlIndex . '_';
 
                 $url = new Url();
-                // Set url
+                // Set url.
                 $url->setUrl($data[$urlIndex]);
 
-                // Set label
+                // Set label.
                 $type = null;
                 if ($this->checkData($prefix . 'label', $data)) {
                     $contactLabel = 'url.' . $this->mapContactLabels($data[$prefix . 'label']);
@@ -1007,9 +1129,10 @@ class Import
                 }
                 $url->setUrlType($type);
 
-                // persist
-                $this->em->persist($url);
-                $entity->addUrl($url);
+                if (!$this->isUrlAlreadyAssigned($url, $entity)) {
+                    $this->em->persist($url);
+                    $entity->addUrl($url);
+                }
             }
         }
         $this->getContactManager()->setMainUrl($entity);
@@ -1024,7 +1147,7 @@ class Import
      */
     protected function processNotes($data, $entity, $prefix = '')
     {
-        // add note -> only use one note
+        // Add note -> only use one note.
         // TODO: use multiple notes, when contact is extended
         $noteValues = array();
         if ($this->checkData($prefix . 'note', $data)) {
@@ -1035,7 +1158,7 @@ class Import
                 $noteValues[] = $data[$prefix . 'note' . $i];
             }
         }
-        // concat all notes to one single note
+        // Concat all notes to one single note.
         if (sizeof($noteValues) > 0) {
             $noteText = implode("\n", $noteValues);
             $noteText = $this->replaceInvalidNewLineCharacters($noteText);
@@ -1083,7 +1206,11 @@ class Import
             $this->em->persist($tag);
             $this->tags[$tag->getName()] = $tag;
         }
-        $entity->addTag($tag);
+
+        // Check if tag is not already assigned.
+        if (!$entity->getTags()->contains($tag)) {
+            $entity->addTag($tag);
+        }
     }
 
     /**
@@ -1150,16 +1277,17 @@ class Import
      */
     protected function createAddresses($data, $entity)
     {
-        // add urls
         $first = true;
         for ($i = 0, $len = 10; ++$i < $len;) {
             foreach ($data as $key => $value) {
                 if (strpos($key, 'address' . $i) !== false) {
                     $address = $this->createAddress($data, $i);
-                    // add address to entity
+                    // Add address to entity.
                     if ($address !== null) {
-                        $first = $first || $address->getPrimaryAddress();
-                        $this->getManager($entity)->addAddress($entity, $address, $first);
+                        if (!$this->isAddressAlreadyAssigned($address, $entity)) {
+                            $first = $first || $address->getPrimaryAddress();
+                            $this->getManager($entity)->addAddress($entity, $address, $first);
+                        }
                     }
                     break;
                 }
@@ -1179,20 +1307,20 @@ class Import
      */
     protected function createAddress($data, $id = 1)
     {
-        // Set address
+        // Set address.
         $address = new Address();
         $addAddress = false;
         $prefix = 'address' . $id . '_';
 
-        // Street
+        // Street.
         if ($this->checkData($prefix . 'street', $data)) {
             $street = $data[$prefix . 'street'];
 
-            // separate street and number
+            // Separate street and number.
             if ($this->options['streetNumberSplit']) {
                 preg_match('/(*UTF8)([^\d]+)\s?(.+)/iu', $street, $result); // UTF8 is to ensure correct utf8 encoding
 
-                // check if number is given, else do not apply preg match
+                // Check if number is given, else do not apply preg match.
                 if (array_key_exists(2, $result) && $this->startsWithNumber($result[2])) {
                     $number = trim($result[2]);
                     $street = trim($result[1]);
@@ -1218,7 +1346,7 @@ class Import
             $addressTitle = $data[$prefix . 'title'];
             $addAddress = true;
         }
-        $address->setTitle($addressTitle);
+        $address->setTitle(trim($addressTitle));
         // Zip
         if ($this->checkData($prefix . 'zip', $data)) {
             $address->setZip($data[$prefix . 'zip']);
@@ -1354,7 +1482,7 @@ class Import
             $bankIndex = 'bank' . $i;
             $prefix = $bankIndex . '_';
 
-            // If iban is set, then add bank account
+            // If iban is set, then add bank account.
             if ($this->checkData($prefix . 'iban', $data)) {
 
                 $bank = new BankAccount();
@@ -1370,7 +1498,7 @@ class Import
                 if ($this->checkData($bankIndex, $data)) {
                     $bank->setBankName($data[$bankIndex]);
                 }
-                // Set bank to public
+                // Set bank to public.
                 if ($this->checkData($prefix . 'public', $data, 'bool')) {
                     $bank->setPublic($data[$prefix . 'public']);
                 } else {
@@ -1381,7 +1509,7 @@ class Import
                 $entity->addBankAccount($bank);
             }
 
-            // Create comments for old bank addresses
+            // Create comments for old bank addresses.
             if ($this->checkData($prefix . 'blz', $data)) {
                 $noteTxt = 'Old Bank Account: ';
                 $noteTxt .= 'BLZ: ';
@@ -1431,7 +1559,7 @@ class Import
      *
      * @return Contact
      */
-    protected function createContact($data, $row)
+    protected function createContact(array $data, $row)
     {
         try {
             // Check if contact already exists.
@@ -1441,17 +1569,16 @@ class Import
             if (!$contact) {
                 $contact = new Contact();
                 $this->em->persist($contact);
-
-                // Set contact data.
-                $this->setContactData($data, $contact);
             }
 
+            // Set data on contact.
+            $this->setContactData($data, $contact);
             // Create account relation.
             $this->createAccountContactRelations($data, $contact, $row);
 
             return $contact;
         } catch (NonUniqueResultException $nur) {
-            $this->debug(sprintf("\nNon unique result for contact at row %d \n", $row));
+            $this->debug(sprintf("\nNon unique result for contact at row %d \n", $this->rowNumber));
         }
 
         return null;
@@ -1460,10 +1587,10 @@ class Import
     /**
      * Sets data to Contact entity by given data array.
      *
-     * @param Contact $contact
      * @param array $data
+     * @param Contact $contact
      */
-    protected function setContactData($data, Contact $contact)
+    protected function setContactData(array $data, Contact $contact)
     {
         if ($this->checkData('contact_firstname', $data)) {
             $contact->setFirstName($data['contact_firstname']);
@@ -1495,13 +1622,10 @@ class Import
             $contact->setBirthday($birthday);
         }
 
-        // check company
-        $this->em->persist($contact);
-
-        // add address if set
+        // Add address if set.
         $this->createAddresses($data, $contact);
 
-        // process emails, phones, faxes, urls and notes
+        // Process emails, phones, faxes, urls and notes.
         $this->processTags($data, $contact);
         $this->processEmails($data, $contact);
         $this->processPhones($data, $contact);
@@ -1577,9 +1701,11 @@ class Import
         if (!$account) {
             $this->debug(
                 sprintf(
-                    "Could not assign contact at row %d to %s. (account could not be found)\n",
+                    "%sCould not assign contact at row %d to %s. (account could not be found)%s",
+                    PHP_EOL,
                     $row,
-                    $data[$index]
+                    $data[$index],
+                    PHP_EOL
                 )
             );
         } else {
@@ -1677,7 +1803,12 @@ class Import
         if ($isDataSet) {
             if ($type !== null) {
                 // TODO check for types
-                if ($type === 'bool' && $data[$index] != 'true' && $data[$index] != 'false' && $data[$index] != '1' && $data[$index] != '0') {
+                if ($type === 'bool'
+                    && $data[$index] != 'true'
+                    && $data[$index] != 'false'
+                    && $data[$index] != '1'
+                    && $data[$index] != '0'
+                ) {
                     throw new \InvalidArgumentException($data[$index] . ' is not a boolean!');
                 }
             }

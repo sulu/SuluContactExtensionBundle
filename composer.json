@@ -6,7 +6,7 @@
     "keywords": ["contact", "crm"],
     "require": {
         "php": ">=5.4",
-        "sulu/sulu": "1.1.*"
+        "sulu/sulu": "1.2.*"
     },
     "require-dev": {
 	"jackalope/jackalope-doctrine-dbal": "~1.2.0"

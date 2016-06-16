@@ -10,7 +10,6 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Entity;
 
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\AbstractAccount as SuluAccount;
 
 class Account extends SuluAccount
@@ -20,8 +19,15 @@ class Account extends SuluAccount
     const TYPE_CUSTOMER = 2;
     const TYPE_SUPPLIER = 3;
 
+    const DEFAULT_IS_ACTIVE = true;
+
     /**
-     * @var integer
+     * @var bool
+     */
+    private $isActive = self::DEFAULT_IS_ACTIVE;
+
+    /**
+     * @var int
      */
     protected $type = self::TYPE_BASIC;
 
@@ -41,10 +47,9 @@ class Account extends SuluAccount
     private $termsOfDelivery;
 
     /**
-     * Set responsiblePerson
-     *
      * @param Contact $responsiblePerson
-     * @return Account
+     *
+     * @return self
      */
     public function setResponsiblePerson(Contact $responsiblePerson = null)
     {
@@ -52,9 +57,7 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get responsiblePerson
-     *
-     * @return \Sulu\Bundle\ContactBundle\Entity\Contact
+     * @return Contact
      */
     public function getResponsiblePerson()
     {
@@ -62,10 +65,9 @@ class Account extends SuluAccount
     }
 
     /**
-     * Set type
+     * @param int $type
      *
-     * @param integer $type
-     * @return Account
+     * @return self
      */
     public function setType($type)
     {
@@ -75,9 +77,7 @@ class Account extends SuluAccount
     }
 
     /**
-     * Get type
-     *
-     * @return integer
+     * @return int
      */
     public function getType()
     {
@@ -114,5 +114,25 @@ class Account extends SuluAccount
     public function setTermsOfDelivery($termsOfDelivery)
     {
         $this->termsOfDelivery = $termsOfDelivery;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     *
+     * @return self
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
     }
 }
