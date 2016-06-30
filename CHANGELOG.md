@@ -1,7 +1,8 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
-* dev-develop
+* 0.6.1 (2016-06-30)
+
     * ENHANCEMENT  Added default value for contact type to avoid BC breaks.
     * ENHANCEMENT  Prepended config for contact model in order to automatically use contact of
                    ContactExtensionBundle.
