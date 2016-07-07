@@ -9,8 +9,8 @@
 
 define([
     'sulucontact/components/contacts/edit/details/main',
-    'services/sulucontactextension/contact-router'
-], function(SuluBaseForm, ContactRouter) {
+    'services/sulucontactextension/account-router'
+], function(SuluBaseForm, AccountRouter) {
 
     'use strict';
 
@@ -34,7 +34,7 @@ define([
         this.sandbox.dom.off('#sidebar');
         this.sandbox.dom.on('#sidebar', 'click', function(event) {
             var id = this.sandbox.dom.data(event.currentTarget,'id');
-            ContactRouter.toEdit(id);
+            AccountRouter.toEdit(id);
         }.bind(this), '#main-account');
     };
 
