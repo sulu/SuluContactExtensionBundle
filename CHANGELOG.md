@@ -1,6 +1,11 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
+* 0.6.3 (2016-07-08)
+
+    * ENHANCEMENT  Changed ORM type of the contact entity from entity to mapped superclass to
+                   allow inheritance.
+
 * 0.6.2 (2016-07-07)
 
     * BUGFIX       Fixed main-account link in sidebar
