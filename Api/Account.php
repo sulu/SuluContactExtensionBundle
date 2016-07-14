@@ -16,7 +16,6 @@ use JMS\Serializer\Annotation\SerializedName;
 use JMS\Serializer\Annotation\VirtualProperty;
 use Sulu\Bundle\ContactBundle\Api\Account as SuluAccount;
 use Sulu\Bundle\ContactBundle\Api\Contact;
-use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
@@ -51,11 +50,11 @@ class Account extends SuluAccount
     }
 
     /**
-     * @param ContactEntity $responsiblePerson
+     * @param ContactInterface $responsiblePerson
      *
      * @return self
      */
-    public function setResponsiblePerson(ContactEntity $responsiblePerson = null)
+    public function setResponsiblePerson(ContactInterface $responsiblePerson = null)
     {
         $this->entity->setResponsiblePerson($responsiblePerson);
 
