@@ -108,4 +108,21 @@ configurable attributes:
                  financials: true
                  supplierinternal: true
                  productcategories: true
+                 
+     contact_types:
+         basic:
+             id: 0
+             name: basic
+             translation: contact.contact.type.basic
+             addTranslation: contact.contact.add-basic
+         customer:
+             id: 1
+             name: customer
+             translation: contact.contact.type.customer
+             addTranslation: contact.contact.add-customer
+         partner:
+             id: 2
+             name: partner
+             translation: contact.contact.type.supplier
+             addTranslation: contact.contact.add-supplier
 ```

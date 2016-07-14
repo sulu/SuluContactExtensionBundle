@@ -13,10 +13,10 @@ namespace Sulu\Bundle\ContactExtensionBundle\Widgets;
 use Doctrine\ORM\EntityManager;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetInterface;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetParameterException;
 use Sulu\Bundle\AdminBundle\Widgets\WidgetEntityNotFoundException;
+use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Persistence\Repository\ORM\EntityRepository;
 
 /**
@@ -110,11 +110,11 @@ class ContactInfo implements WidgetInterface
     /**
      * Returns the data neede for the contact list-sidebar
      *
-     * @param Contact $contact
+     * @param ContactInterface $contact
      *
      * @return array
      */
-    protected function parseContactForListSidebar(Contact $contact)
+    protected function parseContactForListSidebar(ContactInterface $contact)
     {
         $data = [];
 

@@ -14,5 +14,4 @@ use Sulu\Bundle\ContactBundle\Entity\ContactRepository as SuluContactRepository;
 
 class ContactRepository extends SuluContactRepository
 {
-
 }
