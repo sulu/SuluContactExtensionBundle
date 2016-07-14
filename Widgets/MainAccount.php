@@ -120,7 +120,7 @@ class MainAccount implements WidgetInterface
             $data['email'] = $account->getMainEmail();
             $data['url'] = $account->getMainUrl();
 
-            return $data;v
+            return $data;
         } else {
             return null;
         }
