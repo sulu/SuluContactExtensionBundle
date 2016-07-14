@@ -15,7 +15,6 @@ use Hateoas\Representation\CollectionRepresentation;
 use JMS\Serializer\SerializationContext;
 use Sulu\Bundle\ContactBundle\Controller\ContactController as SuluContactController;
 use Sulu\Bundle\ContactBundle\Util\IndexComparatorInterface;
-use Sulu\Bundle\ContactExtensionBundle\Entity\Contact;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\MissingArgumentException;
 use Sulu\Component\Rest\Exception\RestException;
@@ -96,7 +95,7 @@ class ContactController extends SuluContactController
     {
         try {
             $this->checkArguments($request);
-            /** @var Contact $contact */
+            /** @var ContactInterface $contact */
             $contact = $this->getContactManager()->save(
                 $request->request->all()
             );

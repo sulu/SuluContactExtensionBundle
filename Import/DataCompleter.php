@@ -6,12 +6,12 @@
 namespace Sulu\Bundle\ContactExtensionBundle\Import;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Sulu\Component\Content\Query\ContentQueryBuilderInterface;
 use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountRepository;
-use Sulu\Bundle\ContactBundle\Entity\ContactRepository;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
+use Sulu\Component\Contact\Model\ContactRepositoryInterface;
+use Sulu\Component\Content\Query\ContentQueryBuilderInterface;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * Class for either completing missing data in database
@@ -122,19 +122,19 @@ class DataCompleter
     protected $accountRepository;
 
     /**
-     * @var ContactRepository
+     * @var ContactRepositoryInterface
      */
     protected $contactRepository;
 
     /**
      * @param EntityManagerInterface $em
      * @param AccountRepository $accountRepository
-     * @param ContactRepository $contactRepository
+     * @param ContactRepositoryInterface $contactRepository
      */
     public function __construct(
         EntityManagerInterface $em,
         AccountRepository $accountRepository,
-        ContactRepository $contactRepository
+        ContactRepositoryInterface $contactRepository
     ) {
         $this->log = array();
 

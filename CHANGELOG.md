@@ -1,6 +1,10 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
+* 0.6.4 (2016-07-14)
+
+    * BUGFIX       Multiple fixes of ContactInterface
+
 * 0.6.3 (2016-07-08)
 
     * ENHANCEMENT  Changed ORM type of the contact entity from entity to mapped superclass to

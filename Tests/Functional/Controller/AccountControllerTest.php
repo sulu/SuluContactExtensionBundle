@@ -10,24 +10,23 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Controller;
 
-use DateTime;
 use Sulu\Bundle\ContactBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountContact;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\ContactBundle\Entity\AddressType;
 use Sulu\Bundle\ContactBundle\Entity\Country;
 use Sulu\Bundle\ContactBundle\Entity\Email;
 use Sulu\Bundle\ContactBundle\Entity\EmailType;
+use Sulu\Bundle\ContactBundle\Entity\Fax;
+use Sulu\Bundle\ContactBundle\Entity\FaxType;
 use Sulu\Bundle\ContactBundle\Entity\Note;
 use Sulu\Bundle\ContactBundle\Entity\Phone;
 use Sulu\Bundle\ContactBundle\Entity\PhoneType;
-use Sulu\Bundle\ContactBundle\Entity\Fax;
-use Sulu\Bundle\ContactBundle\Entity\FaxType;
 use Sulu\Bundle\ContactBundle\Entity\Url;
 use Sulu\Bundle\ContactBundle\Entity\UrlType;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
+use Sulu\Component\Contact\Model\ContactRepositoryInterface;
 
 class AccountControllerTest extends SuluTestCase
 {
@@ -153,7 +152,7 @@ class AccountControllerTest extends SuluTestCase
         $account->addAccountAddresse($accountAddress);
         $address->addAccountAddresse($accountAddress);
 
-        $contact = new Contact();
+        $contact = $this->getContactRepository()->createNew();
         $contact->setFirstName("Vorname");
         $contact->setLastName("Nachname");
         $contact->setMiddleName("Mittelname");
@@ -231,5 +230,13 @@ class AccountControllerTest extends SuluTestCase
         );
 
         $this->assertEquals(404, $client->getResponse()->getStatusCode());
+    }
+
+    /**
+     * @return ContactRepositoryInterface
+     */
+    private function getContactRepository()
+    {
+        return $this->getContainer()->get('sulu.repository.contact');
     }
 }
