@@ -15,15 +15,15 @@ use Sulu\Bundle\ContactBundle\Contact\ContactManager;
 use Sulu\Bundle\ContactBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\ContactBundle\Entity\AddressType;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\Country;
+use Sulu\Bundle\ContactBundle\Entity\EmailType;
 use Sulu\Bundle\ContactBundle\Entity\FaxType;
 use Sulu\Bundle\ContactBundle\Entity\PhoneType;
-use Sulu\Bundle\ContactBundle\Entity\EmailType;
 use Sulu\Bundle\ContactBundle\Entity\UrlType;
-use Sulu\Bundle\ContactBundle\Entity\Note;
 use Sulu\Bundle\ContactBundle\Import\Import;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
+use Sulu\Component\Contact\Model\ContactInterface;
+use Sulu\Component\Contact\Model\ContactRepositoryInterface;
 
 class ImportTest extends SuluTestCase
 {
@@ -289,8 +289,8 @@ class ImportTest extends SuluTestCase
 
     private function checkContactData()
     {
-        /** @var Contact $contact */
-        $contacts = $this->em->getRepository('SuluContactBundle:Contact')->findAll();
+        /** @var ContactInterface $contact */
+        $contacts = $this->getContactRepository()->findAll();
         $this->assertEquals(2, sizeof($contacts));
 
         $contact = $contacts[0];
@@ -360,5 +360,13 @@ class ImportTest extends SuluTestCase
         $this->assertEquals(1, sizeof($contact->getEmails()));
         $this->assertEquals('nicole@exemplary.com', $contact->getEmails()->get(0)->getEmail());
         $this->assertEquals('Business', $contact->getEmails()->get(0)->getEmailType()->getName());
+    }
+
+    /**
+     * @return ContactRepositoryInterface
+     */
+    private function getContactRepository()
+    {
+        return $this->getContainer()->get('sulu.repository.contact');
     }
 }
