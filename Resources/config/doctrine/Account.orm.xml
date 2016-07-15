@@ -32,7 +32,7 @@
         <one-to-many field="children" target-entity="Sulu\Bundle\ContactBundle\Entity\AccountInterface" mapped-by="parent"
                      fetch="EXTRA_LAZY"/>
 
-        <many-to-one field="responsiblePerson" target-entity="Sulu\Bundle\ContactBundle\Entity\Contact">
+        <many-to-one field="responsiblePerson" target-entity="Sulu\Component\Contact\Model\ContactInterface">
             <join-columns>
                 <join-column name="idResponsiblePerson" referenced-column-name="id" on-delete="SET NULL" nullable="true"/>
             </join-columns>

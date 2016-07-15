@@ -18,6 +18,7 @@ use Sulu\Bundle\ContactBundle\Api\Account as SuluAccount;
 use Sulu\Bundle\ContactBundle\Api\Contact;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
+use Sulu\Component\Contact\Model\ContactInterface;
 
 /**
  * The Account class which will be exported to the API

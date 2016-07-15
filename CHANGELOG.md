@@ -1,6 +1,10 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
+* 0.6.5 (2016-07-15)
+
+    * BUGFIX       Fixed wrong usage of Contact in Account.orm.xml
+
 * 0.6.4 (2016-07-14)
 
     * BUGFIX       Multiple fixes of ContactInterface
