@@ -17,7 +17,7 @@ class TermsOfPaymentControllerTest extends SuluTestCase
 {
     public function setUp()
     {
-        $this->em = $this->db('ORM')->getOm();
+        $this->em = $this->getEntityManager();
         $this->initOrm();
     }
 

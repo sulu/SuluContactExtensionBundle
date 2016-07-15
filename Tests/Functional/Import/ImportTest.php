@@ -54,7 +54,7 @@ class ImportTest extends SuluTestCase
     public function setUp()
     {
         $this->purgeDatabase();
-        $this->em = $this->db('ORM')->getOm();
+        $this->em = $this->getEntityManager();
 
         $emailType = new EmailType();
         $emailType->setName('Business');

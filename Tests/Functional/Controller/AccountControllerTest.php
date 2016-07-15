@@ -10,7 +10,7 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Controller;
 
-use Sulu\Bundle\ContactBundle\Entity\Account;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountContact;
 use Sulu\Bundle\ContactBundle\Entity\Address;
@@ -49,7 +49,7 @@ class AccountControllerTest extends SuluTestCase
     public function setUp()
     {
         $this->purgeDatabase();
-        $this->em = $this->db('ORM')->getOm();
+        $this->em = $this->getEntityManager();
         $this->initOrm();
     }
 
@@ -149,8 +149,8 @@ class AccountControllerTest extends SuluTestCase
         $accountAddress->setAddress($address);
         $accountAddress->setAccount($account);
         $accountAddress->setMain(true);
-        $account->addAccountAddresse($accountAddress);
-        $address->addAccountAddresse($accountAddress);
+        $account->addAccountAddress($accountAddress);
+        $address->addAccountAddress($accountAddress);
 
         $contact = $this->getContactRepository()->createNew();
         $contact->setFirstName("Vorname");
@@ -201,7 +201,7 @@ class AccountControllerTest extends SuluTestCase
         );
 
         $response = json_decode($client->getResponse()->getContent());
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
 
         $this->assertEquals($this->account->getId(), $response->id);
         $this->assertEquals(1, $response->type);
