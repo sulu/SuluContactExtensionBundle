@@ -24,7 +24,6 @@ use Sulu\Bundle\ContactBundle\Entity\AccountContact;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\ContactBundle\Entity\BankAccount;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\ContactTitle;
 use Sulu\Bundle\ContactBundle\Entity\Email;
 use Sulu\Bundle\ContactBundle\Entity\Fax;
@@ -1589,7 +1588,7 @@ class Import
      * Sets data to Contact entity by given data array.
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      */
     protected function setContactData(array $data, ContactInterface $contact)
     {
@@ -1655,7 +1654,7 @@ class Import
      * Either creates a single contact relation (contact_account) or multiple relations (contact_account1..n).
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      */
     protected function createAccountContactRelations($data, $contact, $row)
@@ -1677,7 +1676,7 @@ class Import
      *
      * @param string $index
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      */
     protected function checkAndCreateAccountContactRelation($index, $data, $contact, $row)
@@ -1691,7 +1690,7 @@ class Import
      * Adds an AccountContact relation if not existent.
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      * @param string $index - account-index in data array
      */
@@ -1758,7 +1757,7 @@ class Import
      *
      * @param array $data
      *
-     * @return Contact
+     * @return ContactInterface
      */
     protected function getContactByData($data)
     {
@@ -2278,7 +2277,7 @@ class Import
     }
 
     /**
-     * @param Contact|Account $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return AbstractContactManager
      */
