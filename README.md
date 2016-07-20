@@ -80,8 +80,6 @@ configurable attributes:
              id: 0
              name: basic
              translation: contact.account.type.basic
-             tabs:
-                 financials: false
              convertableTo:
                  lead: true
                  customer: true
@@ -89,23 +87,14 @@ configurable attributes:
              id: 1
              name: lead
              translation: contact.account.type.lead
-             tabs:
-                 financials: false
              convertableTo:
                  customer: true
          customer:
              id: 2
              name: customer
              translation: contact.account.type.customer
-             tabs:
-                 financials: true
-                 customerinternal: true
          supplier:
              id: 3
              name: supplier
              translation: contact.account.type.supplier
-             tabs:
-                 financials: true
-                 supplierinternal: true
-                 productcategories: true
 ```
