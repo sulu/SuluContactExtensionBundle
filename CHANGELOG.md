@@ -1,5 +1,12 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
+* dev-develop
+
+    * BUGFIX       Fixed tests and added travis config
+
+* 0.6.6 (2016-07-21)
+
+    * BUGFIX       Fixed displaying of financial tab for customer and supplier only (also after save)
 
 * 0.5.8 (2016-07-21)
 
