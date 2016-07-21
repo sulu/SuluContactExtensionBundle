@@ -95,6 +95,7 @@
             <argument>sulu-contact-extension</argument>
             <argument type="collection">
                 <argument key="accountTypes">%sulu_contact_extension.account_types%</argument>
+                <argument key="contactTypes">%sulu_contact_extension.contact_types%</argument>
                 <argument key="displayAccountActiveToggle">%sulu_contact_extension.display_account_active_toggle%</argument>
             </argument>
         </service>

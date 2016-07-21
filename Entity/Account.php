@@ -10,8 +10,8 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Entity;
 
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContactBundle\Entity\AbstractAccount as SuluAccount;
+use Sulu\Component\Contact\Model\ContactInterface;
 
 class Account extends SuluAccount
 {
@@ -33,7 +33,7 @@ class Account extends SuluAccount
     protected $type = self::TYPE_BASIC;
 
     /**
-     * @var Contact
+     * @var ContactInterface
      */
     private $responsiblePerson;
 
@@ -48,17 +48,19 @@ class Account extends SuluAccount
     private $termsOfDelivery;
 
     /**
-     * @param Contact $responsiblePerson
+     * @param ContactInterface $responsiblePerson
      *
      * @return self
      */
-    public function setResponsiblePerson(Contact $responsiblePerson = null)
+    public function setResponsiblePerson(ContactInterface $responsiblePerson = null)
     {
         $this->responsiblePerson = $responsiblePerson;
+
+        return $this;
     }
 
     /**
-     * @return Contact
+     * @return ContactInterface
      */
     public function getResponsiblePerson()
     {
