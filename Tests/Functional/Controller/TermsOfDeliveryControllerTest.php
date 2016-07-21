@@ -117,7 +117,7 @@ class TermsOfDeliveryControllerTest extends SuluTestCase
             )
         );
 
-        $this->assertEquals(500, $client->getResponse()->getStatusCode());
+        $this->assertEquals(400, $client->getResponse()->getStatusCode());
         $this->checkAssertionsForOriginalState();
 
     }

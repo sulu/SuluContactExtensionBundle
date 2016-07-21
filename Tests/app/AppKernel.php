@@ -22,6 +22,7 @@ class AppKernel extends SuluTestKernel
             $bundles,
             [
                 new Sulu\Bundle\ContactExtensionBundle\SuluContactExtensionBundle(),
+                new Sulu\Bundle\ActivityBundle\SuluActivityBundle(),
             ]
         );
 

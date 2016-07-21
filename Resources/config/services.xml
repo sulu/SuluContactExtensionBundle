@@ -5,7 +5,6 @@
 
     <parameters>
         <parameter key="sulu_contact_extension.admin.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionAdmin</parameter>
-
         <parameter key="sulu_contact_extension.contact.widgets.main_account.class">Sulu\Bundle\ContactExtensionBundle\Widgets\MainAccount</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.contact_accounts.class">Sulu\Bundle\ContactExtensionBundle\Widgets\ContactAccounts</parameter>
         <parameter key="sulu_contact_extension.contact.widgets.account_info.class">Sulu\Bundle\ContactExtensionBundle\Widgets\AccountInfo</parameter>
@@ -17,7 +16,6 @@
         <parameter key="sulu_contact_extension.js_config.class">Sulu\Bundle\AdminBundle\Admin\JsConfig</parameter>
         <parameter key="sulu_contact_extension.account_navigation_provider.class">Sulu\Bundle\ContactExtensionBundle\Admin\SuluContactExtensionContentNavigation</parameter>
         <parameter key="sulu_contact_extension.data_completer.class">Sulu\Bundle\ContactExtensionBundle\Import\DataCompleter</parameter>
-
         <!-- extend account -->
         <parameter key="sulu_contact.account.entity">SuluContactExtensionBundle:Account</parameter>
         <parameter key="sulu_contact.account_repository.class">Sulu\Bundle\ContactExtensionBundle\Entity\AccountRepository</parameter>
@@ -25,12 +23,29 @@
     </parameters>
 
     <services>
+        <!--REPOSITORIES-->
+        <service id="sulu_contact_extension.terms_of_delivery_repository" class="Sulu\Component\Persistence\Repository\ORM\EntityRepository">
+            <factory method="getRepository" service="doctrine"/>
+            <argument>Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery</argument>
+        </service>
+        <service id="sulu_contact_extension.terms_of_payment_repository" class="Sulu\Component\Persistence\Repository\ORM\EntityRepository">
+            <factory method="getRepository" service="doctrine"/>
+            <argument>Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment</argument>
+        </service>
+
+        <!--ADMIN-->
         <service id="sulu_contact_extension.admin" class="%sulu_contact_extension.admin.class%">
             <argument>%sulu_admin.name%</argument>
             <tag name="sulu.admin"/>
             <tag name="sulu.context" context="admin"/>
         </service>
 
+        <service id="sulu_contact_extension.account_navigation_provider" class="%sulu_contact_extension.account_navigation_provider.class%">
+            <tag name="sulu_admin.content_navigation" alias="account"/>
+            <tag name="sulu.context" context="admin"/>
+        </service>
+
+        <!--WIDGETS-->
         <service id="sulu_contact_extension.contact.widgets.account_children" class="%sulu_contact_extension.contact.widgets.account_children.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="sulu_contact.account_repository"/>
@@ -76,17 +91,14 @@
             <tag name="sulu.widget" alias="sulu-contact-toolbar"/>
         </service>
 
-        <service id="sulu_contact_extension.account_navigation_provider" class="%sulu_contact_extension.account_navigation_provider.class%">
-            <tag name="sulu_admin.content_navigation" alias="account"/>
-            <tag name="sulu.context" context="admin"/>
-        </service>
-
+        <!--COMMAND SERVICES-->
         <service id="sulu_contact_extension.data_completer" class="%sulu_contact_extension.data_completer.class%">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument type="service" id="sulu_contact.account_repository"/>
             <argument type="service" id="sulu.repository.contact"/>
         </service>
 
+        <!--JS CONFIG-->
         <service id="sulu_contact_extension.js_config" class="%sulu_contact_extension.js_config.class%">
             <tag name="sulu.js_config"/>
             <argument>sulu-contact-extension</argument>
@@ -97,5 +109,4 @@
             </argument>
         </service>
     </services>
-
 </container>

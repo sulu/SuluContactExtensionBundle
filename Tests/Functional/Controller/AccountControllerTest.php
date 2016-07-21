@@ -192,7 +192,6 @@ class AccountControllerTest extends SuluTestCase
 
     public function testTriggerAction()
     {
-
         $client = $this->createAuthenticatedClient();
 
         $client->request(

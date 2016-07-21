@@ -10,42 +10,40 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use Hateoas\Representation\CollectionRepresentation;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery;
+use Sulu\Bundle\ContactExtensionBundle\Exception\TermsAlreadySetException;
+use Sulu\Component\Persistence\Repository\ORM\EntityRepository;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\RestController;
-use FOS\RestBundle\Controller\Annotations\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Hateoas\Representation\CollectionRepresentation;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Makes account categories available through a REST API
- * Used RouteResource annotation to prevent automatic parenting of rest controllers
- * @package Sulu\Bundle\ContactBundle\Controller
- */
 class TermsOfDeliveryController extends RestController implements ClassResourceInterface
 {
     /**
      * {@inheritdoc}
      */
-    protected static $entityName = 'SuluContactExtensionBundle:TermsOfDelivery';
     protected static $entityKey = 'termsOfDeliveries';
 
     /**
-     * Shows a single terms of delivery
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Shows a single terms of delivery.
+     *
      * @Route("/termsofdeliveries/{id}")
+     *
+     * @param int $id
+     *
+     * @return Response
      */
     public function getAction($id)
     {
         $view = $this->responseGetById(
             $id,
             function ($id) {
-                return $this->getDoctrine()
-                    ->getRepository(self::$entityName)
-                    ->find($id);
+                return $this->getTermsOfDeliveryRepository()->find($id);
             }
         );
 
@@ -53,14 +51,17 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
     }
 
     /**
-     * lists all terms of deliveries
-     * optional parameter 'flat' calls listAction
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Lists all terms of deliveries.
+     * Optional parameter 'flat' calls listAction.
+     *
      * @Route("/termsofdeliveries")
+     *
+     * @return Response
      */
     public function cgetAction()
     {
-        $termsOfDelivery = $this->getDoctrine()->getRepository(self::$entityName)->findBy([], array('terms' => 'ASC'));
+        $termsOfDelivery = $this->getTermsOfDeliveryRepository()->findBy([], ['terms' => 'ASC']);
+
         $list = new CollectionRepresentation($termsOfDelivery, self::$entityKey);
 
         $view = $this->view($list, 200);
@@ -69,10 +70,13 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
     }
 
     /**
-     * Creates a terms of delivery
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @param Request $request
+     * Creates a terms of delivery.
+     *
      * @Route("/termsofdeliveries")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function postAction(Request $request)
     {
@@ -85,7 +89,7 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
 
             $em = $this->getDoctrine()->getManager();
             $termsOfDelivery = new TermsOfDelivery();
-            $termsOfDelivery->setTerms($terms);
+            $this->setTermsToEntity($termsOfDelivery, $terms);
 
             $em->persist($termsOfDelivery);
             $em->flush();
@@ -95,69 +99,76 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $re) {
             $view = $this->view($re->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Edits the existing terms-of-delivery with the given id
-     * @param integer $id
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
+     * Edits the existing terms-of-delivery with the given id.
+     *
      * @Route("/termsofdeliveries/{id}")
+     *
+     * @param int $id
+     * @param Request $request
+     *
+     * @throws EntityNotFoundException
+     *
+     * @return Response
      */
     public function putAction(Request $request, $id)
     {
         try {
             /** @var TermsOfDelivery $termsOfDelivery */
-            $termsOfDelivery = $this->getDoctrine()
-                ->getRepository(self::$entityName)
-                ->find($id);
+            $termsOfDelivery = $this->getTermsOfDeliveryRepository()->find($id);
 
             if (!$termsOfDelivery) {
-                throw new EntityNotFoundException(self::$entityName, $id);
-            } else {
-                $terms = $request->get('terms');
-
-                if ($terms == null || $terms == '') {
-                    throw new RestException('There is no category-name for the terms of delivery given');
-                } else {
-                    $em = $this->getDoctrine()->getManager();
-                    $termsOfDelivery->setTerms($terms);
-
-                    $em->flush();
-                    $view = $this->view($termsOfDelivery, 200);
-                }
+                throw new EntityNotFoundException($this->getEntityName(), $id);
             }
+
+            $terms = $request->get('terms');
+
+            if ($terms == null || $terms == '') {
+                throw new RestException('Parameter terms not given');
+            }
+
+            $em = $this->getDoctrine()->getManager();
+            $this->setTermsToEntity($termsOfDelivery, $terms);
+
+            $em->flush();
+            $view = $this->view($termsOfDelivery, 200);
+
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $exc) {
             $view = $this->view($exc->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Delete terms-of-delivery with the given id
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Delete terms-of-delivery with the given id.
+     *
      * @Route("/termsofdeliveries/{id}")
+     *
+     * @param int $id
+     *
+     * @return Response
      */
     public function deleteAction($id)
     {
         try {
             $delete = function ($id) {
-
                 /* @var TermsOfDelivery $termsOfDelivery */
-                $termsOfDelivery = $this->getDoctrine()
-                    ->getRepository(self::$entityName)
-                    ->find($id);
+                $termsOfDelivery = $this->getTermsOfDeliveryRepository()->find($id);
 
                 if (!$termsOfDelivery) {
-                    throw new EntityNotFoundException(self::$entityName, $id);
+                    throw new EntityNotFoundException($this->getEntityName(), $id);
                 }
 
                 $em = $this->getDoctrine()->getManager();
@@ -166,7 +177,6 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
             };
 
             $view = $this->responseDelete($id, $delete);
-
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
         }
@@ -175,10 +185,13 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
     }
 
     /**
-     * Add or update a bunch of terms of delivery
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Add or update a bunch of terms of delivery.
+     *
      * @Route("/termsofdeliveries")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function patchAction(Request $request)
     {
@@ -191,7 +204,7 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
                     throw new RestException('There is no category-name for the account-category given');
                 }
 
-                $data[] = $this->addAndUpdateCategories($item);
+                $data[] = $this->processTerms($item);
                 $i++;
             }
 
@@ -201,37 +214,76 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $exc) {
             $view = $this->view($exc->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Helper function for patch action
-     * @param $item
+     * Helper function for patch action.
+     *
+     * @param array $item
+     *
      * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
-     * @return added or updated entity
+     *
+     * @return TermsOfDelivery
      */
-    private function addAndUpdateCategories($item)
+    private function processTerms(array $item)
     {
+        $termsOfDelivery = null;
+
         if (isset($item['id']) && !empty($item['id'])) {
             /* @var TermsOfDelivery $termsOfDelivery */
-            $termsOfDelivery = $this->getDoctrine()
-                ->getRepository(self::$entityName)
-                ->find($item['id']);
+            $termsOfDelivery = $this->getTermsOfDeliveryRepository()->find($item['id']);
 
             if ($termsOfDelivery == null) {
-                throw new EntityNotFoundException(self::$entityName, $item['id']);
-            } else {
-                $termsOfDelivery->setTerms($item['terms']);
+                throw new EntityNotFoundException($this->getTermsOfDeliveryRepository()->getClassName(), $item['id']);
             }
 
-        } else {
-            $termsOfDelivery = new TermsOfDelivery();
-            $termsOfDelivery->setTerms($item['terms']);
-            $this->getDoctrine()->getManager()->persist($termsOfDelivery);
+            $this->setTermsToEntity($termsOfDelivery, $item['terms']);
+
+            return $termsOfDelivery;
         }
 
+        $termsOfDelivery = new TermsOfDelivery();
+        $this->setTermsToEntity($termsOfDelivery, $item['terms']);
+        $this->getDoctrine()->getManager()->persist($termsOfDelivery);
+
         return $termsOfDelivery;
+    }
+
+    /**
+     * @param TermsOfDelivery $entity
+     * @param string $terms
+     *
+     * @throws TermsAlreadySetException
+     */
+    private function setTermsToEntity($entity, $terms)
+    {
+        $termsOfDelivery = $this->getTermsOfDeliveryRepository()->findByTerms($terms);
+
+        if ($termsOfDelivery) {
+            throw new TermsAlreadySetException(sprintf('%s already set.', $terms));
+        }
+
+        $entity->setTerms($terms);
+    }
+
+    /**
+     * @return string
+     */
+    private function getEntityName()
+    {
+        return $this->getTermsOfDeliveryRepository()->getClassName();
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    private function getTermsOfDeliveryRepository()
+    {
+        return $this->get('sulu_contact_extension.terms_of_delivery_repository');
     }
 }

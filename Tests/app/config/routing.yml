@@ -1,17 +1,17 @@
-    sulu_activity_api:
-        type: rest
-        resource: "@SuluActivityBundle/Resources/config/routing_api.xml"
-        prefix: /admin/api
+sulu_activity_api:
+    type: rest
+    resource: "@SuluActivityBundle/Resources/config/routing_api.xml"
+    prefix: /api
 
-    sulu_activity:
-        resource: "@SuluActivityBundle/Resources/config/routing.xml"
-        prefix: /admin/activity
+sulu_activity:
+    resource: "@SuluActivityBundle/Resources/config/routing.xml"
+    prefix: /activity
 
-    sulu_contact_extension:
-        resource: "@SuluContactExtensionBundle/Resources/config/routing.xml"
-        prefix: /admin/contact
+sulu_contact_extension:
+    resource: "@SuluContactExtensionBundle/Resources/config/routing.xml"
+    prefix: /contact
 
-    sulu_contact_extension_api:
-        type: rest
-        resource: "@SuluContactExtensionBundle/Resources/config/routing_extension_api.xml"
-        prefix: /admin/api
+sulu_contact_extension_api:
+    type: rest
+    resource: "@SuluContactExtensionBundle/Resources/config/routing_extension_api.xml"
+    prefix: /api
