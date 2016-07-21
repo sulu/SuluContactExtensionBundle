@@ -83,16 +83,8 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
         $terms = $request->get('terms');
 
         try {
-            if ($terms == null) {
-                throw new RestException('There is no term-name for the term-of-delivery given');
-            }
-
-            $em = $this->getDoctrine()->getManager();
-            $termsOfDelivery = new TermsOfDelivery();
-            $this->setTermsToEntity($termsOfDelivery, $terms);
-
-            $em->persist($termsOfDelivery);
-            $em->flush();
+            $termsOfDelivery = $this->createTermsOfDelivery($terms);
+            $this->getDoctrine()->getManager()->flush();
 
             $view = $this->view($termsOfDelivery, 200);
         } catch (EntityNotFoundException $enfe) {
@@ -129,10 +121,6 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
             }
 
             $terms = $request->get('terms');
-
-            if ($terms == null || $terms == '') {
-                throw new RestException('Parameter terms not given');
-            }
 
             $em = $this->getDoctrine()->getManager();
             $this->setTermsToEntity($termsOfDelivery, $terms);
@@ -232,8 +220,6 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
      */
     private function processTerms(array $item)
     {
-        $termsOfDelivery = null;
-
         if (isset($item['id']) && !empty($item['id'])) {
             /* @var TermsOfDelivery $termsOfDelivery */
             $termsOfDelivery = $this->getTermsOfDeliveryRepository()->find($item['id']);
@@ -247,8 +233,19 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
             return $termsOfDelivery;
         }
 
+        return $termsOfDelivery = $this->createTermsOfDelivery($item['terms']);
+    }
+
+    /**
+     * @param string $terms
+     *
+     * @return TermsOfDelivery
+     */
+    private function createTermsOfDelivery($terms)
+    {
         $termsOfDelivery = new TermsOfDelivery();
-        $this->setTermsToEntity($termsOfDelivery, $item['terms']);
+        $this->setTermsToEntity($termsOfDelivery, $terms);
+
         $this->getDoctrine()->getManager()->persist($termsOfDelivery);
 
         return $termsOfDelivery;
@@ -258,10 +255,15 @@ class TermsOfDeliveryController extends RestController implements ClassResourceI
      * @param TermsOfDelivery $entity
      * @param string $terms
      *
+     * @throws RestException
      * @throws TermsAlreadySetException
      */
     private function setTermsToEntity($entity, $terms)
     {
+        if ($terms == null || $terms == '') {
+            throw new RestException('Parameter terms not given');
+        }
+
         $termsOfDelivery = $this->getTermsOfDeliveryRepository()->findByTerms($terms);
 
         if ($termsOfDelivery) {

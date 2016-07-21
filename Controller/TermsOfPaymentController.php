@@ -10,46 +10,40 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use Hateoas\Representation\CollectionRepresentation;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment;
+use Sulu\Bundle\ContactExtensionBundle\Exception\TermsAlreadySetException;
+use Sulu\Component\Persistence\Repository\ORM\EntityRepository;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
 use Sulu\Component\Rest\Exception\RestException;
 use Sulu\Component\Rest\RestController;
-use FOS\RestBundle\Controller\Annotations\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Hateoas\Representation\CollectionRepresentation;
+use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Makes account categories available through a REST API
- * Used RouteResource annotation to prevent automatic parenting of rest controllers
- * @package Sulu\Bundle\ContactBundle\Controller
- */
 class TermsOfPaymentController extends RestController implements ClassResourceInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected static $entityName = 'SuluContactExtensionBundle:TermsOfPayment';
-
     /**
      * {@inheritdoc}
      */
     protected static $entityKey = 'termsOfPayments';
 
     /**
-     * Shows a single terms of payment
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Shows a single terms of payment.
+     *
      * @Route("/termsofpayments/{id}")
+     *
+     * @param int $id
+     *
+     * @return Response
      */
     public function getAction($id)
     {
         $view = $this->responseGetById(
             $id,
             function ($id) {
-                return $this->getDoctrine()
-                    ->getRepository(self::$entityName)
-                    ->find($id);
+                return $this->getTermsOfPaymentRepository()->find($id);
             }
         );
 
@@ -57,14 +51,17 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
     }
 
     /**
-     * lists all terms of payment
-     * optional parameter 'flat' calls listAction
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Lists all terms of payments.
+     * Optional parameter 'flat' calls listAction.
+     *
      * @Route("/termsofpayments")
+     *
+     * @return Response
      */
     public function cgetAction()
     {
-        $termsOfPayment = $this->getDoctrine()->getRepository(self::$entityName)->findBy([], array('terms' => 'ASC'));
+        $termsOfPayment = $this->getTermsOfPaymentRepository()->findBy([], ['terms' => 'ASC']);
+
         $list = new CollectionRepresentation($termsOfPayment, self::$entityKey);
 
         $view = $this->view($list, 200);
@@ -73,95 +70,93 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
     }
 
     /**
-     * Creates a terms of payment
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Creates a terms of payment.
+     *
      * @Route("/termsofpayments")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function postAction(Request $request)
     {
         $terms = $request->get('terms');
 
         try {
-            if ($terms == null) {
-                throw new RestException('There is no term-name for the term-of-payment given');
-            }
-
-            $em = $this->getDoctrine()->getManager();
-            $termsOfPayment = new TermsOfPayment();
-            $termsOfPayment->setTerms($terms);
-
-            $em->persist($termsOfPayment);
-            $em->flush();
+            $termsOfPayment = $this->createTermsOfPayment($terms);
+            $this->getDoctrine()->getManager()->flush();
 
             $view = $this->view($termsOfPayment, 200);
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $re) {
             $view = $this->view($re->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Edits the existing terms-of-payment with the given id
-     * @param integer $id
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
+     * Edits the existing terms-of-payment with the given id.
+     *
      * @Route("/termsofpayments/{id}")
+     *
+     * @param int $id
+     * @param Request $request
+     *
+     * @throws EntityNotFoundException
+     *
+     * @return Response
      */
     public function putAction(Request $request, $id)
     {
         try {
             /** @var TermsOfPayment $termsOfPayment */
-            $termsOfPayment = $this->getDoctrine()
-                ->getRepository(self::$entityName)
-                ->find($id);
+            $termsOfPayment = $this->getTermsOfPaymentRepository()->find($id);
 
             if (!$termsOfPayment) {
-                throw new EntityNotFoundException(self::$entityName, $id);
-            } else {
-                $terms = $request->get('terms');
-
-                if ($terms == null || $terms == '') {
-                    throw new RestException('There is no category-name for the account-category given');
-                } else {
-                    $em = $this->getDoctrine()->getManager();
-                    $termsOfPayment->setTerms($terms);
-
-                    $em->flush();
-                    $view = $this->view($termsOfPayment, 200);
-                }
+                throw new EntityNotFoundException($this->getEntityName(), $id);
             }
+
+            $terms = $request->get('terms');
+
+            $em = $this->getDoctrine()->getManager();
+            $this->setTermsToEntity($termsOfPayment, $terms);
+
+            $em->flush();
+            $view = $this->view($termsOfPayment, 200);
+
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $exc) {
             $view = $this->view($exc->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Delete terms-of-payment with the given id
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Delete terms-of-payment with the given id.
+     *
      * @Route("/termsofpayments/{id}")
+     *
+     * @param int $id
+     *
+     * @return Response
      */
     public function deleteAction($id)
     {
         try {
             $delete = function ($id) {
-
                 /* @var TermsOfPayment $termsOfPayment */
-                $termsOfPayment = $this->getDoctrine()
-                    ->getRepository(self::$entityName)
-                    ->find($id);
+                $termsOfPayment = $this->getTermsOfPaymentRepository()->find($id);
 
                 if (!$termsOfPayment) {
-                    throw new EntityNotFoundException(self::$entityName, $id);
+                    throw new EntityNotFoundException($this->getEntityName(), $id);
                 }
 
                 $em = $this->getDoctrine()->getManager();
@@ -170,7 +165,6 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
             };
 
             $view = $this->responseDelete($id, $delete);
-
         } catch (EntityNotFoundException $enfe) {
             $view = $this->view($enfe->toArray(), 404);
         }
@@ -179,10 +173,13 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
     }
 
     /**
-     * Add or update a bunch of terms of payment
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Add or update a bunch of terms of payment.
+     *
      * @Route("/termsofpayments")
+     *
+     * @param Request $request
+     *
+     * @return Response
      */
     public function patchAction(Request $request)
     {
@@ -192,10 +189,10 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
             $i = 0;
             while ($item = $request->get($i)) {
                 if (!isset($item['terms'])) {
-                    throw new RestException('There is no term-name for the terms-of-payment given');
+                    throw new RestException('There is no category-name for the account-category given');
                 }
 
-                $data[] = $this->addAndUpdateCategories($item);
+                $data[] = $this->processTerms($item);
                 $i++;
             }
 
@@ -205,37 +202,90 @@ class TermsOfPaymentController extends RestController implements ClassResourceIn
             $view = $this->view($enfe->toArray(), 404);
         } catch (RestException $exc) {
             $view = $this->view($exc->toArray(), 400);
+        } catch (TermsAlreadySetException $e) {
+            $view = $this->view($e->getMessage(), 400);
         }
 
         return $this->handleView($view);
     }
 
     /**
-     * Helper function for patch action
-     * @param $item
+     * Helper function for patch action.
+     *
+     * @param array $item
+     *
      * @throws \Sulu\Component\Rest\Exception\EntityNotFoundException
-     * @return TermsOfPayment added or updated entity
+     *
+     * @return TermsOfPayment
      */
-    private function addAndUpdateCategories($item)
+    private function processTerms(array $item)
     {
         if (isset($item['id']) && !empty($item['id'])) {
             /* @var TermsOfPayment $termsOfPayment */
-            $termsOfPayment = $this->getDoctrine()
-                ->getRepository(self::$entityName)
-                ->find($item['id']);
+            $termsOfPayment = $this->getTermsOfPaymentRepository()->find($item['id']);
 
             if ($termsOfPayment == null) {
-                throw new EntityNotFoundException(self::$entityName, $item['id']);
-            } else {
-                $termsOfPayment->setTerms($item['terms']);
+                throw new EntityNotFoundException($this->getTermsOfPaymentRepository()->getClassName(), $item['id']);
             }
 
-        } else {
-            $termsOfPayment = new TermsOfPayment();
-            $termsOfPayment->setTerms($item['terms']);
-            $this->getDoctrine()->getManager()->persist($termsOfPayment);
+            $this->setTermsToEntity($termsOfPayment, $item['terms']);
+
+            return $termsOfPayment;
         }
 
+        return $this->createTermsOfPayment($item['terms']);
+    }
+
+    /**
+     * @param string $terms
+     *
+     * @return TermsOfPayment
+     */
+    private function createTermsOfPayment($terms)
+    {
+        $termsOfPayment = new TermsOfPayment();
+        $this->setTermsToEntity($termsOfPayment, $terms);
+
+        $this->getDoctrine()->getManager()->persist($termsOfPayment);
+
         return $termsOfPayment;
+    }
+
+    /**
+     * @param TermsOfPayment $entity
+     * @param string $terms
+     *
+     * @throws RestException
+     * @throws TermsAlreadySetException
+     */
+    private function setTermsToEntity($entity, $terms)
+    {
+        if ($terms == null || $terms == '') {
+            throw new RestException('Parameter terms not given');
+        }
+
+        $termsOfPayment = $this->getTermsOfPaymentRepository()->findByTerms($terms);
+
+        if ($termsOfPayment) {
+            throw new TermsAlreadySetException(sprintf('%s already set.', $terms));
+        }
+
+        $entity->setTerms($terms);
+    }
+
+    /**
+     * @return string
+     */
+    private function getEntityName()
+    {
+        return $this->getTermsOfPaymentRepository()->getClassName();
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    private function getTermsOfPaymentRepository()
+    {
+        return $this->get('sulu_contact_extension.terms_of_payment_repository');
     }
 }

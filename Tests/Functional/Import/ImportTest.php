@@ -10,9 +10,6 @@
 
 namespace Sulu\Bundle\ContactExtensionBundle\Tests\Functional\Import;
 
-use Sulu\Bundle\ContactBundle\Contact\AccountManager;
-use Sulu\Bundle\ContactBundle\Contact\ContactManager;
-use Sulu\Bundle\ContactBundle\Entity\Account;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\ContactBundle\Entity\AddressType;
 use Sulu\Bundle\ContactBundle\Entity\Country;
@@ -20,7 +17,8 @@ use Sulu\Bundle\ContactBundle\Entity\EmailType;
 use Sulu\Bundle\ContactBundle\Entity\FaxType;
 use Sulu\Bundle\ContactBundle\Entity\PhoneType;
 use Sulu\Bundle\ContactBundle\Entity\UrlType;
-use Sulu\Bundle\ContactBundle\Import\Import;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
+use Sulu\Bundle\ContactExtensionBundle\Import\Import;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
 use Sulu\Component\Contact\Model\ContactInterface;
 use Sulu\Component\Contact\Model\ContactRepositoryInterface;
@@ -53,6 +51,10 @@ class ImportTest extends SuluTestCase
 
     public function setUp()
     {
+        $this->markTestSkipped(
+            'Import tests currently not supported'
+        );
+
         $this->purgeDatabase();
         $this->em = $this->getEntityManager();
 
@@ -96,10 +98,12 @@ class ImportTest extends SuluTestCase
         $this->em->flush();
 
         // TODO: use fixtures
-        $this->import = new Import($this->em,
-            new AccountManager($this->em, $this->createClient()->getContainer()->get('sulu_tag.tag_manager')),
-            new ContactManager($this->em, $this->createClient()->getContainer()->get('sulu_tag.tag_manager')),
-            array(
+        $this->import = new Import(
+            $this->em,
+            $this->getContainer()->get('sulu_contact.account_manager'),
+            $this->getContainer()->get('sulu_contact.contact_manager'),
+            $this->getContainer()->get('sulu_contact.account_factory'),
+            [
                 'emailType' => $emailType->getId(),
                 'phoneType' => $phoneType->getId(),
                 'phoneTypeMobile' => $mobilePhoneType->getId(),
@@ -107,20 +111,22 @@ class ImportTest extends SuluTestCase
                 'urlType' => $urlType->getId(),
                 'faxType' => $faxType->getId(),
                 'country' => $country->getId(),
-            ),
-            array(), // FIXME: this is not beeing used by import currently (fill in when needed)
-            array(
-                'male' => array(
+            ],
+            $this->getContainer()->getParameter('sulu_contact_extension.account_types'),
+            [
+                'male' => [
                     'id' => 0,
                     'name' => 'male',
-                    'translation' => 'male'
-                ),
-                'female' => array(
+                    'translation' => 'male',
+                ],
+                'female' => [
                     'id' => 1,
                     'name' => 'female',
-                    'translation' => 'female'
-                ),
-            )
+                    'translation' => 'female',
+                ],
+            ],
+            $this->getContainer()->get('sulu.repository.contact'),
+            $this->getContainer()->get('sulu_contact.contact_repository')
         );
     }
 
@@ -197,7 +203,7 @@ class ImportTest extends SuluTestCase
     private function checkAccountData()
     {
         /** @var Account $account */
-        $accounts = $this->em->getRepository('SuluContactBundle:Account')->findAll();
+        $accounts = $this->getContainer()->get('sulu_contact.account_repository')->findAll();
         $this->assertEquals(2, sizeof($accounts));
 
         // accounts
@@ -210,7 +216,6 @@ class ImportTest extends SuluTestCase
         $this->assertEquals(Account::TYPE_SUPPLIER, $account->getType());
         $this->assertEquals('ATU12345678', $account->getUid());
         $this->assertNull($account->getParent());
-        $this->assertEquals(false, $account->getDisabled());
 
         // addresss
         /** @var Address $address */
@@ -255,7 +260,6 @@ class ImportTest extends SuluTestCase
         $this->assertEquals(Account::TYPE_CUSTOMER, $account->getType());
         $this->assertEquals('DEU56781234', $account->getUid());
         $this->assertNotNull($account->getParent());
-        $this->assertEquals(false, $account->getDisabled());
 
         // addresss
         /** @var Address $address */
