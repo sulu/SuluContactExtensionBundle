@@ -25,7 +25,6 @@ use Sulu\Component\Rest\ListBuilder\Doctrine\DoctrineListBuilder;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineConcatenationFieldDescriptor;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineFieldDescriptor;
 use Sulu\Component\Rest\ListBuilder\Doctrine\FieldDescriptor\DoctrineJoinDescriptor;
-use Sulu\Bundle\ContactBundle\Entity\Contact as ContactEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfDelivery as TermsOfDeliveryEntity;
 use Sulu\Bundle\ContactExtensionBundle\Entity\TermsOfPayment as TermsOfPaymentEntity;
 
@@ -85,7 +84,7 @@ class AccountController extends SuluAccountController
     {
         if (!!$responsiblePerson) {
             $id = $responsiblePerson['id'];
-            /* @var ContactEntity $contact */
+            /* @var ContactInterface $contact */
             $contact = $em->getRepository($this->container->getParameter('sulu.model.contact.class'))
                 ->find($id);
 

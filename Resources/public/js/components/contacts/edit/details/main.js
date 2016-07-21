@@ -9,7 +9,7 @@
 
 define([
     'sulucontact/components/contacts/edit/details/main',
-    'services/sulucontact/account-router'
+    'services/sulucontactextension/account-router'
 ], function(SuluBaseForm, AccountRouter) {
 
     'use strict';

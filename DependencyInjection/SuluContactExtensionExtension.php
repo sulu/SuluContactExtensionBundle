@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
 /**
- * This is the class that loads and manages bundle configuration for sulu contact extension bundle
+ * This is the class that loads and manages bundle configuration for sulu contact extension bundle.
  */
 class SuluContactExtensionExtension extends Extension implements PrependExtensionInterface
 {
@@ -26,35 +26,12 @@ class SuluContactExtensionExtension extends Extension implements PrependExtensio
      */
     public function prepend(ContainerBuilder $container)
     {
-        foreach ($container->getExtensions() as $name => $extension) {
-            if ($name === 'sulu_admin') {
-                $container->prependExtensionConfig(
-                    $name,
-                    array(
-                        'widget_groups' => array(
-                            'contact-info' => array(
-                                'mappings' => array(
-                                    'sulu-contact-contact-info',
-                                    'sulu-contact-accounts'
-                                )
-                            ),
-                            'account-info' => array(
-                                'mappings' => array(
-                                    'sulu-contact-account-info',
-                                    'sulu-contact-main-contact',
-                                    'sulu-contact-account-children'
-                                )
-                            ),
-                            'contact-detail' => array(
-                                'mappings' => array('sulu-contact-accounts')
-                            ),
-                            'account-detail' => array(
-                                'mappings' => array('sulu-contact-main-contact')
-                            )
-                        )
-                    )
-                );
-            }
+        if ($container->hasExtension('sulu_contact')) {
+            $this->prependSuluContactConfig($container);
+        }
+
+        if ($container->hasExtension('sulu_admin')) {
+            $this->prependSuluAdminConfig($container);
         }
     }
 
@@ -75,8 +52,68 @@ class SuluContactExtensionExtension extends Extension implements PrependExtensio
         );
 
         $container->setParameter(
+            'sulu_contact_extension.contact_types',
+            $config['contact_types']
+        );
+
+        $container->setParameter(
             'sulu_contact_extension.display_account_active_toggle',
             $config['display_account_active_toggle']
+        );
+    }
+
+    /**
+     * Prepends config for sulu_admin.
+     *
+     * @param ContainerBuilder $container
+     */
+    private function prependSuluAdminConfig(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig(
+            'sulu_admin',
+            [
+                'widget_groups' => [
+                    'contact-info' => [
+                        'mappings' => [
+                            'sulu-contact-contact-info',
+                            'sulu-contact-accounts',
+                        ],
+                    ],
+                    'account-info' => [
+                        'mappings' => [
+                            'sulu-contact-account-info',
+                            'sulu-contact-main-contact',
+                            'sulu-contact-account-children',
+                        ],
+                    ],
+                    'contact-detail' => [
+                        'mappings' => ['sulu-contact-accounts'],
+                    ],
+                    'account-detail' => [
+                        'mappings' => ['sulu-contact-main-contact'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Prepends config for sulu_contact.
+     *
+     * @param ContainerBuilder $container
+     */
+    private function prependSuluContactConfig(ContainerBuilder $container)
+    {
+        $container->prependExtensionConfig(
+            'sulu_contact',
+            [
+                'objects' => [
+                    'contact' => [
+                        'model' => 'Sulu\Bundle\ContactExtensionBundle\Entity\Contact',
+                        'repository' => 'Sulu\Bundle\ContactExtensionBundle\Entity\ContactRepository',
+                    ],
+                ],
+            ]
         );
     }
 }

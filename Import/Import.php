@@ -15,29 +15,29 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
-use Sulu\Bundle\ContactBundle\Contact\AccountManager;
-use Sulu\Bundle\ContactBundle\Contact\ContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AbstractContactManager;
 use Sulu\Bundle\ContactBundle\Contact\AccountFactoryInterface;
-use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
+use Sulu\Bundle\ContactBundle\Contact\AccountManager;
+use Sulu\Bundle\ContactBundle\Contact\ContactManager;
+use Sulu\Bundle\ContactBundle\Entity\AccountAddress;
 use Sulu\Bundle\ContactBundle\Entity\AccountContact;
 use Sulu\Bundle\ContactBundle\Entity\AccountInterface;
 use Sulu\Bundle\ContactBundle\Entity\Address;
 use Sulu\Bundle\ContactBundle\Entity\BankAccount;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
-use Sulu\Bundle\ContactBundle\Entity\ContactRepository;
 use Sulu\Bundle\ContactBundle\Entity\ContactTitle;
-use Sulu\Bundle\ContactBundle\Entity\Position;
 use Sulu\Bundle\ContactBundle\Entity\Email;
 use Sulu\Bundle\ContactBundle\Entity\Fax;
 use Sulu\Bundle\ContactBundle\Entity\Note;
 use Sulu\Bundle\ContactBundle\Entity\Phone;
+use Sulu\Bundle\ContactBundle\Entity\Position;
 use Sulu\Bundle\ContactBundle\Entity\Url;
+use Sulu\Bundle\ContactExtensionBundle\Entity\Account;
 use Sulu\Bundle\ContactExtensionBundle\Import\Exception\ImportException;
 use Sulu\Bundle\TagBundle\Entity\Tag;
+use Sulu\Component\Contact\Model\ContactInterface;
+use Sulu\Component\Contact\Model\ContactRepositoryInterface;
 use Sulu\Component\Rest\Exception\EntityNotFoundException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * Configures and executes an import for contact and account data from a CSV file.
@@ -335,7 +335,7 @@ class Import
     protected $accountRepository;
 
     /**
-     * @var EntityRepository
+     * @var ContactRepositoryInterface
      */
     protected $contactRepository;
 
@@ -876,7 +876,7 @@ class Import
      * Checks if given email is already assigned to entity.
      *
      * @param Email $search
-     * @param Contact|AccountInterface $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return bool
      */
@@ -897,7 +897,7 @@ class Import
      * Checks if given address is already assigned to entity.
      *
      * @param Address $search
-     * @param Contact|AccountInterface $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return bool
      */
@@ -927,7 +927,7 @@ class Import
      * Checks if given phone is already assigned to entity.
      *
      * @param Phone $search
-     * @param Contact|AccountInterface $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return bool
      */
@@ -949,7 +949,7 @@ class Import
      * Checks if given fax is already assigned to entity.
      *
      * @param Fax $search
-     * @param Contact|AccountInterface $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return bool
      */
@@ -971,7 +971,7 @@ class Import
      * Checks if given url is already assigned to entity.
      *
      * @param Url $search
-     * @param Contact|AccountInterface $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return bool
      */
@@ -1073,7 +1073,7 @@ class Import
     protected function processTags($data, $entity)
     {
         $prefix = 'account_';
-        if ($entity instanceof Contact) {
+        if ($entity instanceof ContactInterface) {
             $prefix = 'contact_';
         }
         // Add tags.
@@ -1557,7 +1557,7 @@ class Import
      * @param array $data
      * @param int $row
      *
-     * @return Contact
+     * @return ContactInterface
      */
     protected function createContact(array $data, $row)
     {
@@ -1567,7 +1567,7 @@ class Import
 
             // Or create a new one.
             if (!$contact) {
-                $contact = new Contact();
+                $contact = $this->contactRepository->createNew();
                 $this->em->persist($contact);
             }
 
@@ -1588,9 +1588,9 @@ class Import
      * Sets data to Contact entity by given data array.
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      */
-    protected function setContactData(array $data, Contact $contact)
+    protected function setContactData(array $data, ContactInterface $contact)
     {
         if ($this->checkData('contact_firstname', $data)) {
             $contact->setFirstName($data['contact_firstname']);
@@ -1654,7 +1654,7 @@ class Import
      * Either creates a single contact relation (contact_account) or multiple relations (contact_account1..n).
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      */
     protected function createAccountContactRelations($data, $contact, $row)
@@ -1676,7 +1676,7 @@ class Import
      *
      * @param string $index
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      */
     protected function checkAndCreateAccountContactRelation($index, $data, $contact, $row)
@@ -1690,7 +1690,7 @@ class Import
      * Adds an AccountContact relation if not existent.
      *
      * @param array $data
-     * @param Contact $contact
+     * @param ContactInterface $contact
      * @param int $row
      * @param string $index - account-index in data array
      */
@@ -1757,7 +1757,7 @@ class Import
      *
      * @param array $data
      *
-     * @return Contact
+     * @return ContactInterface
      */
     protected function getContactByData($data)
     {
@@ -1787,7 +1787,6 @@ class Import
             }
         }
 
-        /** @var ContactRepository $repo */
         $repo = $this->contactRepository;
         $contact = $repo->findByCriteriaEmailAndPhone($criteria, $email, $phone);
 
@@ -2278,13 +2277,13 @@ class Import
     }
 
     /**
-     * @param Contact|Account $entity
+     * @param ContactInterface|AccountInterface $entity
      *
      * @return AbstractContactManager
      */
     protected function getManager($entity)
     {
-        if ($entity instanceof Contact) {
+        if ($entity instanceof ContactInterface) {
             return $this->getContactManager();
         } else {
             return $this->getAccountManager();

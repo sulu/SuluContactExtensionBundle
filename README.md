@@ -65,7 +65,6 @@ If SuluTranslationBundle is not included yet, do so (AppKernel and routing.yml)
 The following is an example configuration and contains all possible
 configurable attributes:
  
- 
 ```{config}
  
  # SULU Contact Extension Configuration
@@ -97,4 +96,21 @@ configurable attributes:
              id: 3
              name: supplier
              translation: contact.account.type.supplier
+                 
+     contact_types:
+         basic:
+             id: 0
+             name: basic
+             translation: contact.contact.type.basic
+             addTranslation: contact.contact.add-basic
+         customer:
+             id: 1
+             name: customer
+             translation: contact.contact.type.customer
+             addTranslation: contact.contact.add-customer
+         partner:
+             id: 2
+             name: partner
+             translation: contact.contact.type.supplier
+             addTranslation: contact.contact.add-supplier
 ```
