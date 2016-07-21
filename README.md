@@ -83,18 +83,26 @@ configurable attributes:
              convertableTo:
                  lead: true
                  customer: true
+             tabs:
+                 financials: false
          lead:
              id: 1
              name: lead
              translation: contact.account.type.lead
              convertableTo:
                  customer: true
+             tabs:
+                 financials: false
          customer:
              id: 2
              name: customer
              translation: contact.account.type.customer
+             tabs:
+                 financials: true
          supplier:
              id: 3
              name: supplier
              translation: contact.account.type.supplier
+             tabs:
+                 financials: true
 ```

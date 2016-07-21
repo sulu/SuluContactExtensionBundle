@@ -176,10 +176,8 @@ define(['widget-groups', 'services/sulucontactextension/account-manager'], funct
                 this.sandbox.emit('sulu.contacts.accounts.financials.save', data);
                 this.sandbox.emit('sulu.tab.saving');
                 AccountManager.saveFinancials(data).then(function(savedData) {
-                    this.sandbox.emit('sulu.tab.saved', savedData, true);
+                    this.sandbox.emit('sulu.tab.saved', savedData.toJSON(), true);
                     this.options.data = savedData;
-                    // TODO needed? problems?
-                    this.setFormData(data);
                 }.bind(this));
             }
         },

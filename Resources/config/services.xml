@@ -79,6 +79,9 @@
         <service id="sulu_contact_extension.account_navigation_provider" class="%sulu_contact_extension.account_navigation_provider.class%">
             <tag name="sulu_admin.content_navigation" alias="account"/>
             <tag name="sulu.context" context="admin"/>
+            <call method="setAccountTypesConfig">
+                <argument key="accountTypes">%sulu_contact_extension.account_types%</argument>
+            </call>
         </service>
 
         <service id="sulu_contact_extension.data_completer" class="%sulu_contact_extension.data_completer.class%">
