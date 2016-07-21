@@ -1,6 +1,10 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
+* 0.5.8 (2016-07-20)
+
+    * BUGFIX       Fixed displaying of financial tab for customer and supplier only (also after save)
+
 * 0.6.5 (2016-07-15)
 
     * BUGFIX       Fixed wrong usage of Contact in Account.orm.xml
