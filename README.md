@@ -1,4 +1,4 @@
-# SuluContactExtensionBundle
+# SuluContactExtensionBundle [![Build Status](https://travis-ci.org/sulu/SuluContactExtensionBundle.svg?branch=develop)](https://travis-ci.org/sulu/SuluContactExtensionBundle)
 
 This Bundle extends the Sulu Contact Bundle by some CRM functionality like ..
  * adds Account-Types `Basic`, `Lead`, `Customer`, `Supplier`
