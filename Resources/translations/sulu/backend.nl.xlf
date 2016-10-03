@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1" resname="contact.accounts.responsiblePerson">
+                <source>contact.accounts.responsiblePerson</source>
+                <target>Verantwoordelijke</target>
+            </trans-unit>
+            <trans-unit id="2" resname="navigation.financials">
+                <source>navigation.financials</source>
+                <target>Toevoeging</target>
+            </trans-unit>
+            <trans-unit id="3" resname="contacts.sidebar.company.subsidiaries">
+                <source>contacts.sidebar.company.subsidiaries</source>
+                <target>Lokaties</target>
+            </trans-unit>
+            <trans-unit id="4" resname="contacts.is-active">
+                <source>contacts.is-active</source>
+                <target>Actief</target>
+            </trans-unit>
+            <trans-unit id="5" resname="contact.contact.type.customer">
+                <source>contact.contact.type.customer</source>
+                <target>Klant</target>
+            </trans-unit>
+            <trans-unit id="6" resname="contact.contact.type.supplier">
+                <source>contact.contact.type.supplier</source>
+                <target>Leverancier</target>
+            </trans-unit>
+            <trans-unit id="7" resname="contact.contact.type.basic">
+                <source>contact.contact.type.basic</source>
+                <target>Basis</target>
+            </trans-unit>
+            <trans-unit id="8" resname="contact.contact.add-basic">
+                <source>contact.contact.add-basic</source>
+                <target>Voeg nieuw contact toe</target>
+            </trans-unit>
+            <trans-unit id="9" resname="contact.contact.add-customer">
+                <source>contact.contact.add-customer</source>
+                <target>Voeg nieuwe klant toe</target>
+            </trans-unit>
+            <trans-unit id="10" resname="contact.contact.add-supplier">
+                <source>contact.contact.add-supplier</source>
+                <target>Voeg nieuwe leverancier toe</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
