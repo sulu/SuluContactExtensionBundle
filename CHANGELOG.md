@@ -1,6 +1,10 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
+* dev-develop
+
+    * ENHANCEMENT  Changed dependency for Sulu.
+
 * 0.6.6 (2016-07-21)
 
     * BUGFIX       Fixed displaying of financial tab for customer and supplier only (also after save)
