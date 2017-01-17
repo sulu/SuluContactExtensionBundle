@@ -1,7 +1,7 @@
 CHANGELOG for Sulu Contact Extension Bundle
 ===========================================
 
-* dev-develop
+* 0.6.7 (2017-01-17)
 
     * ENHANCEMENT  Changed dependency for Sulu.
 
